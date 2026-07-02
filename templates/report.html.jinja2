@@ -31,7 +31,7 @@
     padding: 40px 32px;
   }
   header.hero h1 { margin: 0 0 8px; font-size: 28px; }
-  header.hero p.desc { margin: 0 0 16px; max-width: 900px; opacity: 0.95; }
+  header.hero p.desc { margin: 0 0 16px; max-width: 900px; opacity: 0.95; overflow-wrap: anywhere; }
   .badges { display: flex; flex-wrap: wrap; gap: 8px; }
   .tech-badge {
     background: rgba(255,255,255,0.18);
@@ -46,6 +46,7 @@
     border-radius: var(--radius);
     padding: 14px 16px;
     font-size: 14px;
+    overflow-wrap: anywhere;
   }
   main { max-width: 1200px; margin: -24px auto 60px; padding: 0 24px; }
 
@@ -53,7 +54,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 14px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
   .stat-card {
     background: var(--panel);
@@ -61,9 +62,27 @@
     border-radius: var(--radius);
     padding: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    min-width: 0;
   }
   .stat-card .value { font-size: 24px; font-weight: 700; color: var(--accent); }
   .stat-card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .module-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px; }
+  .module-nav a {
+    text-decoration: none;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .module-nav a:hover, .module-nav a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+  .module-nav .nav-count { color: var(--muted); font-size: 11px; }
 
   section { margin-bottom: 32px; }
   section > h2 {
@@ -73,14 +92,53 @@
     margin-bottom: 16px;
   }
 
-  .findings-list { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .finding-item { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .finding-item:last-child { border-bottom: none; }
-  .finding-item .source { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
-
-  .module-block { margin-bottom: 28px; }
-  .module-block > h3 {
+  /* Notable Findings: grouped into collapsible, independently-scrollable
+     categories instead of one long flat list -- with hundreds of findings
+     a single list forces the whole page to scroll to get past it. */
+  .findings-category {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .findings-category > summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .findings-category > summary::-webkit-details-marker { display: none; }
+  .findings-category > summary::before {
+    content: "\25B8";
+    color: var(--muted);
+    transition: transform 0.15s;
     display: inline-block;
+  }
+  .findings-category[open] > summary::before { transform: rotate(90deg); }
+  .findings-category .count-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    margin-left: auto;
+  }
+  .findings-list { max-height: 380px; overflow-y: auto; border-top: 1px solid var(--border); }
+  .finding-item { padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; overflow-wrap: anywhere; }
+  .finding-item:last-child { border-bottom: none; }
+  .finding-item .source { color: var(--muted); font-size: 11px; display: block; margin-top: 3px; overflow-wrap: anywhere; }
+
+  .module-block { margin-bottom: 28px; scroll-margin-top: 16px; }
+  .module-block > h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background: var(--accent-light);
     color: var(--accent);
     padding: 4px 12px;
@@ -88,6 +146,7 @@
     font-size: 14px;
     margin-bottom: 14px;
   }
+  .module-block > h3 .module-count { color: var(--muted); font-weight: 500; font-size: 12px; }
   .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
   .class-card {
     background: var(--panel);
@@ -95,9 +154,25 @@
     border-radius: var(--radius);
     padding: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    min-width: 0;
+  }
+  .class-card.clickable {
+    cursor: pointer;
+    transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+  }
+  .class-card.clickable:hover, .class-card.clickable:focus-visible {
+    box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    outline: none;
   }
   .class-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-  .class-card-header .class-name { font-weight: 700; font-size: 15px; font-family: "SFMono-Regular", Consolas, monospace; }
+  .class-card-header .class-name {
+    font-weight: 700;
+    font-size: 15px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    overflow-wrap: anywhere;
+  }
   .type-badge {
     font-size: 11px;
     padding: 2px 8px;
@@ -105,6 +180,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    white-space: nowrap;
   }
   .type-badge.controller { background: #dbeafe; color: #1d4ed8; }
   .type-badge.service { background: #dcfce7; color: #15803d; }
@@ -117,21 +193,79 @@
   .type-badge.exception { background: #fee2e2; color: #b91c1c; }
   .type-badge.other { background: #f3f4f6; color: #6b7280; }
 
-  .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; word-break: break-all; }
-  .class-description { font-size: 13px; margin-bottom: 10px; }
+  .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; overflow-wrap: anywhere; word-break: break-word; }
+  .class-description { font-size: 13px; margin-bottom: 10px; overflow-wrap: anywhere; word-break: break-word; }
+  .class-description.clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
   .endpoint-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .endpoint-badge { font-size: 11px; font-family: monospace; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 2px 6px; border-radius: 4px; }
+  .endpoint-badge { font-size: 11px; font-family: monospace; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 2px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+  .endpoint-badge.more-badge { background: #f3f4f6; border-color: #e5e7eb; color: #4b5563; }
 
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .card-footer .view-details { color: var(--accent); font-weight: 600; white-space: nowrap; }
+
+  .methods-wrapper { overflow-x: auto; }
   table.methods { width: 100%; border-collapse: collapse; font-size: 12px; }
-  table.methods th, table.methods td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.methods th, table.methods td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
   table.methods th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
-  table.methods td.signature { font-family: monospace; white-space: nowrap; }
+  table.methods td.signature { font-family: monospace; }
   tr.high-complexity td { background: var(--danger-light); }
   .complexity-flag { color: var(--danger); font-weight: 700; font-size: 11px; }
 
   .notable-tags { margin-top: 8px; }
-  .notable-tag { display: block; font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-top: 4px; }
+  .notable-tag { display: block; font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-top: 4px; overflow-wrap: anywhere; word-break: break-word; }
+
+  /* Class detail dialog -- opened by clicking a card. Renders in the
+     browser's top layer, so its content can never overlap a sibling
+     card even if a card's own text runs long. */
+  dialog.class-dialog {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    width: min(720px, 92vw);
+    max-height: 85vh;
+    box-shadow: 0 24px 60px rgba(15,17,25,0.35);
+    color: var(--text);
+  }
+  dialog.class-dialog::backdrop { background: rgba(15,17,25,0.55); }
+  .dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dialog-header-text { min-width: 0; }
+  .dialog-close {
+    border: none;
+    background: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .dialog-close:hover, .dialog-close:focus-visible { background: var(--accent-light); color: var(--accent); outline: none; }
+  .dialog-body { padding: 20px 24px; overflow-y: auto; max-height: calc(85vh - 77px); }
+  .dialog-body .class-description { font-size: 14px; }
 
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; }
 </style>
@@ -162,68 +296,127 @@
     <div class="stat-card"><div class="value">${{ "%.4f"|format(metadata.estimated_cost_usd) }}</div><div class="label">Estimated Cost</div></div>
   </div>
 
+  {% if modules|length > 1 %}
+  <nav class="module-nav" aria-label="Jump to module">
+    {% for module_name, classes in modules.items() %}
+    <a href="#module-{{ loop.index }}">{{ module_name }} <span class="nav-count">{{ classes|length }}</span></a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+
   {% if notable_findings %}
   <section>
     <h2>Notable Findings</h2>
-    <div class="findings-list">
-      {% for finding in notable_findings %}
-      <div class="finding-item">
-        {{ finding.text }}
-        <span class="source">{{ finding.class_name }} &mdash; {{ finding.file_path }}</span>
+    {% for category in notable_findings %}
+    <details class="findings-category"{% if loop.first %} open{% endif %}>
+      <summary>
+        <span aria-hidden="true">{{ category.icon }}</span>
+        <span>{{ category.label }}</span>
+        <span class="count-badge">{{ category.findings|length }}</span>
+      </summary>
+      <div class="findings-list">
+        {% for finding in category.findings %}
+        <div class="finding-item">
+          <span class="finding-text">{{ finding.text }}</span>
+          <span class="source">{{ finding.class_name }} &mdash; {{ finding.file_path }}</span>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
+    </details>
+    {% endfor %}
   </section>
   {% endif %}
 
   <section>
     <h2>Modules</h2>
+    {% set ns = namespace(i=0) %}
     {% for module_name, classes in modules.items() %}
-    <div class="module-block">
-      <h3>{{ module_name }}</h3>
+    <div class="module-block" id="module-{{ loop.index }}">
+      <h3>{{ module_name }} <span class="module-count">{{ classes|length }} class{{ 'es' if classes|length != 1 else '' }}</span></h3>
       <div class="class-grid">
         {% for cls in classes %}
-        <div class="class-card">
+        {% set ns.i = ns.i + 1 %}
+        {% set dialog_id = "class-dialog-" ~ ns.i %}
+        <div class="class-card clickable" tabindex="0" role="button"
+             aria-haspopup="dialog" aria-controls="{{ dialog_id }}"
+             data-dialog-target="{{ dialog_id }}">
           <div class="class-card-header">
             <span class="class-name">{{ cls.class_name }}</span>
             <span class="type-badge {{ cls.class_type.value }}">{{ cls.class_type.value }}</span>
           </div>
           <div class="file-path">{{ cls.file_path }}</div>
-          <div class="class-description">{{ cls.description }}</div>
+          <div class="class-description clamp">{{ cls.description }}</div>
 
           {% if cls.rest_endpoints %}
           <div class="endpoint-badges">
-            {% for endpoint in cls.rest_endpoints %}
+            {% for endpoint in cls.rest_endpoints[:4] %}
             <span class="endpoint-badge">{{ endpoint.http_method }} {{ endpoint.path }}</span>
             {% endfor %}
+            {% if cls.rest_endpoints|length > 4 %}
+            <span class="endpoint-badge more-badge">+{{ cls.rest_endpoints|length - 4 }} more</span>
+            {% endif %}
           </div>
           {% endif %}
 
-          {% if cls.methods %}
-          <table class="methods">
-            <thead><tr><th>Method</th><th>Description</th></tr></thead>
-            <tbody>
-              {% for method in cls.methods %}
-              <tr {% if method.high_complexity %}class="high-complexity"{% endif %}>
-                <td class="signature">
-                  {{ method.signature }}
-                  {% if method.high_complexity %}<br><span class="complexity-flag">HIGH COMPLEXITY (cyclomatic~={{ method.cyclomatic_estimate }})</span>{% endif %}
-                </td>
-                <td>{{ method.description }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-          {% endif %}
-
-          {% if cls.notable_aspects %}
-          <div class="notable-tags">
-            {% for aspect in cls.notable_aspects %}
-            <span class="notable-tag">{{ aspect }}</span>
-            {% endfor %}
+          <div class="card-footer">
+            <span>
+              {{ cls.methods|length }} method{{ 's' if cls.methods|length != 1 else '' }}
+              {%- if cls.notable_aspects %} &middot; {{ cls.notable_aspects|length }} notable{% endif %}
+            </span>
+            <span class="view-details">View details &rarr;</span>
           </div>
-          {% endif %}
         </div>
+
+        <dialog id="{{ dialog_id }}" class="class-dialog" aria-label="{{ cls.class_name }} details">
+          <div class="dialog-header">
+            <div class="dialog-header-text">
+              <div class="class-card-header">
+                <span class="class-name">{{ cls.class_name }}</span>
+                <span class="type-badge {{ cls.class_type.value }}">{{ cls.class_type.value }}</span>
+              </div>
+              <div class="file-path">{{ cls.file_path }}</div>
+            </div>
+            <button type="button" class="dialog-close" aria-label="Close">&times;</button>
+          </div>
+          <div class="dialog-body">
+            <div class="class-description">{{ cls.description }}</div>
+
+            {% if cls.rest_endpoints %}
+            <div class="endpoint-badges">
+              {% for endpoint in cls.rest_endpoints %}
+              <span class="endpoint-badge">{{ endpoint.http_method }} {{ endpoint.path }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if cls.methods %}
+            <div class="methods-wrapper">
+              <table class="methods">
+                <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                <tbody>
+                  {% for method in cls.methods %}
+                  <tr {% if method.high_complexity %}class="high-complexity"{% endif %}>
+                    <td class="signature">
+                      {{ method.signature }}
+                      {% if method.high_complexity %}<br><span class="complexity-flag">HIGH COMPLEXITY (cyclomatic~={{ method.cyclomatic_estimate }})</span>{% endif %}
+                    </td>
+                    <td>{{ method.description }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+
+            {% if cls.notable_aspects %}
+            <div class="notable-tags">
+              {% for aspect in cls.notable_aspects %}
+              <span class="notable-tag">{{ aspect }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </dialog>
         {% endfor %}
       </div>
     </div>
@@ -240,6 +433,39 @@
   <br>{{ metadata.parse_errors|length }} file(s) could not be parsed and were skipped.
   {% endif %}
 </footer>
+
+<script>
+(function () {
+  document.querySelectorAll(".class-card[data-dialog-target]").forEach(function (card) {
+    var dialog = document.getElementById(card.getAttribute("data-dialog-target"));
+    if (!dialog) { return; }
+    var open = function () {
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        dialog.setAttribute("open", "");
+      }
+    };
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+
+  document.querySelectorAll("dialog.class-dialog").forEach(function (dialog) {
+    var closeBtn = dialog.querySelector(".dialog-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () { dialog.close(); });
+    }
+    dialog.addEventListener("click", function (event) {
+      if (event.target === dialog) { dialog.close(); }
+    });
+  });
+})();
+</script>
 
 </body>
 </html>

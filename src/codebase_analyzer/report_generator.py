@@ -13,10 +13,26 @@ ever hosted rather than opened locally as a file.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TypedDict
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from codebase_analyzer.schemas import ClassAnalysis, ProjectAnalysis
+
+
+class _Finding(TypedDict):
+    class_name: str
+    file_path: str
+    text: str
+
+
+class _FindingCategory(TypedDict):
+    label: str
+    icon: str
+    # Named `findings`, not `items` -- Jinja's dot-attribute access on a
+    # dict tries `getattr` first, so a key literally named "items" would
+    # be shadowed by `dict.items` (the bound method) inside the template.
+    findings: list[_Finding]
 
 # templates/ lives at the project root, one level above the installed
 # package (src/codebase_analyzer/). This resolves correctly for an
@@ -47,18 +63,20 @@ def _group_by_module(classes: list[ClassAnalysis]) -> dict[str, list[ClassAnalys
     return dict(sorted(modules.items()))
 
 
-def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[dict[str, str]]:
+def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCategory]:
     """Roll up every LLM-flagged notable aspect and every statically-flagged
-    high-complexity method into one scannable list, so a reviewer doesn't
-    have to open every class card to find what's worth a closer look.
+    high-complexity method into categorized, collapsible groups, so a
+    reviewer isn't stuck scrolling one flat list of hundreds of items to
+    find what's worth a closer look.
     """
-    findings: list[dict[str, str]] = []
+    high_complexity: list[_Finding] = []
+    notable_aspects: list[_Finding] = []
     for cls in classes:
         for aspect in cls.notable_aspects:
-            findings.append({"class_name": cls.class_name, "file_path": cls.file_path, "text": aspect})
+            notable_aspects.append({"class_name": cls.class_name, "file_path": cls.file_path, "text": aspect})
         for method in cls.methods:
             if method.high_complexity:
-                findings.append(
+                high_complexity.append(
                     {
                         "class_name": cls.class_name,
                         "file_path": cls.file_path,
@@ -68,7 +86,12 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[dict[str, st
                         ),
                     }
                 )
-    return findings
+
+    categories: list[_FindingCategory] = [
+        {"label": "High-Complexity Methods", "icon": "⚠️", "findings": high_complexity},
+        {"label": "Notable Aspects", "icon": "\U0001f4a1", "findings": notable_aspects},
+    ]
+    return [category for category in categories if category["findings"]]
 
 
 def render_report(analysis: ProjectAnalysis) -> str:
