@@ -72,6 +72,17 @@
     font-size: 14px;
     overflow-wrap: anywhere;
   }
+  .key-modules { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .key-modules-label { font-size: 12px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 2px; }
+  .module-chip {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: white;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
   main { max-width: 1200px; margin: -24px auto 60px; padding: 0 24px; }
 
   .stats-grid {
@@ -286,6 +297,7 @@
   .type-badge.other { background: rgba(255,255,255,0.06); color: var(--muted); }
 
   .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; overflow-wrap: anywhere; word-break: break-word; }
+  .file-path.package-path { margin-top: -4px; font-style: italic; opacity: 0.85; }
   .class-description { font-size: 13px; margin-bottom: 10px; color: var(--text-secondary); overflow-wrap: anywhere; word-break: break-word; }
   .class-description.clamp {
     display: -webkit-box;
@@ -380,6 +392,14 @@
   </div>
   {% if project.architecture_summary %}
   <div class="architecture-note">{{ project.architecture_summary }}</div>
+  {% endif %}
+  {% if project.main_modules %}
+  <div class="key-modules">
+    <span class="key-modules-label">Key Modules:</span>
+    {% for module in project.main_modules %}
+    <span class="module-chip">{{ module }}</span>
+    {% endfor %}
+  </div>
   {% endif %}
 </header>
 
@@ -503,6 +523,7 @@
                 <span class="type-badge {{ cls.class_type.value }}">{{ cls.class_type.value }}</span>
               </div>
               <div class="file-path">{{ cls.file_path }}</div>
+              <div class="file-path package-path">package {{ cls.package }}</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -552,14 +573,35 @@
     {% endfor %}
   </section>
 
+  {% if metadata.parse_errors %}
+  <section>
+    <h2>Parse Errors</h2>
+    <details class="findings-category" style="--cat-color: #e66767;" open>
+      <summary>
+        <span aria-hidden="true">🚫</span>
+        <span>Files That Failed to Parse</span>
+        <span class="count-badge">{{ metadata.parse_errors|length }}</span>
+      </summary>
+      <div class="findings-list">
+        {% for error in metadata.parse_errors %}
+        <div class="finding-item">
+          <span class="finding-text" style="font-family: monospace;">{{ error }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+  </section>
+  {% endif %}
+
 </main>
 
 <footer>
   Generated {{ generated_at_display }} using {{ metadata.model_used }} &middot;
+  {{ metadata.total_files_parsed }} file(s) parsed, {{ total_classes }} class(es) extracted &middot;
   {{ metadata.llm_calls_made }} LLM call(s), {{ metadata.llm_calls_cached }} served from cache &middot;
   {{ metadata.total_input_tokens }} input / {{ metadata.total_output_tokens }} output tokens
   {% if metadata.parse_errors %}
-  <br>{{ metadata.parse_errors|length }} file(s) could not be parsed and were skipped.
+  <br>{{ metadata.parse_errors|length }} file(s) could not be parsed and were skipped -- see Parse Errors above.
   {% endif %}
 </footer>
 
