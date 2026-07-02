@@ -1,0 +1,32 @@
+name: CI
+
+# Runs on every push and pull request. All three gates (lint, type-check,
+# test) must pass before code is considered mergeable. No step here ever
+# needs ANTHROPIC_API_KEY — the test suite mocks the LLM client entirely,
+# so CI never makes a real, billable network call.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Type-check (mypy)
+        run: mypy src
+
+      - name: Test (pytest)
+        run: pytest -v

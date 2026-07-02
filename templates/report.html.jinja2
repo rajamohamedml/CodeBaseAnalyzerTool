@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ project.name }} - Codebase Analysis Report</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --panel: #ffffff;
+    --border: #e2e5ec;
+    --text: #1f2430;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header.hero {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: white;
+    padding: 40px 32px;
+  }
+  header.hero h1 { margin: 0 0 8px; font-size: 28px; }
+  header.hero p.desc { margin: 0 0 16px; max-width: 900px; opacity: 0.95; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech-badge {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+  }
+  .architecture-note {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  main { max-width: 1200px; margin: -24px auto 60px; padding: 0 24px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .stat-card .value { font-size: 24px; font-weight: 700; color: var(--accent); }
+  .stat-card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  section { margin-bottom: 32px; }
+  section > h2 {
+    font-size: 18px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+  }
+
+  .findings-list { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .finding-item { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .finding-item:last-child { border-bottom: none; }
+  .finding-item .source { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
+
+  .module-block { margin-bottom: 28px; }
+  .module-block > h3 {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+  .class-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .class-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .class-card-header .class-name { font-weight: 700; font-size: 15px; font-family: "SFMono-Regular", Consolas, monospace; }
+  .type-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .type-badge.controller { background: #dbeafe; color: #1d4ed8; }
+  .type-badge.service { background: #dcfce7; color: #15803d; }
+  .type-badge.repository { background: #ede9fe; color: #6d28d9; }
+  .type-badge.entity { background: #ccfbf1; color: #0f766e; }
+  .type-badge.dto { background: #f3f4f6; color: #4b5563; }
+  .type-badge.mapper { background: #ffedd5; color: #c2410c; }
+  .type-badge.assembler { background: #fef9c3; color: #854d0e; }
+  .type-badge.config { background: #e5e7eb; color: #374151; }
+  .type-badge.exception { background: #fee2e2; color: #b91c1c; }
+  .type-badge.other { background: #f3f4f6; color: #6b7280; }
+
+  .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; word-break: break-all; }
+  .class-description { font-size: 13px; margin-bottom: 10px; }
+
+  .endpoint-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .endpoint-badge { font-size: 11px; font-family: monospace; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 2px 6px; border-radius: 4px; }
+
+  table.methods { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.methods th, table.methods td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.methods th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  table.methods td.signature { font-family: monospace; white-space: nowrap; }
+  tr.high-complexity td { background: var(--danger-light); }
+  .complexity-flag { color: var(--danger); font-weight: 700; font-size: 11px; }
+
+  .notable-tags { margin-top: 8px; }
+  .notable-tag { display: block; font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-top: 4px; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>{{ project.name }}</h1>
+  <p class="desc">{{ project.description }}</p>
+  <div class="badges">
+    {% for tech in project.tech_stack %}
+    <span class="tech-badge">{{ tech }}</span>
+    {% endfor %}
+  </div>
+  {% if project.architecture_summary %}
+  <div class="architecture-note">{{ project.architecture_summary }}</div>
+  {% endif %}
+</header>
+
+<main>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="value">{{ total_classes }}</div><div class="label">Classes Analyzed</div></div>
+    <div class="stat-card"><div class="value">{{ total_methods }}</div><div class="label">Methods</div></div>
+    <div class="stat-card"><div class="value">{{ total_endpoints }}</div><div class="label">REST Endpoints</div></div>
+    <div class="stat-card"><div class="value">{{ high_complexity_count }}</div><div class="label">High Complexity</div></div>
+    <div class="stat-card"><div class="value">{{ cache_hit_rate_pct }}%</div><div class="label">Cache Hit Rate</div></div>
+    <div class="stat-card"><div class="value">${{ "%.4f"|format(metadata.estimated_cost_usd) }}</div><div class="label">Estimated Cost</div></div>
+  </div>
+
+  {% if notable_findings %}
+  <section>
+    <h2>Notable Findings</h2>
+    <div class="findings-list">
+      {% for finding in notable_findings %}
+      <div class="finding-item">
+        {{ finding.text }}
+        <span class="source">{{ finding.class_name }} &mdash; {{ finding.file_path }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section>
+    <h2>Modules</h2>
+    {% for module_name, classes in modules.items() %}
+    <div class="module-block">
+      <h3>{{ module_name }}</h3>
+      <div class="class-grid">
+        {% for cls in classes %}
+        <div class="class-card">
+          <div class="class-card-header">
+            <span class="class-name">{{ cls.class_name }}</span>
+            <span class="type-badge {{ cls.class_type.value }}">{{ cls.class_type.value }}</span>
+          </div>
+          <div class="file-path">{{ cls.file_path }}</div>
+          <div class="class-description">{{ cls.description }}</div>
+
+          {% if cls.rest_endpoints %}
+          <div class="endpoint-badges">
+            {% for endpoint in cls.rest_endpoints %}
+            <span class="endpoint-badge">{{ endpoint.http_method }} {{ endpoint.path }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if cls.methods %}
+          <table class="methods">
+            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+            <tbody>
+              {% for method in cls.methods %}
+              <tr {% if method.high_complexity %}class="high-complexity"{% endif %}>
+                <td class="signature">
+                  {{ method.signature }}
+                  {% if method.high_complexity %}<br><span class="complexity-flag">HIGH COMPLEXITY (cyclomatic~={{ method.cyclomatic_estimate }})</span>{% endif %}
+                </td>
+                <td>{{ method.description }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% endif %}
+
+          {% if cls.notable_aspects %}
+          <div class="notable-tags">
+            {% for aspect in cls.notable_aspects %}
+            <span class="notable-tag">{{ aspect }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+</main>
+
+<footer>
+  Generated {{ metadata.generated_at }} using {{ metadata.model_used }} &middot;
+  {{ metadata.llm_calls_made }} LLM call(s), {{ metadata.llm_calls_cached }} served from cache &middot;
+  {{ metadata.total_input_tokens }} input / {{ metadata.total_output_tokens }} output tokens
+  {% if metadata.parse_errors %}
+  <br>{{ metadata.parse_errors|length }} file(s) could not be parsed and were skipped.
+  {% endif %}
+</footer>
+
+</body>
+</html>
