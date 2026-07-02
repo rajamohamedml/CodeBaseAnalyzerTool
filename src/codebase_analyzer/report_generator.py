@@ -12,12 +12,28 @@ ever hosted rather than opened locally as a file.
 
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
 from typing import TypedDict
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from codebase_analyzer.schemas import ClassAnalysis, ProjectAnalysis
+
+# Dark-mode categorical accent colors, one per module card and per
+# notable-aspect subcategory, cycled by index. Values are the validated
+# dark-surface steps of the standard 8-hue categorical palette (blue, aqua,
+# yellow, green, violet, red, magenta, orange).
+_ACCENT_COLORS: list[str] = [
+    "#3987e5",
+    "#199e70",
+    "#c98500",
+    "#008300",
+    "#9085e9",
+    "#e66767",
+    "#d55181",
+    "#d95926",
+]
 
 
 class _Finding(TypedDict):
@@ -180,6 +196,14 @@ _TEMPLATE_DIR = Path(__file__).resolve().parent.parent.parent / "templates"
 _TEMPLATE_NAME = "report.html.jinja2"
 
 
+def _format_generated_at(generated_at: str) -> str:
+    """Render `RunMetadata.generated_at` (an ISO-8601 UTC timestamp produced
+    by `ProjectAnalysis.now_iso()`) as a human-readable date/time with an
+    explicit timezone label, for display in the report header.
+    """
+    return datetime.fromisoformat(generated_at).strftime("%B %d, %Y at %I:%M %p %Z")
+
+
 def _group_by_module(classes: list[ClassAnalysis]) -> dict[str, list[ClassAnalysis]]:
     """Group classes by feature module for the report's navigation.
 
@@ -261,7 +285,9 @@ def render_report(analysis: ProjectAnalysis) -> str:
     return template.render(
         project=analysis.project,
         metadata=analysis.metadata,
+        generated_at_display=_format_generated_at(analysis.metadata.generated_at),
         modules=_group_by_module(analysis.classes),
+        accent_colors=_ACCENT_COLORS,
         notable_findings=_collect_notable_findings(analysis.classes),
         total_classes=len(analysis.classes),
         total_methods=sum(len(c.methods) for c in analysis.classes),
