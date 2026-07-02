@@ -3,18 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>{{ project.name }} - Codebase Analysis Report</title>
 <style>
+  /* Dark theme -- chrome/ink/status roles are the validated dark-surface
+     steps of the standard palette (see the dataviz skill's palette.md),
+     not an ad-hoc dark flip of the light theme. */
   :root {
-    --bg: #f6f7fb;
-    --panel: #ffffff;
-    --border: #e2e5ec;
-    --text: #1f2430;
-    --muted: #6b7280;
-    --accent: #4f46e5;
-    --accent-light: #eef2ff;
-    --danger: #dc2626;
-    --danger-light: #fef2f2;
+    --bg: #0d0d0d;
+    --panel: #1a1a19;
+    --panel-2: #202020;
+    --border: rgba(255,255,255,0.10);
+    --text: #ffffff;
+    --text-secondary: #c3c2b7;
+    --muted: #898781;
+    --accent: #3987e5;
+    --accent-light: rgba(57,135,229,0.16);
+    --danger: #e66767;
+    --danger-light: rgba(230,103,103,0.14);
+    --warning: #fab219;
+    --warning-light: rgba(250,178,25,0.14);
+    --success: #199e70;
+    --success-light: rgba(25,158,112,0.16);
     --radius: 10px;
   }
   * { box-sizing: border-box; }
@@ -26,23 +36,37 @@
     line-height: 1.5;
   }
   header.hero {
-    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    background: linear-gradient(135deg, #10203a, #1a1440);
     color: white;
     padding: 40px 32px;
+    border-bottom: 1px solid var(--border);
   }
   header.hero h1 { margin: 0 0 8px; font-size: 28px; }
-  header.hero p.desc { margin: 0 0 16px; max-width: 900px; opacity: 0.95; overflow-wrap: anywhere; }
+  header.hero p.desc { margin: 0 0 14px; max-width: 900px; opacity: 0.92; overflow-wrap: anywhere; }
+  .generated-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
   .badges { display: flex; flex-wrap: wrap; gap: 8px; }
   .tech-badge {
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.22);
     padding: 4px 10px;
     border-radius: 999px;
     font-size: 12px;
   }
   .architecture-note {
     margin-top: 16px;
-    background: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: var(--radius);
     padding: 14px 16px;
     font-size: 14px;
@@ -61,7 +85,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
     min-width: 0;
   }
   .stat-card .value { font-size: 24px; font-weight: 700; color: var(--accent); }
@@ -78,10 +102,11 @@
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     transition: border-color 0.15s, color 0.15s;
   }
   .module-nav a:hover, .module-nav a:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+  .module-nav .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .module-nav .nav-count { color: var(--muted); font-size: 11px; }
 
   section { margin-bottom: 32px; }
@@ -94,10 +119,14 @@
 
   /* Notable Findings: grouped into collapsible, independently-scrollable
      categories instead of one long flat list -- with hundreds of findings
-     a single list forces the whole page to scroll to get past it. */
+     a single list forces the whole page to scroll to get past it. Each
+     category carries its own accent color (border-left stripe + icon
+     chip) so the two categories -- and, nested inside, each Notable
+     Aspects subcategory -- read as visually distinct sections. */
   .findings-category {
     background: var(--panel);
     border: 1px solid var(--border);
+    border-left: 4px solid var(--cat-color, var(--accent));
     border-radius: var(--radius);
     margin-bottom: 10px;
     overflow: hidden;
@@ -121,8 +150,8 @@
   }
   .findings-category[open] > summary::before { transform: rotate(90deg); }
   .findings-category .count-badge {
-    background: var(--accent-light);
-    color: var(--accent);
+    background: color-mix(in srgb, var(--cat-color, var(--accent)) 22%, transparent);
+    color: var(--text);
     font-size: 11px;
     font-weight: 700;
     padding: 2px 9px;
@@ -136,20 +165,21 @@
 
   /* Notable Aspects is by far the largest category, so it gets a second
      level of keyword-based, independently-expandable subcategories
-     (security, persistence, caching, ...) nested inside it. */
+     (security, persistence, caching, ...) nested inside it, each with
+     its own accent color from the categorical palette. */
   .findings-subcategories { border-top: 1px solid var(--border); }
-  .findings-subcategory { border-bottom: 1px solid var(--border); }
+  .findings-subcategory { border-bottom: 1px solid var(--border); border-left: 3px solid var(--sub-color, var(--accent)); }
   .findings-subcategory:last-child { border-bottom: none; }
   .findings-subcategory > summary {
     cursor: pointer;
-    padding: 9px 16px 9px 34px;
+    padding: 9px 16px 9px 31px;
     font-weight: 600;
     font-size: 12.5px;
     list-style: none;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #fafbfd;
+    background: var(--panel-2);
   }
   .findings-subcategory > summary::-webkit-details-marker { display: none; }
   .findings-subcategory > summary::before {
@@ -160,30 +190,62 @@
     display: inline-block;
   }
   .findings-subcategory[open] > summary::before { transform: rotate(90deg); }
-  .findings-subcategory .count-badge { background: #f3f4f6; color: #4b5563; font-size: 10px; }
-  .findings-subcategory .findings-list { max-height: 300px; border-top: 1px solid var(--border); }
-  .findings-subcategory .finding-item { padding-left: 34px; }
-
-  .module-block { margin-bottom: 28px; scroll-margin-top: 16px; }
-  .module-block > h3 {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--accent-light);
-    color: var(--accent);
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 14px;
-    margin-bottom: 14px;
+  .findings-subcategory .count-badge {
+    background: color-mix(in srgb, var(--sub-color, var(--accent)) 24%, transparent);
+    color: var(--text);
+    font-size: 10px;
   }
-  .module-block > h3 .module-count { color: var(--muted); font-weight: 500; font-size: 12px; }
-  .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
-  .class-card {
+  .findings-subcategory .findings-list { max-height: 300px; border-top: 1px solid var(--border); }
+  .findings-subcategory .finding-item { padding-left: 31px; }
+
+  /* Modules: collapsed by default (native <details>, no JS needed),
+     each module gets its own accent color from the categorical palette
+     so the section list reads as distinct groups at a glance. */
+  .module-block {
+    margin-bottom: 12px;
+    scroll-margin-top: 16px;
     background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--module-color, var(--accent));
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .module-block > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .module-block > summary::-webkit-details-marker { display: none; }
+  .module-block > summary::before {
+    content: "\25B8";
+    color: var(--muted);
+    font-size: 13px;
+    transition: transform 0.15s;
+    display: inline-block;
+  }
+  .module-block[open] > summary::before { transform: rotate(90deg); }
+  .module-block > summary .module-name {
+    color: var(--module-color, var(--accent));
+  }
+  .module-block > summary .module-count {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 12px;
+    margin-left: auto;
+  }
+  .module-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
+  .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-top: 14px; }
+  .class-card {
+    background: var(--panel-2);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     min-width: 0;
   }
   .class-card.clickable {
@@ -191,7 +253,7 @@
     transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
   }
   .class-card.clickable:hover, .class-card.clickable:focus-visible {
-    box-shadow: 0 6px 18px rgba(79,70,229,0.18);
+    box-shadow: 0 6px 20px rgba(57,135,229,0.30);
     border-color: var(--accent);
     transform: translateY(-1px);
     outline: none;
@@ -212,19 +274,19 @@
     letter-spacing: 0.03em;
     white-space: nowrap;
   }
-  .type-badge.controller { background: #dbeafe; color: #1d4ed8; }
-  .type-badge.service { background: #dcfce7; color: #15803d; }
-  .type-badge.repository { background: #ede9fe; color: #6d28d9; }
-  .type-badge.entity { background: #ccfbf1; color: #0f766e; }
-  .type-badge.dto { background: #f3f4f6; color: #4b5563; }
-  .type-badge.mapper { background: #ffedd5; color: #c2410c; }
-  .type-badge.assembler { background: #fef9c3; color: #854d0e; }
-  .type-badge.config { background: #e5e7eb; color: #374151; }
-  .type-badge.exception { background: #fee2e2; color: #b91c1c; }
-  .type-badge.other { background: #f3f4f6; color: #6b7280; }
+  .type-badge.controller { background: rgba(57,135,229,0.18); color: #8ec0f7; }
+  .type-badge.service { background: rgba(0,131,0,0.28); color: #6adf6a; }
+  .type-badge.repository { background: rgba(144,133,233,0.20); color: #c1b8f7; }
+  .type-badge.entity { background: rgba(25,158,112,0.20); color: #5fe0bb; }
+  .type-badge.dto { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+  .type-badge.mapper { background: rgba(217,89,38,0.22); color: #f2a679; }
+  .type-badge.assembler { background: rgba(201,133,0,0.22); color: #f0c14f; }
+  .type-badge.config { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+  .type-badge.exception { background: rgba(230,103,103,0.20); color: #f3a9a9; }
+  .type-badge.other { background: rgba(255,255,255,0.06); color: var(--muted); }
 
   .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; overflow-wrap: anywhere; word-break: break-word; }
-  .class-description { font-size: 13px; margin-bottom: 10px; overflow-wrap: anywhere; word-break: break-word; }
+  .class-description { font-size: 13px; margin-bottom: 10px; color: var(--text-secondary); overflow-wrap: anywhere; word-break: break-word; }
   .class-description.clamp {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -233,8 +295,8 @@
   }
 
   .endpoint-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .endpoint-badge { font-size: 11px; font-family: monospace; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 2px 6px; border-radius: 4px; overflow-wrap: anywhere; }
-  .endpoint-badge.more-badge { background: #f3f4f6; border-color: #e5e7eb; color: #4b5563; }
+  .endpoint-badge { font-size: 11px; font-family: monospace; background: var(--success-light); border: 1px solid rgba(25,158,112,0.35); color: #5fe0bb; padding: 2px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+  .endpoint-badge.more-badge { background: rgba(255,255,255,0.06); border-color: var(--border); color: var(--muted); }
 
   .card-footer {
     display: flex;
@@ -253,26 +315,28 @@
   table.methods { width: 100%; border-collapse: collapse; font-size: 12px; }
   table.methods th, table.methods td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; word-break: break-word; }
   table.methods th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
-  table.methods td.signature { font-family: monospace; }
+  table.methods td { color: var(--text-secondary); }
+  table.methods td.signature { font-family: monospace; color: var(--text); }
   tr.high-complexity td { background: var(--danger-light); }
   .complexity-flag { color: var(--danger); font-weight: 700; font-size: 11px; }
 
   .notable-tags { margin-top: 8px; }
-  .notable-tag { display: block; font-size: 12px; color: #854d0e; background: #fefce8; border: 1px solid #fde68a; border-radius: 6px; padding: 4px 8px; margin-top: 4px; overflow-wrap: anywhere; word-break: break-word; }
+  .notable-tag { display: block; font-size: 12px; color: #f0c14f; background: var(--warning-light); border: 1px solid rgba(250,178,25,0.35); border-radius: 6px; padding: 4px 8px; margin-top: 4px; overflow-wrap: anywhere; word-break: break-word; }
 
   /* Class detail dialog -- opened by clicking a card. Renders in the
      browser's top layer, so its content can never overlap a sibling
      card even if a card's own text runs long. */
   dialog.class-dialog {
-    border: none;
+    border: 1px solid var(--border);
+    background: var(--panel);
     border-radius: 14px;
     padding: 0;
     width: min(720px, 92vw);
     max-height: 85vh;
-    box-shadow: 0 24px 60px rgba(15,17,25,0.35);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
     color: var(--text);
   }
-  dialog.class-dialog::backdrop { background: rgba(15,17,25,0.55); }
+  dialog.class-dialog::backdrop { background: rgba(0,0,0,0.7); }
   .dialog-header {
     display: flex;
     align-items: flex-start;
@@ -297,7 +361,7 @@
   .dialog-body { padding: 20px 24px; overflow-y: auto; max-height: calc(85vh - 77px); }
   .dialog-body .class-description { font-size: 14px; }
 
-  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -305,6 +369,10 @@
 <header class="hero">
   <h1>{{ project.name }}</h1>
   <p class="desc">{{ project.description }}</p>
+  <div class="generated-meta">
+    <span aria-hidden="true">🕐</span>
+    Generated {{ generated_at_display }}
+  </div>
   <div class="badges">
     {% for tech in project.tech_stack %}
     <span class="tech-badge">{{ tech }}</span>
@@ -329,7 +397,10 @@
   {% if modules|length > 1 %}
   <nav class="module-nav" aria-label="Jump to module">
     {% for module_name, classes in modules.items() %}
-    <a href="#module-{{ loop.index }}">{{ module_name }} <span class="nav-count">{{ classes|length }}</span></a>
+    <a href="#module-{{ loop.index }}">
+      <span class="nav-dot" style="background: {{ accent_colors[loop.index0 % accent_colors|length] }};" aria-hidden="true"></span>
+      {{ module_name }} <span class="nav-count">{{ classes|length }}</span>
+    </a>
     {% endfor %}
   </nav>
   {% endif %}
@@ -338,7 +409,7 @@
   <section>
     <h2>Notable Findings</h2>
     {% for category in notable_findings %}
-    <details class="findings-category"{% if loop.first %} open{% endif %}>
+    <details class="findings-category" style="--cat-color: {{ '#e66767' if category.label == 'High-Complexity Methods' else '#9085e9' }};"{% if loop.first %} open{% endif %}>
       <summary>
         <span aria-hidden="true">{{ category.icon }}</span>
         <span>{{ category.label }}</span>
@@ -347,7 +418,7 @@
       {% if category.subcategories %}
       <div class="findings-subcategories">
         {% for sub in category.subcategories %}
-        <details class="findings-subcategory">
+        <details class="findings-subcategory" style="--sub-color: {{ accent_colors[loop.index0 % accent_colors|length] }};">
           <summary>
             <span aria-hidden="true">{{ sub.icon }}</span>
             <span>{{ sub.label }}</span>
@@ -383,8 +454,13 @@
     <h2>Modules</h2>
     {% set ns = namespace(i=0) %}
     {% for module_name, classes in modules.items() %}
-    <div class="module-block" id="module-{{ loop.index }}">
-      <h3>{{ module_name }} <span class="module-count">{{ classes|length }} class{{ 'es' if classes|length != 1 else '' }}</span></h3>
+    {% set module_color = accent_colors[loop.index0 % accent_colors|length] %}
+    <details class="module-block" id="module-{{ loop.index }}" style="--module-color: {{ module_color }};">
+      <summary>
+        <span class="module-name">{{ module_name }}</span>
+        <span class="module-count">{{ classes|length }} class{{ 'es' if classes|length != 1 else '' }}</span>
+      </summary>
+      <div class="module-body">
       <div class="class-grid">
         {% for cls in classes %}
         {% set ns.i = ns.i + 1 %}
@@ -471,14 +547,15 @@
         </dialog>
         {% endfor %}
       </div>
-    </div>
+      </div>
+    </details>
     {% endfor %}
   </section>
 
 </main>
 
 <footer>
-  Generated {{ metadata.generated_at }} using {{ metadata.model_used }} &middot;
+  Generated {{ generated_at_display }} using {{ metadata.model_used }} &middot;
   {{ metadata.llm_calls_made }} LLM call(s), {{ metadata.llm_calls_cached }} served from cache &middot;
   {{ metadata.total_input_tokens }} input / {{ metadata.total_output_tokens }} output tokens
   {% if metadata.parse_errors %}
