@@ -1,0 +1,253 @@
+{
+  "$defs": {
+    "ClassAnalysis": {
+      "description": "One class in the final report.",
+      "properties": {
+        "file_path": {
+          "title": "File Path",
+          "type": "string"
+        },
+        "package": {
+          "title": "Package",
+          "type": "string"
+        },
+        "class_name": {
+          "title": "Class Name",
+          "type": "string"
+        },
+        "class_type": {
+          "$ref": "#/$defs/ClassType"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "rest_endpoints": {
+          "items": {
+            "$ref": "#/$defs/RestEndpoint"
+          },
+          "title": "Rest Endpoints",
+          "type": "array"
+        },
+        "methods": {
+          "items": {
+            "$ref": "#/$defs/MethodAnalysis"
+          },
+          "title": "Methods",
+          "type": "array"
+        },
+        "notable_aspects": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notable Aspects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "file_path",
+        "package",
+        "class_name",
+        "class_type",
+        "description"
+      ],
+      "title": "ClassAnalysis",
+      "type": "object"
+    },
+    "ClassType": {
+      "description": "Convention-based classification of a class's architectural role,\ninferred from its package path and Spring annotations in java_parser.py.\nThis is a heuristic, not an authoritative language-level concept \u2014 an\nunconventionally-organized codebase may be misclassified as OTHER.",
+      "enum": [
+        "controller",
+        "service",
+        "repository",
+        "entity",
+        "dto",
+        "mapper",
+        "assembler",
+        "config",
+        "exception",
+        "other"
+      ],
+      "title": "ClassType",
+      "type": "string"
+    },
+    "MethodAnalysis": {
+      "description": "One method in the final report: structure + complexity + LLM description.",
+      "properties": {
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "loc": {
+          "title": "Loc",
+          "type": "integer"
+        },
+        "cyclomatic_estimate": {
+          "title": "Cyclomatic Estimate",
+          "type": "integer"
+        },
+        "high_complexity": {
+          "title": "High Complexity",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "signature",
+        "description",
+        "loc",
+        "cyclomatic_estimate",
+        "high_complexity"
+      ],
+      "title": "MethodAnalysis",
+      "type": "object"
+    },
+    "ProjectOverview": {
+      "description": "Structured-output contract for the single, project-wide overview LLM call.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "description": "1-2 paragraph summary of the project's purpose and functionality.",
+          "title": "Description",
+          "type": "string"
+        },
+        "tech_stack": {
+          "description": "Frameworks/libraries the project depends on.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tech Stack",
+          "type": "array"
+        },
+        "architecture_summary": {
+          "description": "How the codebase is organized (layers, modules, patterns).",
+          "title": "Architecture Summary",
+          "type": "string"
+        },
+        "main_modules": {
+          "description": "The project's main feature areas/modules.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Main Modules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "architecture_summary"
+      ],
+      "title": "ProjectOverview",
+      "type": "object"
+    },
+    "RestEndpoint": {
+      "description": "An HTTP route derived from a Spring mapping annotation. Only\npopulated for controller methods \u2014 extracted from annotations directly,\nwithout any LLM involvement.",
+      "properties": {
+        "http_method": {
+          "title": "Http Method",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "http_method",
+        "path"
+      ],
+      "title": "RestEndpoint",
+      "type": "object"
+    },
+    "RunMetadata": {
+      "description": "Observability data about the run itself \u2014 cost, cache effectiveness,\nand any files that could not be parsed. Treating cost and correctness\nas first-class, inspectable outputs rather than hidden side effects.",
+      "properties": {
+        "generated_at": {
+          "title": "Generated At",
+          "type": "string"
+        },
+        "model_used": {
+          "title": "Model Used",
+          "type": "string"
+        },
+        "total_files_parsed": {
+          "title": "Total Files Parsed",
+          "type": "integer"
+        },
+        "parse_errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Parse Errors",
+          "type": "array"
+        },
+        "llm_calls_made": {
+          "title": "Llm Calls Made",
+          "type": "integer"
+        },
+        "llm_calls_cached": {
+          "title": "Llm Calls Cached",
+          "type": "integer"
+        },
+        "total_input_tokens": {
+          "title": "Total Input Tokens",
+          "type": "integer"
+        },
+        "total_output_tokens": {
+          "title": "Total Output Tokens",
+          "type": "integer"
+        },
+        "estimated_cost_usd": {
+          "title": "Estimated Cost Usd",
+          "type": "number"
+        }
+      },
+      "required": [
+        "generated_at",
+        "model_used",
+        "total_files_parsed",
+        "llm_calls_made",
+        "llm_calls_cached",
+        "total_input_tokens",
+        "total_output_tokens",
+        "estimated_cost_usd"
+      ],
+      "title": "RunMetadata",
+      "type": "object"
+    }
+  },
+  "description": "The complete, schema-versioned deliverable written to `analysis.json`\nand rendered into `report.html` by `report_generator.py`. Both files are\nderived from one instance of this model, so they can never disagree.",
+  "properties": {
+    "schema_version": {
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "project": {
+      "$ref": "#/$defs/ProjectOverview"
+    },
+    "classes": {
+      "items": {
+        "$ref": "#/$defs/ClassAnalysis"
+      },
+      "title": "Classes",
+      "type": "array"
+    },
+    "metadata": {
+      "$ref": "#/$defs/RunMetadata"
+    }
+  },
+  "required": [
+    "project",
+    "metadata"
+  ],
+  "title": "ProjectAnalysis",
+  "type": "object"
+}
