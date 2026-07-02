@@ -26,6 +26,12 @@ class _Finding(TypedDict):
     text: str
 
 
+class _FindingSubcategory(TypedDict):
+    label: str
+    icon: str
+    findings: list[_Finding]
+
+
 class _FindingCategory(TypedDict):
     label: str
     icon: str
@@ -33,6 +39,137 @@ class _FindingCategory(TypedDict):
     # dict tries `getattr` first, so a key literally named "items" would
     # be shadowed by `dict.items` (the bound method) inside the template.
     findings: list[_Finding]
+    subcategories: list[_FindingSubcategory]
+
+
+# Keyword-based classification of free-text `notable_aspects` strings into a
+# type, since the LLM only returns prose -- there is no structured "type"
+# field to group by (see ClassType in schemas.py for the same heuristic
+# trade-off applied to class classification). Order matters: rules are
+# checked top to bottom and the first keyword match wins, so more specific
+# categories (e.g. Security) are listed before more generic ones (e.g.
+# Configuration) that would otherwise steal shared vocabulary.
+_ASPECT_CATEGORY_RULES: list[tuple[str, str, tuple[str, ...]]] = [
+    (
+        "Security & Authentication",
+        "\U0001f512",
+        (
+            "security",
+            "jwt",
+            "authentic",
+            "authoriz",
+            "@secured",
+            "@preauthorize",
+            "credential",
+            "token",
+            "userdetails",
+        ),
+    ),
+    (
+        "Error Handling",
+        "\U0001f6a8",
+        ("exception", "error handling", "@controlleradvice", "@exceptionhandler", "catch-all"),
+    ),
+    (
+        "REST API & Hypermedia",
+        "\U0001f310",
+        (
+            "hateoas",
+            "hypermedia",
+            "@relation",
+            "responseentity",
+            "representationmodel",
+            "hal-formatted",
+            "collection relation",
+            "item relation",
+        ),
+    ),
+    (
+        "Caching & Performance",
+        "⚡",
+        ("cache", "redis", "ttl", "pagination", "performance"),
+    ),
+    (
+        "Persistence & Data Access",
+        "\U0001f5c4️",
+        (
+            "jpa",
+            "repository",
+            "querydsl",
+            "query",
+            "persistence",
+            "criteria api",
+            "sql",
+            "hibernate",
+            "@idclass",
+            "primary key",
+            "@transactional",
+        ),
+    ),
+    (
+        "Logging & Observability",
+        "\U0001f4dd",
+        ("log", "slf4j", "mdc", "diagnostic context", "audit"),
+    ),
+    (
+        "Validation & Null-Safety",
+        "✅",
+        ("null", "valid", "empty string"),
+    ),
+    (
+        "Design Patterns & Mapping",
+        "\U0001f9e9",
+        (
+            "pattern",
+            "mapper",
+            "mapstruct",
+            "convert",
+            "builder",
+            "singleton",
+            "factory",
+            "delegat",
+            "adapter",
+            "decorator",
+            "utility class",
+            "cannot be instantiated",
+        ),
+    ),
+    (
+        "Configuration & Dependency Injection",
+        "⚙️",
+        (
+            "@bean",
+            "@configuration",
+            "@enable",
+            "dependency injection",
+            "@requiredargsconstructor",
+            "@postconstruct",
+            "constructor-based",
+            "@componentscan",
+            "@service",
+            "@component",
+            "spring-managed",
+        ),
+    ),
+    (
+        "Code Complexity & Structure",
+        "\U0001f4d0",
+        ("cyclomatic", "complexity", "boilerplate", "lombok", "overload", "@fieldnameconstants"),
+    ),
+]
+_OTHER_ASPECT_CATEGORY = ("Other", "\U0001f539")
+
+
+def _categorize_aspect(text: str) -> tuple[str, str]:
+    """Return (label, icon) for one notable-aspect string, matching the
+    first rule in `_ASPECT_CATEGORY_RULES` whose keyword appears in it.
+    """
+    lowered = text.lower()
+    for label, icon, keywords in _ASPECT_CATEGORY_RULES:
+        if any(keyword in lowered for keyword in keywords):
+            return label, icon
+    return _OTHER_ASPECT_CATEGORY
+
 
 # templates/ lives at the project root, one level above the installed
 # package (src/codebase_analyzer/). This resolves correctly for an
@@ -67,13 +204,16 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
     """Roll up every LLM-flagged notable aspect and every statically-flagged
     high-complexity method into categorized, collapsible groups, so a
     reviewer isn't stuck scrolling one flat list of hundreds of items to
-    find what's worth a closer look.
+    find what's worth a closer look. Notable aspects are further split into
+    keyword-based subcategories (security, persistence, caching, ...) since
+    that single bucket is typically the largest by far.
     """
     high_complexity: list[_Finding] = []
-    notable_aspects: list[_Finding] = []
+    aspects_by_category: dict[tuple[str, str], list[_Finding]] = {}
     for cls in classes:
         for aspect in cls.notable_aspects:
-            notable_aspects.append({"class_name": cls.class_name, "file_path": cls.file_path, "text": aspect})
+            finding: _Finding = {"class_name": cls.class_name, "file_path": cls.file_path, "text": aspect}
+            aspects_by_category.setdefault(_categorize_aspect(aspect), []).append(finding)
         for method in cls.methods:
             if method.high_complexity:
                 high_complexity.append(
@@ -87,9 +227,20 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
                     }
                 )
 
+    sorted_categories = sorted(aspects_by_category.items(), key=lambda kv: len(kv[1]), reverse=True)
+    notable_subcategories: list[_FindingSubcategory] = [
+        {"label": label, "icon": icon, "findings": findings} for (label, icon), findings in sorted_categories
+    ]
+    all_aspects = [finding for subcategory in notable_subcategories for finding in subcategory["findings"]]
+
     categories: list[_FindingCategory] = [
-        {"label": "High-Complexity Methods", "icon": "⚠️", "findings": high_complexity},
-        {"label": "Notable Aspects", "icon": "\U0001f4a1", "findings": notable_aspects},
+        {"label": "High-Complexity Methods", "icon": "⚠️", "findings": high_complexity, "subcategories": []},
+        {
+            "label": "Notable Aspects",
+            "icon": "\U0001f4a1",
+            "findings": all_aspects,
+            "subcategories": notable_subcategories,
+        },
     ]
     return [category for category in categories if category["findings"]]
 

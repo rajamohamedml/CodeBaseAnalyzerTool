@@ -134,6 +134,36 @@
   .finding-item:last-child { border-bottom: none; }
   .finding-item .source { color: var(--muted); font-size: 11px; display: block; margin-top: 3px; overflow-wrap: anywhere; }
 
+  /* Notable Aspects is by far the largest category, so it gets a second
+     level of keyword-based, independently-expandable subcategories
+     (security, persistence, caching, ...) nested inside it. */
+  .findings-subcategories { border-top: 1px solid var(--border); }
+  .findings-subcategory { border-bottom: 1px solid var(--border); }
+  .findings-subcategory:last-child { border-bottom: none; }
+  .findings-subcategory > summary {
+    cursor: pointer;
+    padding: 9px 16px 9px 34px;
+    font-weight: 600;
+    font-size: 12.5px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafbfd;
+  }
+  .findings-subcategory > summary::-webkit-details-marker { display: none; }
+  .findings-subcategory > summary::before {
+    content: "\25B8";
+    color: var(--muted);
+    font-size: 11px;
+    transition: transform 0.15s;
+    display: inline-block;
+  }
+  .findings-subcategory[open] > summary::before { transform: rotate(90deg); }
+  .findings-subcategory .count-badge { background: #f3f4f6; color: #4b5563; font-size: 10px; }
+  .findings-subcategory .findings-list { max-height: 300px; border-top: 1px solid var(--border); }
+  .findings-subcategory .finding-item { padding-left: 34px; }
+
   .module-block { margin-bottom: 28px; scroll-margin-top: 16px; }
   .module-block > h3 {
     display: inline-flex;
@@ -314,6 +344,27 @@
         <span>{{ category.label }}</span>
         <span class="count-badge">{{ category.findings|length }}</span>
       </summary>
+      {% if category.subcategories %}
+      <div class="findings-subcategories">
+        {% for sub in category.subcategories %}
+        <details class="findings-subcategory">
+          <summary>
+            <span aria-hidden="true">{{ sub.icon }}</span>
+            <span>{{ sub.label }}</span>
+            <span class="count-badge">{{ sub.findings|length }}</span>
+          </summary>
+          <div class="findings-list">
+            {% for finding in sub.findings %}
+            <div class="finding-item">
+              <span class="finding-text">{{ finding.text }}</span>
+              <span class="source">{{ finding.class_name }} &mdash; {{ finding.file_path }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </details>
+        {% endfor %}
+      </div>
+      {% else %}
       <div class="findings-list">
         {% for finding in category.findings %}
         <div class="finding-item">
@@ -322,6 +373,7 @@
         </div>
         {% endfor %}
       </div>
+      {% endif %}
     </details>
     {% endfor %}
   </section>
