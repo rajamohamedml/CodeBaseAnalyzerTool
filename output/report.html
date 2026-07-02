@@ -72,6 +72,17 @@
     font-size: 14px;
     overflow-wrap: anywhere;
   }
+  .key-modules { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .key-modules-label { font-size: 12px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 2px; }
+  .module-chip {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: white;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
   main { max-width: 1200px; margin: -24px auto 60px; padding: 0 24px; }
 
   .stats-grid {
@@ -286,6 +297,7 @@
   .type-badge.other { background: rgba(255,255,255,0.06); color: var(--muted); }
 
   .file-path { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 8px; overflow-wrap: anywhere; word-break: break-word; }
+  .file-path.package-path { margin-top: -4px; font-style: italic; opacity: 0.85; }
   .class-description { font-size: 13px; margin-bottom: 10px; color: var(--text-secondary); overflow-wrap: anywhere; word-break: break-word; }
   .class-description.clamp {
     display: -webkit-box;
@@ -410,6 +422,30 @@
   </div>
   
   <div class="architecture-note">The application follows a layered architecture organized into distinct domain modules (films, customers, rentals, payments, staff, stores, locations, reports, and authentication). Each domain contains DTOs, entities, repositories, services, and controllers. The architecture employs REST representational models with HAL/HATEOAS support for hypermedia-driven API responses. Cross-cutting concerns are handled through configuration classes, filters, and converters. Data access uses Spring Data JPA repositories enhanced with custom QueryDSL and Blaze JPA queries for complex filtering. MapStruct is used for entity-to-DTO mapping, and Spring Security provides JWT-based authentication with role-based authorization.</div>
+  
+  
+  <div class="key-modules">
+    <span class="key-modules-label">Key Modules:</span>
+    
+    <span class="module-chip">Film &amp; Actor Catalog</span>
+    
+    <span class="module-chip">Customer Management</span>
+    
+    <span class="module-chip">Rental &amp; Return Operations</span>
+    
+    <span class="module-chip">Payment Processing</span>
+    
+    <span class="module-chip">Staff Management</span>
+    
+    <span class="module-chip">Store &amp; Inventory</span>
+    
+    <span class="module-chip">Location (Address &amp; City)</span>
+    
+    <span class="module-chip">Reporting &amp; Analytics</span>
+    
+    <span class="module-chip">Authentication &amp; Authorization</span>
+    
+  </div>
   
 </header>
 
@@ -2287,6 +2323,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/SpringRestSakilaApplication.java</div>
+              <div class="file-path package-path">package com.example.app</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2368,6 +2405,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/controller/LoginController.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2435,6 +2473,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/converter/UserRoleConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2512,6 +2551,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/dto/AuthorityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2556,6 +2596,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/dto/AuthorityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2633,6 +2674,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/dto/AuthorityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2710,6 +2752,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/dto/AuthorityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2754,6 +2797,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/entity/AuthorityEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2833,6 +2877,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/vo/UserRole.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.vo</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2877,6 +2922,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/domain/vo/UserRole.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.domain.vo</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2921,6 +2967,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/repository/AuthorityRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -2982,6 +3029,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/service/JpaUserDetailsService.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3059,6 +3107,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/auth/service/SecurityService.java</div>
+              <div class="file-path package-path">package com.example.app.services.auth.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3139,6 +3188,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/assembler/ActorDetailsRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3216,6 +3266,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/assembler/ActorRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3293,6 +3344,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/assembler/FilmDetailsRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3362,6 +3414,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/assembler/FilmRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3454,6 +3507,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/controller/ActorController.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3654,6 +3708,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/controller/FilmController.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3799,6 +3854,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/converter/CategoryConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3868,6 +3924,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/converter/FilmRatingConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -3937,6 +3994,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/converter/SpecialFeatureConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4006,6 +4064,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4050,6 +4109,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4129,6 +4189,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4206,6 +4267,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4250,6 +4312,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4329,6 +4392,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4406,6 +4470,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/ActorDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4481,6 +4546,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/CategoryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4525,6 +4591,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/CategoryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4600,6 +4667,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4644,6 +4712,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4721,6 +4790,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4796,6 +4866,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4840,6 +4911,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4915,6 +4987,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -4990,6 +5063,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5065,6 +5139,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5134,6 +5209,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5203,6 +5279,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5280,6 +5357,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5367,6 +5445,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/ActorEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5452,6 +5531,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/CategoryEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5529,6 +5609,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmActorEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5614,6 +5695,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmActorEntityPK.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5691,6 +5773,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmCategoryEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5774,6 +5857,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmCategoryEntityPK.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5851,6 +5935,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -5938,6 +6023,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/entity/FilmTextEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6025,6 +6111,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/mapper/ActorMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6106,6 +6193,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/domain/mapper/FilmMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6187,6 +6275,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/ActorRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6248,6 +6337,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/CategoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6292,6 +6382,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomActorRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6401,6 +6492,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomActorRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6526,6 +6618,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomCategoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6570,6 +6663,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomCategoryRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6614,6 +6708,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmActorRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6658,6 +6753,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmActorRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6702,6 +6798,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmCategoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6746,6 +6843,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmCategoryRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6790,6 +6888,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -6891,6 +6990,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7016,6 +7116,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmTextRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7060,6 +7161,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/CustomFilmTextRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7104,6 +7206,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/custom/RentalRateProjection.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7165,6 +7268,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/FilmActorRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7209,6 +7313,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/FilmCategoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7253,6 +7358,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/FilmRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7314,6 +7420,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/repository/FilmTextRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7358,6 +7465,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/service/ActorService.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7515,6 +7623,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/service/ActorServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7682,6 +7791,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/service/FilmService.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7823,6 +7933,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/catalog/service/FilmServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -7987,6 +8098,7 @@
                 <span class="type-badge config">config</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/config/AuthConfig.java</div>
+              <div class="file-path package-path">package com.example.app.config</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8064,6 +8176,7 @@
                 <span class="type-badge config">config</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/config/LoggingFilterConfig.java</div>
+              <div class="file-path package-path">package com.example.app.config</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8141,6 +8254,7 @@
                 <span class="type-badge config">config</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/config/PersistenceConfig.java</div>
+              <div class="file-path package-path">package com.example.app.config</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8252,6 +8366,7 @@
                 <span class="type-badge config">config</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/config/RedisConfig.java</div>
+              <div class="file-path package-path">package com.example.app.config</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8339,6 +8454,7 @@
                 <span class="type-badge config">config</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/config/SecurityFilterConfig.java</div>
+              <div class="file-path package-path">package com.example.app.config</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8423,6 +8539,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Category.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8467,6 +8584,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Category.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8511,6 +8629,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Country.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8555,6 +8674,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Country.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8622,6 +8742,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/ErrorCode.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8666,6 +8787,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/ErrorLevel.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8710,6 +8832,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/FilmRating.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8754,6 +8877,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/FilmRating.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8798,6 +8922,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/HalRelation.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8842,6 +8967,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Language.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8886,6 +9012,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/Language.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8930,6 +9057,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/SpecialFeature.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -8974,6 +9102,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/constant/SpecialFeature.java</div>
+              <div class="file-path package-path">package com.example.app.common.constant</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9031,6 +9160,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/assembler/CustomerDetailsRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9100,6 +9230,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/assembler/CustomerRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9184,6 +9315,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/controller/CustomerController.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9333,6 +9465,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9377,6 +9510,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9456,6 +9590,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9533,6 +9668,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9577,6 +9713,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9656,6 +9793,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9735,6 +9873,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/dto/CustomerDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9814,6 +9953,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/entity/CustomerEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9901,6 +10041,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/domain/mapper/CustomerMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -9982,6 +10123,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/repository/custom/CustomCustomerRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10067,6 +10209,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/repository/custom/CustomCustomerRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10168,6 +10311,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/repository/CustomerRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10212,6 +10356,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/service/CustomerService.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10337,6 +10482,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/customer/service/CustomerServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.customer.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10485,6 +10631,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/dto/ErrorResponseDto.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10546,6 +10693,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/dto/FullName.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10590,6 +10738,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/dto/NullCheckable.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10651,6 +10800,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/dto/Updatable.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10725,6 +10875,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/entity/FullName.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10782,6 +10933,7 @@
                 <span class="type-badge exception">exception</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/exception/GlobalExceptionHandler.java</div>
+              <div class="file-path package-path">package com.example.app.common.exception</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10869,6 +11021,7 @@
                 <span class="type-badge exception">exception</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/exception/ResourceNotAvailableException.java</div>
+              <div class="file-path package-path">package com.example.app.common.exception</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -10930,6 +11083,7 @@
                 <span class="type-badge exception">exception</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/exception/ResourceNotFoundException.java</div>
+              <div class="file-path package-path">package com.example.app.common.exception</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11004,6 +11158,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/filter/MdcLoggingFilter.java</div>
+              <div class="file-path package-path">package com.example.app.common.filter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11086,6 +11241,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/assembler/AddressRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11171,6 +11327,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/assembler/CityRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11263,6 +11420,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/controller/LocationController.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11440,6 +11598,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/converter/CountryConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11509,6 +11668,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/converter/GeometryConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11584,6 +11744,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/converter/LanguageConverter.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.converter</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11653,6 +11814,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11697,6 +11859,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11772,6 +11935,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11847,6 +12011,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11924,6 +12089,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -11968,6 +12134,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12043,6 +12210,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12120,6 +12288,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CityDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12197,6 +12366,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CountryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12241,6 +12411,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/CountryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12318,6 +12489,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/LanguageDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12362,6 +12534,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/dto/LanguageDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12439,6 +12612,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/entity/AddressEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12524,6 +12698,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/entity/CityEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12609,6 +12784,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/entity/CountryEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12692,6 +12868,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/entity/LanguageEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12769,6 +12946,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/mapper/AddressMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12848,6 +13026,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/domain/mapper/CityMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12919,6 +13098,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/AddressRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -12963,6 +13143,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/CityRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13007,6 +13188,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/CountryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13051,6 +13233,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomAddressRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13120,6 +13303,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomAddressRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13197,6 +13381,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomCityRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13241,6 +13426,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomCityRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13293,6 +13479,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomCountryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13337,6 +13524,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomCountryRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13389,6 +13577,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomLanguageRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13433,6 +13622,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/custom/CustomLanguageRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13477,6 +13667,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/repository/LanguageRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13521,6 +13712,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/service/LocationService.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13670,6 +13862,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/location/service/LocationServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.location.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13844,6 +14037,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/mapper/FullNameMapper.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -13911,6 +14105,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/mapper/GenericMapper.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14025,6 +14220,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/assembler/PaymentRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14109,6 +14305,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/controller/PaymentController.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14228,6 +14425,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/dto/PaymentDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14272,6 +14470,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/dto/PaymentDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14351,6 +14550,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/dto/PaymentDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14430,6 +14630,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/dto/PaymentDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14509,6 +14710,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/entity/PaymentEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14598,6 +14800,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/domain/mapper/PaymentMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14669,6 +14872,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/repository/custom/CustomPaymentRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14754,6 +14958,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/repository/custom/CustomPaymentRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14855,6 +15060,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/repository/PaymentRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -14899,6 +15105,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/service/PaymentService.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15008,6 +15215,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/payment/service/PaymentServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.payment.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15140,6 +15348,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/assembler/RentalRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15224,6 +15433,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/controller/RentalController.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15349,6 +15559,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15393,6 +15604,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15472,6 +15684,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15551,6 +15764,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15630,6 +15844,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15674,6 +15889,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/dto/RentalDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15753,6 +15969,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/entity/RentalEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15842,6 +16059,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/mapper/RentalMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15949,6 +16167,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/domain/vo/RentalStatus.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.domain.vo</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -15993,6 +16212,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/repository/custom/CustomRentalRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16054,6 +16274,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/repository/custom/CustomRentalRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16121,6 +16342,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/repository/RentalRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16165,6 +16387,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/service/RentalService.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16282,6 +16505,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/rental/service/RentalServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.rental.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16422,6 +16646,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/security/JwtAuthenticationFilter.java</div>
+              <div class="file-path package-path">package com.example.app.common.security</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16499,6 +16724,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/security/JwtAuthenticationProvider.java</div>
+              <div class="file-path package-path">package com.example.app.common.security</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16576,6 +16802,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/security/JwtAuthenticationToken.java</div>
+              <div class="file-path package-path">package com.example.app.common.security</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16669,6 +16896,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/security/JwtTokenProvider.java</div>
+              <div class="file-path package-path">package com.example.app.common.security</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16769,6 +16997,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/domain/serializer/NullToEmptyStringSerializer.java</div>
+              <div class="file-path package-path">package com.example.app.common.domain.serializer</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16891,6 +17120,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/assembler/StaffDetailsRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -16960,6 +17190,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/assembler/StaffRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17052,6 +17283,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/controller/StaffController.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17179,6 +17411,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17223,6 +17456,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17302,6 +17536,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17377,6 +17612,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17421,6 +17657,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17500,6 +17737,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17579,6 +17817,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17658,6 +17897,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/entity/StaffEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17745,6 +17985,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/domain/mapper/StaffMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17826,6 +18067,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/repository/custom/CustomStaffRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17895,6 +18137,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/repository/custom/CustomStaffRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -17980,6 +18223,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/repository/StaffRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18024,6 +18268,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/service/StaffService.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18133,6 +18378,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/staff/service/StaffServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.staff.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18265,6 +18511,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/assembler/CategorySalesRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18342,6 +18589,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/assembler/StoreDetailsRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18411,6 +18659,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/assembler/StoreRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18480,6 +18729,7 @@
                 <span class="type-badge assembler">assembler</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/assembler/StoreSalesRepresentationModelAssembler.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.assembler</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18566,6 +18816,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/controller/ReportController.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18666,6 +18917,7 @@
                 <span class="type-badge controller">controller</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/controller/StoreController.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.controller</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18845,6 +19097,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/CategorySalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18889,6 +19142,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/CategorySalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -18966,6 +19220,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/CategorySalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19043,6 +19298,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/InventoryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19087,6 +19343,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/InventoryDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19164,6 +19421,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19208,6 +19466,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19285,6 +19544,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDetailsDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19360,6 +19620,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19404,6 +19665,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19481,6 +19743,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19556,6 +19819,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19631,6 +19895,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreSalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19675,6 +19940,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreSalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19754,6 +20020,7 @@
                 <span class="type-badge dto">dto</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/dto/StoreSalesDto.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.dto</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19831,6 +20098,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/entity/InventoryEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -19918,6 +20186,7 @@
                 <span class="type-badge entity">entity</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/entity/StoreEntity.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.entity</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20007,6 +20276,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/mapper/InventoryMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20074,6 +20344,7 @@
                 <span class="type-badge mapper">mapper</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/domain/mapper/StoreMapper.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.domain.mapper</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20143,6 +20414,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/custom/CustomInventoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20187,6 +20459,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/custom/CustomInventoryRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20237,6 +20510,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/custom/CustomStoreRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20322,6 +20596,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/custom/CustomStoreRepositoryImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository.custom</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20441,6 +20716,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/InventoryRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20510,6 +20786,7 @@
                 <span class="type-badge repository">repository</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/repository/StoreRepository.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.repository</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20554,6 +20831,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/service/ReportService.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20623,6 +20901,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/service/ReportServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20700,6 +20979,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/service/StoreService.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -20857,6 +21137,7 @@
                 <span class="type-badge service">service</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/services/store/service/StoreServiceImpl.java</div>
+              <div class="file-path package-path">package com.example.app.services.store.service</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -21039,6 +21320,7 @@
                 <span class="type-badge other">other</span>
               </div>
               <div class="file-path">src/main/java/com/example/app/common/util/ExpressionUtils.java</div>
+              <div class="file-path package-path">package com.example.app.common.util</div>
             </div>
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
@@ -21150,14 +21432,35 @@
     
   </section>
 
+  
+  <section>
+    <h2>Parse Errors</h2>
+    <details class="findings-category" style="--cat-color: #e66767;" open>
+      <summary>
+        <span aria-hidden="true">🚫</span>
+        <span>Files That Failed to Parse</span>
+        <span class="count-badge">1</span>
+      </summary>
+      <div class="findings-list">
+        
+        <div class="finding-item">
+          <span class="finding-text" style="font-family: monospace;">.cache\spring-rest-sakila\repo\src\main\java\com\example\app\services\catalog\domain\serializer\LocalDateYearSerializer.java: </span>
+        </div>
+        
+      </div>
+    </details>
+  </section>
+  
+
 </main>
 
 <footer>
   Generated July 02, 2026 at 06:10 PM UTC using claude-haiku-4-5 &middot;
+  187 file(s) parsed, 246 class(es) extracted &middot;
   92 LLM call(s), 0 served from cache &middot;
   149053 input / 58064 output tokens
   
-  <br>1 file(s) could not be parsed and were skipped.
+  <br>1 file(s) could not be parsed and were skipped -- see Parse Errors above.
   
 </footer>
 
