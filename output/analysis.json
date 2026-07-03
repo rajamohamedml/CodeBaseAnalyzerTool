@@ -1003,7 +1003,7 @@
       "notable_aspects": [
         "Entity uses Lombok annotations (@Getter, @Builder, @NoArgsConstructor, @AllArgsConstructor) for reducing boilerplate code generation",
         "Protected no-args constructor indicates this entity is designed for JPA framework instantiation while restricting direct external construction",
-        "Custom equals() method with elevated cyclomatic complexity (≈6) suggests non-trivial equality logic, likely comparing multiple entity fields"
+        "Custom equals() method with elevated cyclomatic complexity (\u22486) suggests non-trivial equality logic, likely comparing multiple entity fields"
       ]
     },
     {
@@ -4423,7 +4423,7 @@
         }
       ],
       "notable_aspects": [
-        "Part of a geographic hierarchy (Country → City → Address) reflected in the sakila schema"
+        "Part of a geographic hierarchy (Country \u2192 City \u2192 Address) reflected in the sakila schema"
       ]
     },
     {
@@ -4956,7 +4956,7 @@
       "notable_aspects": [
         "All endpoints are secured with @Secured(UserRole.Constants.ROLE_MANAGE), enforcing role-based access control at the method level.",
         "Uses @RequiredArgsConstructor for dependency injection, indicating dependencies are likely provided via constructor parameters.",
-        "All methods have low cyclomatic complexity (≤1), indicating straightforward business logic without complex branching.",
+        "All methods have low cyclomatic complexity (\u22641), indicating straightforward business logic without complex branching.",
         "Implements standard CRUD operations (Create implied via POST, Read, Update, Delete) plus an additional details endpoint for enhanced payment information retrieval."
       ]
     },
@@ -7604,7 +7604,7 @@
     "model_used": "claude-haiku-4-5",
     "total_files_parsed": 187,
     "parse_errors": [
-      ".cache\\spring-rest-sakila\\repo\\src\\main\\java\\com\\example\\app\\services\\catalog\\domain\\serializer\\LocalDateYearSerializer.java: "
+      ".cache\\spring-rest-sakila\\repo\\src\\main\\java\\com\\example\\app\\services\\catalog\\domain\\serializer\\LocalDateYearSerializer.java: Expected ':' (at Keyword \"case\" line 57, position 13)"
     ],
     "llm_calls_made": 92,
     "llm_calls_cached": 0,

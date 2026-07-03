@@ -385,7 +385,16 @@ def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
     source_lines = source.splitlines()
     try:
         tree = javalang.parse.parse(source)
-    except (javalang.parser.JavaSyntaxError, javalang.tokenizer.LexerError) as exc:
+    except javalang.parser.JavaSyntaxError as exc:
+        # JavaSyntaxError.__init__ calls super().__init__() with no
+        # arguments, so str(exc) is always empty -- the actual detail lives
+        # in .description ("Expected ':'") and .at (the offending token and
+        # its position), which is what we want surfaced instead.
+        detail = exc.description
+        if exc.at is not None:
+            detail = f"{detail} (at {exc.at})"
+        raise JavaParseError(f"{path}: {detail}") from exc
+    except javalang.tokenizer.LexerError as exc:
         raise JavaParseError(f"{path}: {exc}") from exc
 
     package = tree.package.name if tree.package else ""
