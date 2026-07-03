@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>codebase-analyzer — Architecture Walkthrough</title>
+<style>
+  :root {
+    --paper: #f6f4ee;
+    --panel: #ffffff;
+    --ink: #211e19;
+    --ink-soft: #5c574c;
+    --ink-faint: #8a8474;
+    --accent: #0d6e64;
+    --accent-ink: #075048;
+    --accent-soft: #e2f1ee;
+    --line: #e2ddd0;
+    --line-strong: #c9c2ae;
+    --term-bg: #1b1a17;
+    --term-text: #ece7da;
+    --term-muted: #8b8778;
+    --term-accent: #7fe0cd;
+    --radius: 8px;
+    --radius-term: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Optima, "Candara", "Noto Sans", "Segoe UI", "Century Gothic", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent-soft); color: var(--accent-ink); }
+
+  a { color: var(--accent-ink); }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    font-weight: 400;
+    color: var(--ink);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  code, .mono, .term, kbd {
+    font-family: "Cascadia Code", "Cascadia Mono", Consolas, "SF Mono", Menlo, "Liberation Mono", monospace;
+  }
+
+  /* ---------- Masthead ---------- */
+  header.masthead {
+    border-bottom: 1px solid var(--line);
+    padding: 40px 28px 28px;
+  }
+  .masthead-inner { max-width: 700px; margin: 0 auto; }
+  .eyebrow {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin: 0 0 10px;
+  }
+  header.masthead h1 { font-size: 34px; line-height: 1.2; }
+  header.masthead p.dek {
+    margin: 14px 0 0;
+    max-width: 60ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+  }
+
+  /* ---------- In-page nav ---------- */
+  nav.toc {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: rgba(246, 244, 238, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.toc .toc-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 11px 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+  }
+  nav.toc a {
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    padding: 2px 0;
+  }
+  nav.toc a:hover { color: var(--accent-ink); border-bottom-color: var(--accent); }
+
+  main { max-width: 700px; margin: 0 auto; padding: 0 28px 100px; }
+
+  section { padding-top: 52px; scroll-margin-top: 54px; }
+  section > h2 {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  section > p.section-lede {
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    max-width: 62ch;
+    margin: 8px 0 26px;
+  }
+
+  p { max-width: 68ch; }
+
+  /* ---------- Terminal command blocks ---------- */
+  .term {
+    background: var(--term-bg);
+    color: var(--term-text);
+    border-radius: var(--radius-term);
+    margin: 16px 0 22px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .term-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+  .term-bar .dot.a { background: #e0665a; }
+  .term-bar .dot.b { background: #e0b24f; }
+  .term-bar .dot.c { background: #63c07a; }
+  .term-bar .label {
+    margin-left: 6px;
+    font-size: 11.5px;
+    color: var(--term-muted);
+    letter-spacing: 0.02em;
+  }
+  .term-body {
+    padding: 14px 16px 16px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  .term-body .line { white-space: pre; }
+  .term-body .prompt { color: var(--term-accent); }
+  .term-body .comment { color: var(--term-muted); }
+
+  /* ---------- Pipeline stage list ---------- */
+  .pipeline {
+    position: relative;
+    margin-top: 8px;
+  }
+  .pipeline::before {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--line-strong) 0,
+      var(--line-strong) 5px,
+      transparent 5px,
+      transparent 10px
+    );
+  }
+  .stage {
+    position: relative;
+    padding: 0 0 34px 56px;
+  }
+  .stage:last-child { padding-bottom: 4px; }
+  .stage-num {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stage h3 {
+    font-size: 17.5px;
+    margin-bottom: 3px;
+  }
+  .stage .file-tag {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 12px;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 9px;
+  }
+  .stage p { color: var(--ink-soft); font-size: 15px; margin: 0 0 8px; }
+  .stage .calls-out {
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    border-left: 2px solid var(--line-strong);
+    padding-left: 10px;
+    margin-top: 10px;
+  }
+  .stage .calls-out code { color: var(--ink-soft); }
+
+  /* ---------- Definition-style list for wiring notes ---------- */
+  .wiring dt {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 13.5px;
+    color: var(--accent-ink);
+    margin-top: 16px;
+  }
+  .wiring dd {
+    margin: 4px 0 0;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 64ch;
+  }
+
+  /* ---------- Cheat sheet table ---------- */
+  .cheat-wrap { overflow-x: auto; }
+  table.cheat {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    margin: 4px 0 8px;
+  }
+  table.cheat th, table.cheat td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.cheat th {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+  table.cheat td.cmd code {
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  table.cheat td.desc { color: var(--ink-soft); }
+
+  .callout {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin: 18px 0;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+  .callout strong { color: var(--ink); }
+
+  footer.colophon {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 28px 60px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="eyebrow">codebase-analyzer — reading the source</p>
+    <h1>From <code>main.py</code> to <code>report.html</code>, one stage at a time</h1>
+    <p class="dek">
+      This tool is one strict, linear pipeline: clone a repo, parse it for free, ask an LLM
+      what the code means, cache that, and write three files. Below is the exact call chain,
+      file by file, plus every terminal command you need to set it up, run it, and test it.
+    </p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Section navigation">
+  <div class="toc-inner">
+    <a href="#setup">Setup</a>
+    <a href="#pipeline">The Pipeline</a>
+    <a href="#wiring">How It's Wired</a>
+    <a href="#running">Running It</a>
+    <a href="#testing">Running Tests</a>
+    <a href="#cheatsheet">Cheat Sheet</a>
+  </div>
+</nav>
+
+<main>
+
+  <section id="setup">
+    <h2>1. Setup — do this once</h2>
+    <p class="section-lede">
+      Three commands: install the package in editable mode, create your local config file,
+      then fill in two values.
+    </p>
+
+    <div class="term">
+      <div class="term-bar">
+        <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+        <span class="label">PowerShell</span>
+      </div>
+      <div class="term-body">
+        <div class="line"><span class="prompt">PS&gt;</span> pip install -e ".[dev]"</div>
+        <div class="line"><span class="comment"># installs codebase-analyzer itself, plus pytest/ruff/mypy</span></div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="prompt">PS&gt;</span> copy .env.example .env</div>
+        <div class="line"><span class="comment"># then open .env and fill in:</span></div>
+        <div class="line"><span class="comment">#   ANTHROPIC_API_KEY=sk-ant-...</span></div>
+        <div class="line"><span class="comment">#   REPO_URL=https://github.com/&lt;owner&gt;/&lt;repo&gt;</span></div>
+      </div>
+    </div>
+
+    <p>
+      That's it — no database, no server to start. <code>.env</code> is read once, at the top
+      of every run, by <code>config.py</code>.
+    </p>
+  </section>
+
+  <section id="pipeline">
+    <h2>2. The pipeline, stage by stage</h2>
+    <p class="section-lede">
+      <code>run_pipeline()</code> in <code>pipeline.py</code> calls each of these in order — no
+      stage ever calls backward to a previous one. Each has exactly one file, and does exactly
+      one job.
+    </p>
+
+    <div class="pipeline">
+
+      <div class="stage">
+        <div class="stage-num">0</div>
+        <span class="file-tag">main.py</span>
+        <h3>Entry point</h3>
+        <p>
+          Parses CLI flags, resolves settings, turns on logging, then hands off to the pipeline.
+          Deliberately has no logic of its own beyond that hand-off — if something breaks here,
+          the fix lives elsewhere.
+        </p>
+        <div class="calls-out">calls <code>resolve_settings(args)</code>, then <code>run_pipeline(settings)</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">1</div>
+        <span class="file-tag">config.py</span>
+        <h3>Resolve settings</h3>
+        <p>
+          Merges CLI flag → environment variable → <code>.env</code>, in that order of priority.
+          Fails immediately, before any network call, if <code>REPO_URL</code> or
+          <code>ANTHROPIC_API_KEY</code> is missing from all three sources.
+        </p>
+        <div class="calls-out"><code>resolve_settings()</code> returns a frozen <code>Settings</code> object every later stage reads from</div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">2</div>
+        <span class="file-tag">repo_fetcher.py</span>
+        <h3>Clone the target repo</h3>
+        <p>
+          Shells out to the system <code>git</code> for a shallow (<code>--depth 1</code>) clone
+          into <code>.cache/&lt;repo-name&gt;/repo</code>. Reuses that folder on the next run
+          unless <code>--refresh-repo</code> is passed — so you only pay the clone cost once.
+        </p>
+        <div class="calls-out"><code>fetch_repository()</code> returns the local path to the checked-out code</div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">3</div>
+        <span class="file-tag">java_parser.py</span>
+        <h3>Parse every .java file — free</h3>
+        <p>
+          Walks <code>src/main/java</code>, runs each file through the <code>javalang</code>
+          grammar parser, and extracts class names, method signatures, annotations, and REST
+          routes as plain structured data. No LLM call happens here. A file that fails to parse
+          is logged and skipped, never aborts the run.
+        </p>
+        <div class="calls-out"><code>parse_source_tree()</code> returns a <code>ParseResult</code> — a list of <code>ParsedClass</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">4</div>
+        <span class="file-tag">complexity.py</span>
+        <h3>Score every method — also free</h3>
+        <p>
+          For each method's source lines: counts branching keywords
+          (<code>if</code>/<code>for</code>/<code>while</code>/<code>case</code>/<code>catch</code>/<code>&amp;&amp;</code>/<code>||</code>)
+          to get a rough cyclomatic estimate, and flags a method as high-complexity if that
+          estimate or its line count crosses a threshold.
+        </p>
+        <div class="calls-out">called once per method from <code>pipeline._compute_all_complexity()</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">5</div>
+        <span class="file-tag">chunker.py</span>
+        <h3>Group classes into LLM-sized batches</h3>
+        <p>
+          Renders each class into condensed, signatures-only text (never raw source), groups
+          classes by directory, then packs them into batches capped by both
+          <code>--batch-size</code> and a real token count — measured against the actual
+          Anthropic tokenizer, not guessed from character length.
+        </p>
+        <div class="calls-out"><code>build_batches()</code> returns a list of <code>ClassBatch</code>, each with one prompt string</div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">6</div>
+        <span class="file-tag">cache.py + llm_client.py</span>
+        <h3>Ask the LLM what the code means</h3>
+        <p>
+          Before any call, each class's rendered text is hashed and checked against
+          <code>cache.py</code>'s on-disk cache — an unchanged class costs zero tokens on a
+          re-run. Everything else goes to <code>llm_client.py</code>, which sends the batch to
+          Claude via LangChain and gets back a schema-guaranteed
+          <code>ClassBatchAnalysis</code> (one description + notable aspects per class, one
+          sentence per method). This is the only stage that costs money.
+        </p>
+        <div class="calls-out"><code>LLMCache.get()</code> first, <code>LLMClient.analyze_batch()</code> on a miss, <code>LLMCache.set()</code> to store the result</div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">7</div>
+        <span class="file-tag">pipeline.py</span>
+        <h3>Assemble the final record</h3>
+        <p>
+          Merges the parser's structure, the complexity scores, and the LLM's descriptions back
+          together into one <code>ClassAnalysis</code> per class. A class whose LLM call failed
+          gets an explicit <code>"Description unavailable."</code> placeholder rather than being
+          silently dropped. One more LLM call — <code>generate_overview()</code> — produces the
+          single project-wide summary from the README, build file, and every class's one-line
+          purpose.
+        </p>
+        <div class="calls-out"><code>_assemble_classes()</code> + <code>_generate_overview()</code> → one <code>ProjectAnalysis</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">8</div>
+        <span class="file-tag">report_generator.py</span>
+        <h3>Write the three output files</h3>
+        <p>
+          <code>ProjectAnalysis</code> is serialized straight to
+          <code>output/analysis.json</code>; its Pydantic schema is dumped to
+          <code>output/analysis.schema.json</code>; and the same object is rendered through a
+          Jinja2 template into <code>output/report.html</code>. All three come from one object,
+          so they can never disagree with each other.
+        </p>
+        <div class="calls-out"><code>_write_outputs()</code> — the last thing <code>run_pipeline()</code> does</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="wiring">
+    <h2>3. How the pieces are wired together</h2>
+    <p class="section-lede">
+      A few connective details that aren't obvious from reading one file at a time.
+    </p>
+
+    <dl class="wiring">
+      <dt>codebase_analyzer.schemas</dt>
+      <dd>
+        Every arrow in the diagram above passes a Pydantic model, never a raw dict —
+        <code>ParsedClass</code> → <code>ComplexityMetrics</code> → <code>ClassDescription</code>
+        → <code>ClassAnalysis</code>. If you want to know the exact shape of data moving between
+        two stages, this file is the contract.
+      </dd>
+
+      <dt>codebase_analyzer.exceptions</dt>
+      <dd>
+        Each stage raises its own named exception (<code>RepoFetchError</code>,
+        <code>JavaParseError</code>, <code>LLMExtractionError</code>) instead of a bare
+        <code>Exception</code>. <code>pipeline.py</code> catches the ones it knows how to
+        recover from — one bad file or one failed batch — and lets configuration errors
+        propagate all the way up to <code>main.py</code>, which prints a clean message instead
+        of a traceback.
+      </dd>
+
+      <dt>PROMPT_VERSION (cache.py)</dt>
+      <dd>
+        The cache key is a hash of the prompt text <em>plus</em> this version string. Change the
+        extraction prompt in <code>llm_client.py</code>, bump this constant, and every cached
+        result is invalidated at once — nothing is silently mixed across prompt versions.
+      </dd>
+
+      <dt>output/ vs .cache/</dt>
+      <dd>
+        <code>.cache/</code> holds the cloned repo and the LLM response cache — disposable,
+        regenerated on demand. <code>output/</code> holds the three deliverables described in
+        stage 8 above — what you actually came here for.
+      </dd>
+    </dl>
+  </section>
+
+  <section id="running">
+    <h2>4. Running it</h2>
+    <p class="section-lede">
+      One required flag (or set it once in <code>.env</code> and skip it forever after).
+    </p>
+
+    <div class="term">
+      <div class="term-bar">
+        <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+        <span class="label">PowerShell</span>
+      </div>
+      <div class="term-body">
+        <div class="line"><span class="comment"># full run against a repo</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt;</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># cheap smoke test — only analyze the first 15 files</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt; --max-files 15</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># force a fresh clone and bypass the LLM cache</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt; --refresh-repo --refresh-cache</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># see every flag</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --help</div>
+      </div>
+    </div>
+
+    <p>
+      Watch the log lines as it runs — each stage above logs its own progress
+      (<code>"Discovered N Java file(s)"</code>, <code>"N class(es) served from cache"</code>,
+      <code>"Grouped N classes into N LLM batch(es)"</code>), so you can literally see this
+      walkthrough happen in real time.
+    </p>
+  </section>
+
+  <section id="testing">
+    <h2>5. Running the tests</h2>
+    <p class="section-lede">
+      The whole suite runs offline — no API key needed, nothing hits the network. Every LLM and
+      tokenizer call is faked in <code>tests/conftest.py</code>.
+    </p>
+
+    <div class="term">
+      <div class="term-bar">
+        <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+        <span class="label">PowerShell</span>
+      </div>
+      <div class="term-body">
+        <div class="line"><span class="comment"># everything</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> pytest</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># one file, verbose</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> pytest tests/test_java_parser.py -v</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># lint</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> ruff check .</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># strict type-check</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> mypy src</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>A good first step:</strong> open <code>tests/test_java_parser.py</code> next to
+      <code>src/codebase_analyzer/java_parser.py</code>. Each test feeds a small embedded Java
+      string in and asserts on the exact <code>ParsedClass</code> that comes out — the clearest,
+      smallest example of "input in, structured data out" in the whole codebase.
+    </div>
+  </section>
+
+  <section id="cheatsheet">
+    <h2>6. Cheat sheet</h2>
+    <p class="section-lede">Every command from this page, in one place.</p>
+
+    <div class="cheat-wrap">
+      <table class="cheat">
+        <thead>
+          <tr><th>Command</th><th>What it does</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cmd"><code>pip install -e ".[dev]"</code></td>
+            <td class="desc">Install the tool + dev tooling, editable</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>copy .env.example .env</code></td>
+            <td class="desc">Create your local config (then fill in the two values)</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>python main.py --repo-url URL</code></td>
+            <td class="desc">Run the full pipeline against a repo</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>python main.py --repo-url URL --max-files 15</code></td>
+            <td class="desc">Cheap smoke test on a small subset</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>python main.py --help</code></td>
+            <td class="desc">Full flag reference</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>pytest</code></td>
+            <td class="desc">Run the whole offline test suite</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>pytest tests/test_cache.py -v</code></td>
+            <td class="desc">Run one test file, verbosely</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>ruff check .</code></td>
+            <td class="desc">Lint</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>mypy src</code></td>
+            <td class="desc">Strict type-check</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="colophon">
+  Traced directly from <code>main.py</code>, <code>pipeline.py</code>, and every module each
+  imports — no step here is assumed or simplified beyond what the source itself does.
+</footer>
+
+</body>
+</html>
