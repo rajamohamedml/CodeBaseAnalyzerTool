@@ -14,12 +14,13 @@ inspectable output of this tool, not a hidden side effect.
 
 from __future__ import annotations
 
+import json
 import logging
 from dataclasses import dataclass
 from typing import Any
 
 from langchain_anthropic import ChatAnthropic
-from pydantic import SecretStr
+from pydantic import BaseModel, SecretStr
 
 from codebase_analyzer.exceptions import LLMExtractionError
 from codebase_analyzer.schemas import ClassBatchAnalysis, ProjectOverview
@@ -78,6 +79,52 @@ class UsageTracker:
         return (self.input_tokens / 1_000_000) * input_price + (self.output_tokens / 1_000_000) * output_price
 
 
+def _decode_stringified_json(value: Any) -> Any:
+    """Recursively decode any string field that is itself JSON-encoded.
+
+    Occasionally the model emits a list/object field as an escaped JSON
+    string (e.g. `"classes": "[{...}]"`) instead of native nested JSON --
+    seen on batches with a large number of methods, likely a size-pressure
+    quirk of tool-call argument generation rather than a malformed
+    response. Only strings that actually parse as JSON are touched; plain
+    text fields (descriptions, etc.) pass through unchanged.
+    """
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped[:1] in "[{":
+            try:
+                decoded = json.loads(stripped)
+            except json.JSONDecodeError:
+                return value
+            return _decode_stringified_json(decoded)
+        return value
+    if isinstance(value, list):
+        return [_decode_stringified_json(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _decode_stringified_json(item) for key, item in value.items()}
+    return value
+
+
+def _recover_stringified_fields(raw_message: Any, schema: type[BaseModel]) -> Any:
+    """Best-effort repair for the double-encoded-field quirk described in
+    `_decode_stringified_json`, tried only after normal structured-output
+    parsing has already failed. Walks the raw tool call(s) on the
+    underlying `AIMessage`, decodes any stringified list/object fields, and
+    re-validates against `schema`. Returns `None` if no tool call recovers
+    cleanly, so the caller can fall back to raising `LLMExtractionError`.
+    """
+    tool_calls = getattr(raw_message, "tool_calls", None) or []
+    for call in tool_calls:
+        args = call.get("args") if isinstance(call, dict) else None
+        if not isinstance(args, dict):
+            continue
+        try:
+            return schema.model_validate(_decode_stringified_json(args))
+        except Exception:
+            continue
+    return None
+
+
 class LLMClient:
     """Wraps a LangChain `ChatAnthropic` instance with the two
     structured-output extraction operations this pipeline needs.
@@ -106,7 +153,7 @@ class LLMClient:
                 retries, or the response fails schema validation.
         """
         messages = [("system", _BATCH_SYSTEM_PROMPT), ("human", prompt_text)]
-        result: ClassBatchAnalysis = self._invoke(self._batch_chain, messages)
+        result: ClassBatchAnalysis = self._invoke(self._batch_chain, messages, ClassBatchAnalysis)
         return result
 
     def generate_overview(self, prompt_text: str) -> ProjectOverview:
@@ -114,10 +161,10 @@ class LLMClient:
         parsed build dependencies, and aggregated per-class one-line purposes.
         """
         messages = [("system", _OVERVIEW_SYSTEM_PROMPT), ("human", prompt_text)]
-        result: ProjectOverview = self._invoke(self._overview_chain, messages)
+        result: ProjectOverview = self._invoke(self._overview_chain, messages, ProjectOverview)
         return result
 
-    def _invoke(self, chain: Any, messages: list[tuple[str, str]]) -> Any:
+    def _invoke(self, chain: Any, messages: list[tuple[str, str]], schema: type[BaseModel]) -> Any:
         try:
             result = chain.invoke(messages)
         except Exception as exc:  # SDK-level failure: network, auth, retries exhausted
@@ -129,6 +176,8 @@ class LLMClient:
             self._usage.record(usage.get("input_tokens", 0), usage.get("output_tokens", 0))
 
         parsed = result.get("parsed")
+        if parsed is None:
+            parsed = _recover_stringified_fields(raw_message, schema)
         if parsed is None:
             raise LLMExtractionError(
                 f"LLM response failed schema validation: {result.get('parsing_error')}"
