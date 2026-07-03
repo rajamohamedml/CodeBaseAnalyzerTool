@@ -184,7 +184,8 @@ class ProjectOverview(BaseModel):
         description="How the codebase is organized (layers, modules, patterns)."
     )
     main_modules: list[str] = Field(
-        default_factory=list, description="The project's main feature areas/modules."
+        default_factory=list,
+        description="The project's main domain modules -- its business feature areas.",
     )
 
 

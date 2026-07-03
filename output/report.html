@@ -55,7 +55,8 @@
     border-radius: 999px;
     margin-bottom: 18px;
   }
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badges { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .badges-label { font-size: 12px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 2px; }
   .tech-badge {
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.22);
@@ -385,7 +386,9 @@
     <span aria-hidden="true">🕐</span>
     Generated July 02, 2026 at 06:10 PM UTC
   </div>
+  
   <div class="badges">
+    <span class="badges-label">Technology Stack:</span>
     
     <span class="tech-badge">Spring Boot Web</span>
     
@@ -421,11 +424,12 @@
     
   </div>
   
+  
   <div class="architecture-note">The application follows a layered architecture organized into distinct domain modules (films, customers, rentals, payments, staff, stores, locations, reports, and authentication). Each domain contains DTOs, entities, repositories, services, and controllers. The architecture employs REST representational models with HAL/HATEOAS support for hypermedia-driven API responses. Cross-cutting concerns are handled through configuration classes, filters, and converters. Data access uses Spring Data JPA repositories enhanced with custom QueryDSL and Blaze JPA queries for complex filtering. MapStruct is used for entity-to-DTO mapping, and Spring Security provides JWT-based authentication with role-based authorization.</div>
   
   
   <div class="key-modules">
-    <span class="key-modules-label">Key Modules:</span>
+    <span class="key-modules-label">Domain Modules:</span>
     
     <span class="module-chip">Film &amp; Actor Catalog</span>
     
@@ -2281,7 +2285,7 @@
   
 
   <section>
-    <h2>Modules</h2>
+    <h2>Application Modules</h2>
     
     
     

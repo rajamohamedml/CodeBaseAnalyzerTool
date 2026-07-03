@@ -131,7 +131,7 @@
           "type": "string"
         },
         "main_modules": {
-          "description": "The project's main feature areas/modules.",
+          "description": "The project's main domain modules -- its business feature areas.",
           "items": {
             "type": "string"
           },
