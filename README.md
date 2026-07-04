@@ -7,9 +7,7 @@ descriptions, REST endpoints, and complexity signals — using an LLM
 repository is always supplied by the caller, never hardcoded.
 
 This project was built to satisfy a "Codebase Analysis using LLM" coding
-assignment, demonstrated against
-[`codejsha/spring-rest-sakila`](https://github.com/codejsha/spring-rest-sakila),
-a Spring Boot REST API over the Sakila sample database.
+assignment, demonstrated against any given repository (configurable).
 
 ## Approach
 
