@@ -9,6 +9,93 @@ repository is always supplied by the caller, never hardcoded.
 This project was built to satisfy a "Codebase Analysis using LLM" coding
 assignment, demonstrated against any given repository (configurable).
 
+## About
+
+Codebase Analyzer turns an unfamiliar Java/Spring repository into a
+navigable, structured summary without requiring the user to read every
+file by hand. Point it at any public (or accessible) Git repository URL
+and it clones the code, parses every `.java` file into an AST, computes
+complexity signals, and asks an LLM to explain — in plain language — what
+each class and method is for. The result is a single, versioned
+data model (`ProjectAnalysis`) that is rendered both as machine-readable
+JSON and as a human-readable HTML report, so a new contributor, a
+reviewer, or a technical lead can get oriented in a large codebase in
+minutes rather than hours.
+
+It is deliberately **not** a linter, a test generator, or a security
+scanner — it answers one question well: *"What does this codebase
+contain, and what does each part of it do?"* Everything downstream (the
+project overview, the per-class descriptions, the REST API surface, the
+complexity hotspots) is derived from that single question.
+
+Two design choices shape everything else in the tool:
+
+- **Static analysis first, LLM second.** Anything derivable
+  deterministically from source (class names, method signatures,
+  annotations, REST routes, LOC, cyclomatic complexity) is extracted by a
+  real Java parser (`javalang`) and a regex-based complexity heuristic —
+  for free, with no LLM call. The LLM is reserved for the one thing static
+  analysis cannot do: judging what a class or method *means*. This keeps
+  runs cheap and repeatable, and means the tool can process large
+  repositories without a proportionally large API bill.
+- **One model, two outputs.** Every run assembles a single Pydantic model
+  (`schemas.ProjectAnalysis`) and renders it into both `analysis.json` and
+  `report.html`. Because both come from the same in-memory object, the
+  JSON deliverable and the HTML report can never contradict each other.
+
+## What Output You Get
+
+Every run writes three files to `output/`:
+
+### `output/report.html` — human-readable dashboard
+A single, self-contained, styled HTML file (no external assets needed) —
+the recommended way to review results in a browser. It includes:
+
+- **Project overview** — a generated name, a 1–2 paragraph description of
+  the project's purpose, the inferred technology stack, an
+  architecture summary (how the codebase is layered/organized), and a
+  list of the main domain (business/feature) modules.
+- **Stats dashboard** — total files parsed, classes analyzed, methods
+  analyzed, REST endpoints discovered, and complexity outliers, at a
+  glance.
+- **Module-grouped class cards** — every analyzed class, grouped by its
+  source directory, showing:
+  - its architectural role (`controller` / `service` / `repository` /
+    `entity` / `dto` / `mapper` / `assembler` / `config` / `exception` /
+    `other`)
+  - an LLM-written summary of what the class does
+  - every method's signature, a one-sentence description of what it does
+    and why, its line count, and its cyclomatic-complexity estimate
+    (flagged when it's a high-complexity outlier)
+  - any REST endpoints the class exposes (HTTP verb + path), derived
+    directly from Spring mapping annotations
+- **Notable Findings rollup** — a consolidated list of noteworthy
+  design patterns, security-relevant logic, or other characteristics the
+  LLM flagged across all classes, surfaced in one place instead of buried
+  inside individual class cards.
+
+Pass `--no-html-report` to skip generating this file if only the JSON is
+needed.
+
+### `output/analysis.json` — machine-readable deliverable
+The same data as the HTML report, in structured JSON, keyed by the
+`ProjectAnalysis` schema: `schema_version`, `project` (the overview),
+`classes` (the full list of per-class analyses), and `metadata` (see
+below). This is the artifact meant for scripts, other tools, or further
+automated processing.
+
+### `output/analysis.schema.json` — the formal JSON Schema
+Generated straight from the `ProjectAnalysis` Pydantic model, so the JSON
+deliverable is machine-*validatable*, not just consistent by convention.
+
+### Run metadata (embedded in `analysis.json`, also printed to console)
+Every run reports on itself as a first-class output rather than a hidden
+side effect: files parsed, any files that failed to parse (and why),
+number of LLM calls made vs. served from cache, total input/output
+tokens, and an estimated USD cost. Re-running the same command against an
+unchanged repository should serve most or all classes from cache, at
+zero additional token cost.
+
 ## Approach
 
 The core design decision is to split the work into two stages with very
@@ -24,7 +111,7 @@ genuinely needs it:
 
 2. **Targeted, cached LLM calls** (`llm_client.py`, `chunker.py`,
    `cache.py`) — only the *semantic* part (what does this class/method do,
-   is anything about it noteworthy) is deferred to Claude. Classes are
+   is anything about it noteworthy) is deferred to Claude LLM. Classes are
    batched together (grouped by directory, capped by both a class count and
    a real token count) so one call covers several small classes at once,
    and every result is cached by content hash so re-running the tool costs
