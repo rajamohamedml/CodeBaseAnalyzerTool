@@ -1,6 +1,6 @@
 # Codebase Analyzer
 
-A Python program that analyzes a Java/Spring GitHub repository and extracts
+Is a project that analyzes a Java/Spring GitHub repository and extracts
 structured knowledge — a project overview, method-level signatures and
 descriptions, REST endpoints, and complexity signals — using an LLM
 (Claude Haiku 4.5, via LangChain). It is **repo-agnostic**: the target
