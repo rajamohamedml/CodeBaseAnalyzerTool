@@ -10,8 +10,8 @@ tokenizer's own measurement of the fixtures, rather than hardcoded numbers
 
 from __future__ import annotations
 
-from codebase_analyzer.chunker import build_batches, render_class_for_prompt
-from codebase_analyzer.schemas import ClassType, ParsedClass, ParsedMethod
+from intellisource_ai.chunker import build_batches, render_class_for_prompt
+from intellisource_ai.schemas import ClassType, ParsedClass, ParsedMethod
 
 from .conftest import FakeAnthropicClient
 

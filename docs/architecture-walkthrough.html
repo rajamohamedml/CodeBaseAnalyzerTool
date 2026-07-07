@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>codebase-analyzer — Architecture Walkthrough</title>
+<title>intellisource-ai — Architecture Walkthrough</title>
 <style>
   :root {
     --paper: #f6f4ee;
@@ -299,7 +299,7 @@
 
 <header class="masthead">
   <div class="masthead-inner">
-    <p class="eyebrow">codebase-analyzer — reading the source</p>
+    <p class="eyebrow">intellisource-ai — reading the source</p>
     <h1>From <code>main.py</code> to <code>report.html</code>, one stage at a time</h1>
     <p class="dek">
       This tool is one strict, linear pipeline: clone a repo, parse it for free, ask an LLM
@@ -336,7 +336,7 @@
       </div>
       <div class="term-body">
         <div class="line"><span class="prompt">PS&gt;</span> pip install -e ".[dev]"</div>
-        <div class="line"><span class="comment"># installs codebase-analyzer itself, plus pytest/ruff/mypy</span></div>
+        <div class="line"><span class="comment"># installs intellisource-ai itself, plus pytest/ruff/mypy</span></div>
         <div class="line">&nbsp;</div>
         <div class="line"><span class="prompt">PS&gt;</span> copy .env.example .env</div>
         <div class="line"><span class="comment"># then open .env and fill in:</span></div>
@@ -490,7 +490,7 @@
     </p>
 
     <dl class="wiring">
-      <dt>codebase_analyzer.schemas</dt>
+      <dt>intellisource_ai.schemas</dt>
       <dd>
         Every arrow in the diagram above passes a Pydantic model, never a raw dict —
         <code>ParsedClass</code> → <code>ComplexityMetrics</code> → <code>ClassDescription</code>
@@ -498,7 +498,7 @@
         two stages, this file is the contract.
       </dd>
 
-      <dt>codebase_analyzer.exceptions</dt>
+      <dt>intellisource_ai.exceptions</dt>
       <dd>
         Each stage raises its own named exception (<code>RepoFetchError</code>,
         <code>JavaParseError</code>, <code>LLMExtractionError</code>) instead of a bare
@@ -587,7 +587,7 @@
 
     <div class="callout">
       <strong>A good first step:</strong> open <code>tests/test_java_parser.py</code> next to
-      <code>src/codebase_analyzer/java_parser.py</code>. Each test feeds a small embedded Java
+      <code>src/intellisource_ai/java_parser.py</code>. Each test feeds a small embedded Java
       string in and asserts on the exact <code>ParsedClass</code> that comes out — the clearest,
       smallest example of "input in, structured data out" in the whole codebase.
     </div>

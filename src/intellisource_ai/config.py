@@ -17,7 +17,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from codebase_analyzer.exceptions import ConfigurationError
+from intellisource_ai.exceptions import ConfigurationError
 
 # These are the only "defaults" in this module. Note that none of them name
 # a specific target repository — REPO is always supplied by the caller.
@@ -89,7 +89,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     fully configured.
     """
     parser = argparse.ArgumentParser(
-        prog="codebase-analyzer",
+        prog="intellisource-ai",
         description=(
             "Analyze a Java/Spring GitHub repository and extract structured "
             "knowledge (project overview, method signatures, complexity) "

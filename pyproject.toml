@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "codebase-analyzer"
+name = "intellisource-ai"
 version = "1.0.0"
 description = "Analyzes a Java/Spring codebase and extracts structured knowledge (overview, method signatures, complexity) using an LLM via LangChain."
 readme = "README.md"

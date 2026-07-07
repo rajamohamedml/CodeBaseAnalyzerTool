@@ -16,8 +16,8 @@ from dataclasses import dataclass
 
 from anthropic import Anthropic
 
-from codebase_analyzer.exceptions import LLMExtractionError
-from codebase_analyzer.schemas import AnnotationInfo, ComplexityMetrics, ParsedClass, ParsedMethod
+from intellisource_ai.exceptions import LLMExtractionError
+from intellisource_ai.schemas import AnnotationInfo, ComplexityMetrics, ParsedClass, ParsedMethod
 
 logger = logging.getLogger(__name__)
 

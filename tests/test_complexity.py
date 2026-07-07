@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from codebase_analyzer.complexity import compute_complexity
-from codebase_analyzer.schemas import ParsedMethod
+from intellisource_ai.complexity import compute_complexity
+from intellisource_ai.schemas import ParsedMethod
 
 
 def _method(start_line: int, end_line: int) -> ParsedMethod:

@@ -13,9 +13,9 @@ from typing import Any
 
 import pytest
 
-from codebase_analyzer.exceptions import LLMExtractionError
-from codebase_analyzer.llm_client import LLMClient, UsageTracker, _recover_stringified_fields
-from codebase_analyzer.schemas import ClassBatchAnalysis
+from intellisource_ai.exceptions import LLMExtractionError
+from intellisource_ai.llm_client import LLMClient, UsageTracker, _recover_stringified_fields
+from intellisource_ai.schemas import ClassBatchAnalysis
 
 
 class _FakeRawMessage:

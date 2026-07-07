@@ -5,8 +5,8 @@ LLM-generated text (the XSS-safety guarantee described in the plan's
 
 from __future__ import annotations
 
-from codebase_analyzer.report_generator import render_report
-from codebase_analyzer.schemas import (
+from intellisource_ai.report_generator import render_report
+from intellisource_ai.schemas import (
     ClassAnalysis,
     ClassType,
     MethodAnalysis,

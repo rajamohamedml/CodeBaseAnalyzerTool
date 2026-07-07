@@ -1,4 +1,4 @@
-"""codebase_analyzer: reads a Java/Spring codebase, extracts structure via
+"""intellisource_ai: reads a Java/Spring codebase, extracts structure via
 static parsing, and enriches it with LLM-generated descriptions to produce
 a structured JSON report and a human-readable HTML report.
 

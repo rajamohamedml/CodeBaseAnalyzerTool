@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 
-from codebase_analyzer.schemas import ComplexityMetrics, ParsedMethod
+from intellisource_ai.schemas import ComplexityMetrics, ParsedMethod
 
 # 1 (baseline path) + one per branching construct found. This intentionally
 # excludes the ternary operator `?:` — a naive `?` count would also match

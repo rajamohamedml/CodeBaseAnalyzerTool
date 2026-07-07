@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from codebase_analyzer.java_parser import parse_java_file, parse_source_tree
-from codebase_analyzer.schemas import ClassType
+from intellisource_ai.java_parser import parse_java_file, parse_source_tree
+from intellisource_ai.schemas import ClassType
 
 from .conftest import SAMPLE_BROKEN_JAVA, SAMPLE_CONTROLLER_JAVA, SAMPLE_NESTED_DTO_JAVA
 

@@ -12,7 +12,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from codebase_analyzer.exceptions import RepoFetchError
+from intellisource_ai.exceptions import RepoFetchError
 
 logger = logging.getLogger(__name__)
 

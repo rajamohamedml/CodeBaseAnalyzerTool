@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from codebase_analyzer.cache import LLMCache, compute_cache_key
-from codebase_analyzer.schemas import ClassDescription, MethodDescription
+from intellisource_ai.cache import LLMCache, compute_cache_key
+from intellisource_ai.schemas import ClassDescription, MethodDescription
 
 
 def _sample_description() -> ClassDescription:

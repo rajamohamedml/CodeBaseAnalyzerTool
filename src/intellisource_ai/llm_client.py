@@ -22,8 +22,8 @@ from typing import Any
 from langchain_anthropic import ChatAnthropic
 from pydantic import BaseModel, SecretStr
 
-from codebase_analyzer.exceptions import LLMExtractionError
-from codebase_analyzer.schemas import ClassBatchAnalysis, ProjectOverview
+from intellisource_ai.exceptions import LLMExtractionError
+from intellisource_ai.schemas import ClassBatchAnalysis, ProjectOverview
 
 logger = logging.getLogger(__name__)
 

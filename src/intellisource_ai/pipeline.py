@@ -16,16 +16,16 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-from codebase_analyzer.cache import LLMCache, compute_cache_key
-from codebase_analyzer.chunker import ClassBatch, ComplexityIndex, build_batches, render_class_for_prompt
-from codebase_analyzer.complexity import compute_complexity
-from codebase_analyzer.config import Settings
-from codebase_analyzer.exceptions import LLMExtractionError
-from codebase_analyzer.java_parser import parse_source_tree
-from codebase_analyzer.llm_client import LLMClient, UsageTracker
-from codebase_analyzer.repo_fetcher import fetch_repository
-from codebase_analyzer.report_generator import write_report
-from codebase_analyzer.schemas import (
+from intellisource_ai.cache import LLMCache, compute_cache_key
+from intellisource_ai.chunker import ClassBatch, ComplexityIndex, build_batches, render_class_for_prompt
+from intellisource_ai.complexity import compute_complexity
+from intellisource_ai.config import Settings
+from intellisource_ai.exceptions import LLMExtractionError
+from intellisource_ai.java_parser import parse_source_tree
+from intellisource_ai.llm_client import LLMClient, UsageTracker
+from intellisource_ai.repo_fetcher import fetch_repository
+from intellisource_ai.report_generator import write_report
+from intellisource_ai.schemas import (
     ClassAnalysis,
     ClassDescription,
     MethodAnalysis,

@@ -1,17 +1,16 @@
-# Codebase Analyzer
+# IntelliSource AI
 
-Is a project that analyzes a Java/Spring GitHub repository and extracts
+A production grade Python project that analyzes a Java/Spring GitHub repository and extracts
 structured knowledge — a project overview, method-level signatures and
 descriptions, REST endpoints, and complexity signals — using an LLM
 (Claude Haiku 4.5, via LangChain). It is **repo-agnostic**: the target
 repository is always supplied by the caller, never hardcoded.
 
-This project was built to satisfy a "Codebase Analysis using LLM" coding
-assignment, demonstrated against any given repository (configurable).
+This project can run against any given github repository configured
 
 ## About
 
-Codebase Analyzer turns an unfamiliar Java/Spring repository into a
+IntelliSource AI turns an unfamiliar Java/Spring repository into a
 navigable, structured summary without requiring the user to read every
 file by hand. Point it at any public (or accessible) Git repository URL
 and it clones the code, parses every `.java` file into an AST, computes
@@ -152,7 +151,7 @@ in-memory result, so they can never disagree with each other:
 
 | # | Practice | Where |
 |---|---|---|
-| 1 | Separation of concerns — one job per module (fetch, parse, compute, chunk, cache, call the LLM, render, orchestrate) | package layout under `src/codebase_analyzer/` |
+| 1 | Separation of concerns — one job per module (fetch, parse, compute, chunk, cache, call the LLM, render, orchestrate) | package layout under `src/intellisource_ai/` |
 | 2 | Explicit contracts via typing — full type hints, Pydantic models instead of raw dicts at every module boundary | `schemas.py`, enforced via `mypy --strict` |
 | 3 | Fail-fast, explicit configuration — no silent default for the target repo; a missing `--repo-url`/`REPO_URL` or `ANTHROPIC_API_KEY` raises before any network/API call | `config.py` |
 | 4 | Custom exception hierarchy instead of bare `except Exception` | `exceptions.py` |
@@ -165,7 +164,7 @@ in-memory result, so they can never disagree with each other:
 | 11 | Static analysis and formatting enforced (`ruff`, `mypy`) | `pyproject.toml` |
 | 12 | CI pipeline running lint, type-check, and tests on every push | `.github/workflows/ci.yml` |
 | 13 | Single source of truth for dependencies/metadata (`pyproject.toml`, PEP 621) instead of a loose `requirements.txt` | `pyproject.toml` |
-| 14 | Documented public API — docstrings on every public class/function, inline comments reserved for genuinely non-obvious logic | throughout `src/codebase_analyzer/*.py` |
+| 14 | Documented public API — docstrings on every public class/function, inline comments reserved for genuinely non-obvious logic | throughout `src/intellisource_ai/*.py` |
 | 15 | Schema-versioned output (`schema_version` field) for forward compatibility | `schemas.py` |
 | 16 | Observability — every run reports files parsed, parse errors, cache hit rate, token usage, and estimated cost as first-class output, not a hidden side effect | `pipeline.py`, the `metadata` block in `analysis.json` |
 | 17 | Honest documentation of limitations (below), instead of overclaiming accuracy | this section |
@@ -192,7 +191,7 @@ Two items the assignment calls out by name got a specific, verifiable answer rat
 
 ```powershell
 git clone <this-repo>
-cd CodebaseAnalyzer
+cd intellisource-ai
 pip install -e ".[dev]"
 copy .env.example .env
 # edit .env: set ANTHROPIC_API_KEY, and REPO_URL if you don't want to pass --repo-url each time

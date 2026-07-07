@@ -13,8 +13,8 @@ from pathlib import Path
 
 import pytest
 
-from codebase_analyzer.config import build_arg_parser, resolve_settings
-from codebase_analyzer.exceptions import ConfigurationError
+from intellisource_ai.config import build_arg_parser, resolve_settings
+from intellisource_ai.exceptions import ConfigurationError
 
 
 def _parse(args_list: list[str]) -> argparse.Namespace:

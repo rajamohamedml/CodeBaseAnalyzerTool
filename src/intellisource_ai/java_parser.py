@@ -27,8 +27,8 @@ from javalang.tree import (
     InterfaceDeclaration,
 )
 
-from codebase_analyzer.exceptions import JavaParseError
-from codebase_analyzer.schemas import (
+from intellisource_ai.exceptions import JavaParseError
+from intellisource_ai.schemas import (
     AnnotationInfo,
     ClassType,
     ParsedClass,

@@ -18,7 +18,7 @@ from typing import TypedDict
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from codebase_analyzer.schemas import ClassAnalysis, ProjectAnalysis
+from intellisource_ai.schemas import ClassAnalysis, ProjectAnalysis
 
 # Dark-mode categorical accent colors, one per module card and per
 # notable-aspect subcategory, cycled by index. Values are the validated
@@ -188,7 +188,7 @@ def _categorize_aspect(text: str) -> tuple[str, str]:
 
 
 # templates/ lives at the project root, one level above the installed
-# package (src/codebase_analyzer/). This resolves correctly for an
+# package (src/intellisource_ai/). This resolves correctly for an
 # editable install (`pip install -e .`), which is how this tool is
 # intended to be run; a packaged wheel distribution would need the
 # template shipped as package data instead.

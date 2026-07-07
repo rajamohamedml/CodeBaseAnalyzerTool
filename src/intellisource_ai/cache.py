@@ -20,7 +20,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from codebase_analyzer.schemas import ClassDescription
+from intellisource_ai.schemas import ClassDescription
 
 logger = logging.getLogger(__name__)
 
