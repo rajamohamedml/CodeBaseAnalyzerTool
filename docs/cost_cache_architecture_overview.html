@@ -183,6 +183,27 @@
     color:var(--accent-ai); padding:2px 0 14px;
   }
 
+  /* bottom line */
+  .bottomline{
+    margin-top:40px; border:1px solid var(--line); border-radius:12px;
+    background:var(--bg-panel); box-shadow:var(--shadow); padding:26px 26px 24px;
+  }
+  .bottomline .eyebrow{ margin-bottom:10px; }
+  .bottomline h2{
+    font-family:Georgia,"Iowan Old Style",serif; font-size:21px; margin:0 0 14px;
+    text-wrap:balance;
+  }
+  .bottomline p{ font-size:15px; color:var(--ink); margin:0 0 14px; max-width:66ch; }
+  .bottomline .lead-step{ color:var(--ink); }
+  .bottomline .lead-step b{ color:var(--accent-free); }
+  .bottomline .lead-step b.ai{ color:var(--accent-ai); }
+  .bottomline .quote{
+    margin:18px 0 0; padding:14px 18px; border-left:3px solid var(--accent-free);
+    background:var(--accent-free-bg); border-radius:0 8px 8px 0;
+    font-family:Georgia,"Iowan Old Style",serif; font-style:italic; font-size:16px;
+    color:var(--ink); text-wrap:balance;
+  }
+
   /* footer artifacts */
   .artifacts{ margin-top:52px; }
   .artifacts h2{
@@ -365,6 +386,13 @@
       <div class="artifact"><span class="fname">report.html</span><span class="fdesc">A self-contained, browsable report of the same data.</span></div>
     </div>
     <p class="aside" style="margin-top:14px">* Figures above are from a real full run against <span class="font-mono">spring-rest-sakila</span>: 187 of 188 discovered files parsed (1 skipped for unsupported syntax), 246 classes analyzed, 3 LLM calls made because 235 classes were already cached from a prior run.</p>
+  </div>
+
+  <div class="bottomline">
+    <p class="eyebrow">The bottom line</p>
+    <h2>How do you keep this cheap and scalable?</h2>
+    <p class="lead-step">Lead with step 4 vs. step 9 — splitting free, deterministic static analysis (parsing, complexity) from paid LLM calls (semantic judgment only), plus the content-hash cache in step 6 that makes repeat runs cost nothing for unchanged code.</p>
+    <p class="quote">It reads the code for free using normal parsing, only pays to ask an AI the one thing parsing can't tell you — what the code means — and remembers past answers so it never pays twice for the same class.</p>
   </div>
 </div>
 
