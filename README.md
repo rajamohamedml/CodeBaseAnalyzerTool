@@ -133,6 +133,34 @@ in-memory result, so they can never disagree with each other:
   "Notable Findings" rollup). Skippable via `--no-html-report` if only the
   JSON is wanted.
 
+### Where the LLM pipeline lives, and how to inspect it
+
+The LLM integration is split across two files with a clear boundary:
+
+- **`llm_client.py`** — the actual model calls. `LLMClient` wraps one
+  `ChatAnthropic` instance with two structured-output operations,
+  `analyze_batch()` (per-class descriptions for one `ClassBatch`) and
+  `generate_overview()` (the single project-wide summary), plus a
+  `UsageTracker` that accumulates token/cost totals across every call.
+- **`pipeline.py`** — decides *when* the LLM gets called. `_analyze_classes()`
+  checks `cache.py` first and only batches the cache misses; `_process_batch()`
+  calls `LLMClient.analyze_batch` per batch and contains a failure to that
+  batch alone (see Error containment above).
+
+To see what the pipeline actually did on a given run:
+
+1. **Console output** — every run logs cache hits vs. LLM calls made, the
+   number of batches, and a final summary line with token counts and
+   estimated cost.
+2. **`output/analysis.json` → `metadata`** — the same counters
+   (`llm_calls_made`, `llm_calls_cached`, `total_input_tokens`,
+   `total_output_tokens`, `estimated_cost_usd`) persisted per run, plus
+   every class's LLM-written `description`/`notable_aspects`.
+3. **The LLM cache file** (under `.cache/<repo>/llm_cache.json` by
+   default) — the raw cached `ClassDescription` per content-hash key.
+   Delete it, or pass `--refresh-cache`, to force every class back through
+   the LLM and watch fresh batch/token logs.
+
 ## Methodologies Employed
 
 | Concern | Method |
