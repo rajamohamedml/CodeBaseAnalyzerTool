@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IntelliSource AI — Cost & Cache Architecture Overview</title>
+<style>
+  :root{
+    --bg:#f4f5f8;
+    --bg-panel:#ffffff;
+    --bg-panel-2:#eef0f4;
+    --ink:#1b2028;
+    --ink-muted:#5b6270;
+    --line:#d7dbe3;
+    --accent-free:#16897a;
+    --accent-free-bg:#e3f5f1;
+    --accent-ai:#a8680c;
+    --accent-ai-bg:#faf0dd;
+    --shadow: 0 1px 2px rgba(20,24,32,0.04), 0 8px 24px -12px rgba(20,24,32,0.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#10131a;
+      --bg-panel:#161a23;
+      --bg-panel-2:#1b2029;
+      --ink:#e8eaf0;
+      --ink-muted:#9aa1b1;
+      --line:#2a3040;
+      --accent-free:#4fd6c0;
+      --accent-free-bg:rgba(79,214,192,0.10);
+      --accent-ai:#f0b45a;
+      --accent-ai-bg:rgba(240,180,90,0.10);
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10131a; --bg-panel:#161a23; --bg-panel-2:#1b2029;
+    --ink:#e8eaf0; --ink-muted:#9aa1b1; --line:#2a3040;
+    --accent-free:#4fd6c0; --accent-free-bg:rgba(79,214,192,0.10);
+    --accent-ai:#f0b45a; --accent-ai-bg:rgba(240,180,90,0.10);
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f5f8; --bg-panel:#ffffff; --bg-panel-2:#eef0f4;
+    --ink:#1b2028; --ink-muted:#5b6270; --line:#d7dbe3;
+    --accent-free:#16897a; --accent-free-bg:#e3f5f1;
+    --accent-ai:#a8680c; --accent-ai-bg:#faf0dd;
+    --shadow: 0 1px 2px rgba(20,24,32,0.04), 0 8px 24px -12px rgba(20,24,32,0.10);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:840px; margin:0 auto; padding:56px 24px 80px; }
+
+  .font-display{ font-family:Georgia,"Iowan Old Style","Times New Roman",serif; }
+  .font-mono{ font-family:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,"SFMono-Regular",Menlo,monospace; }
+
+  .eyebrow{
+    font-family:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,"SFMono-Regular",Menlo,monospace;
+    font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--accent-free); font-weight:600; margin:0 0 14px;
+  }
+  h1{
+    font-family:Georgia,"Iowan Old Style","Times New Roman",serif;
+    font-size:clamp(28px,4.2vw,40px); line-height:1.15; margin:0 0 14px; font-weight:700;
+    text-wrap:balance; letter-spacing:-0.01em;
+  }
+  .lede{
+    font-size:16.5px; color:var(--ink-muted); max-width:60ch; margin:0 0 36px;
+  }
+  .lede code{ font-family:ui-monospace,Consolas,monospace; font-size:0.92em; color:var(--ink); }
+
+  /* command line */
+  .cmd{
+    font-family:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,"SFMono-Regular",Menlo,monospace;
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:14px 16px; font-size:13.5px; color:var(--ink); margin:0 0 40px;
+    overflow-x:auto; white-space:pre;
+  }
+  .cmd .prompt{ color:var(--ink-muted); }
+
+  /* legend + stats */
+  .panel-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:0 0 48px; }
+  @media (max-width:640px){ .panel-row{ grid-template-columns:1fr; } }
+  .stat{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; box-shadow:var(--shadow);
+  }
+  .stat .num{
+    font-family:ui-monospace,Consolas,monospace; font-variant-numeric:tabular-nums;
+    font-size:24px; font-weight:600; color:var(--ink); display:block; margin-bottom:2px;
+  }
+  .stat .label{ font-size:12.5px; color:var(--ink-muted); }
+
+  .legend{ display:flex; gap:20px; flex-wrap:wrap; margin:0 0 40px; }
+  .legend-item{ display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-muted); }
+  .swatch{ width:12px; height:12px; border-radius:3px; flex:none; }
+  .swatch.free{ background:var(--accent-free); }
+  .swatch.ai{ background:var(--accent-ai); }
+
+  /* timeline */
+  .timeline{ position:relative; }
+  .stage{
+    display:grid; grid-template-columns:40px 1fr; gap:18px;
+    position:relative; padding-bottom:26px;
+  }
+  .stage:last-child{ padding-bottom:0; }
+  .rail{ position:relative; }
+  .rail::before{
+    content:""; position:absolute; left:50%; top:2px; bottom:-26px; width:2px;
+    background:var(--rail-color,var(--line)); transform:translateX(-50%);
+  }
+  .stage:last-child .rail::before{ display:none; }
+  .dot{
+    position:relative; z-index:1; width:36px; height:36px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--dot-color,var(--line));
+    display:flex; align-items:center; justify-content:center;
+    font-family:ui-monospace,Consolas,monospace; font-weight:700; font-size:13px;
+    color:var(--dot-color,var(--ink-muted));
+  }
+  .card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px 18px; box-shadow:var(--shadow);
+  }
+  .card-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; flex-wrap:wrap; }
+  .card h3{
+    font-family:Georgia,"Iowan Old Style",serif; font-size:18px; font-weight:700; margin:0;
+    color:var(--ink);
+  }
+  .card h3 .modtag{
+    font-family:ui-monospace,Consolas,monospace; font-size:12.5px; font-weight:400;
+    color:var(--ink-muted); margin-left:8px;
+  }
+  .tech-label{
+    font-family:ui-monospace,Consolas,monospace; font-size:10px; letter-spacing:0.06em;
+    text-transform:uppercase; font-weight:700; color:var(--ink-muted); display:block; margin-bottom:4px;
+  }
+  .chip{
+    font-family:ui-monospace,Consolas,monospace; font-size:10.5px; letter-spacing:0.06em;
+    text-transform:uppercase; font-weight:700; padding:3px 8px; border-radius:5px; flex:none;
+  }
+  .chip.free{ color:var(--accent-free); background:var(--accent-free-bg); }
+  .chip.ai{ color:var(--accent-ai); background:var(--accent-ai-bg); }
+  .plain{ font-size:15px; color:var(--ink); margin:0 0 10px; }
+  .tech{
+    font-family:ui-monospace,"Cascadia Code","Segoe UI Mono",Consolas,"SFMono-Regular",Menlo,monospace;
+    font-size:12.5px; color:var(--ink-muted); background:var(--bg-panel-2);
+    border-radius:6px; padding:8px 10px; overflow-x:auto; white-space:pre;
+  }
+  .tech b{ color:var(--ink); font-weight:600; }
+  .aside{ font-size:12.5px; color:var(--ink-muted); margin:8px 2px 0; font-style:italic; }
+
+  /* branch mini-diagram inside stage 6 */
+  .fork{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  @media (max-width:520px){ .fork{ grid-template-columns:1fr; } }
+  .fork-lane{ border:1px dashed var(--line); border-radius:8px; padding:10px 12px; font-size:13px; }
+  .fork-lane .lane-label{ font-family:ui-monospace,Consolas,monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; display:block; margin-bottom:4px; }
+  .fork-lane.hit{ border-color:var(--accent-free); }
+  .fork-lane.hit .lane-label{ color:var(--accent-free); }
+  .fork-lane.miss{ border-color:var(--accent-ai); }
+  .fork-lane.miss .lane-label{ color:var(--accent-ai); }
+
+  /* AI path bracket panel */
+  .ai-path{
+    position:relative; border:1px solid var(--accent-ai); border-radius:12px;
+    background:var(--accent-ai-bg); padding:22px 16px 4px; margin:2px 0 26px;
+  }
+  .ai-path-label{
+    position:absolute; top:-11px; left:14px; background:var(--bg);
+    padding:0 8px; font-family:ui-monospace,Consolas,monospace; font-size:11px;
+    letter-spacing:0.06em; text-transform:uppercase; font-weight:700; color:var(--accent-ai);
+  }
+  .ai-path .stage .card{ background:var(--bg-panel); }
+  .rejoin{
+    text-align:center; font-family:ui-monospace,Consolas,monospace; font-size:12px;
+    color:var(--accent-ai); padding:2px 0 14px;
+  }
+
+  /* footer artifacts */
+  .artifacts{ margin-top:52px; }
+  .artifacts h2{
+    font-family:Georgia,"Iowan Old Style",serif; font-size:20px; margin:0 0 16px;
+  }
+  .artifact-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media (max-width:640px){ .artifact-grid{ grid-template-columns:1fr; } }
+  .artifact{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .artifact .fname{
+    font-family:ui-monospace,Consolas,monospace; font-size:13px; font-weight:600;
+    color:var(--ink); display:block; margin-bottom:4px;
+  }
+  .artifact .fdesc{ font-size:13px; color:var(--ink-muted); }
+
+  @media (prefers-reduced-motion: no-preference){
+    .stage{ animation: rise 0.5s ease both; }
+  }
+  @keyframes rise{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <p class="eyebrow">Architecture Walkthrough</p>
+  <h1>How IntelliSource&nbsp;AI turns a repo into a report</h1>
+  <p class="lede">Thirteen stages, entry point to output. Two colors do the real work here: <b style="color:var(--accent-free)">teal</b> marks a step that costs nothing — pure parsing and bookkeeping — and <b style="color:var(--accent-ai)">amber</b> marks the only two steps that actually call the LLM and cost tokens.</p>
+
+  <div class="cmd"><span class="prompt">$</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt;</div>
+
+  <div class="panel-row">
+    <div class="stat"><span class="num">13</span><span class="label">pipeline stages, one file each</span></div>
+    <div class="stat"><span class="num">246 / 187</span><span class="label">classes analyzed from files parsed*</span></div>
+    <div class="stat"><span class="num">3</span><span class="label">actual LLM calls made — 235 classes served from cache*</span></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch free"></span>Free — deterministic, no API cost</div>
+    <div class="legend-item"><span class="swatch ai"></span>AI call — billed generation via Claude</div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.00s">
+      <div class="rail"><div class="dot">1</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Entry point <span class="modtag">main.py</span></h3><span class="chip free">Free</span></div>
+        <p class="plain"><code class="font-mono">python main.py --repo-url &lt;url&gt;</code> calls <code class="font-mono">main()</code>. It's deliberately thin: parse CLI args → configure logging → resolve settings → call <code class="font-mono">run_pipeline()</code>. No business logic lives here by design.</p>
+        <div class="tech"><span class="tech-label">Technically</span>main.py calls build_arg_parser() and parser.parse_args() to read your CLI flags.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.04s">
+      <div class="rail"><div class="dot">2</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Config resolution <span class="modtag">config.py: resolve_settings()</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">Merges CLI flags, environment variables, and <code class="font-mono">.env</code>, in that precedence order. Fails fast here — before any network call — if <code class="font-mono">repo_url</code> or <code class="font-mono">ANTHROPIC_API_KEY</code> is missing, raising <code class="font-mono">ConfigurationError</code>. Returns an immutable <code class="font-mono">Settings</code> dataclass.</p>
+        <div class="tech"><span class="tech-label">Technically</span>config.py: resolve_settings() merges CLI args → env vars → .env, and raises ConfigurationError if repo_url or ANTHROPIC_API_KEY is missing.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.08s">
+      <div class="rail"><div class="dot">3</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Repo fetch <span class="modtag">repo_fetcher.py: fetch_repository()</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">Shells out to <code class="font-mono">git clone --depth 1 --branch &lt;ref&gt;</code>. Reuses an existing clone under <code class="font-mono">.cache/&lt;repo-name&gt;/repo</code> unless <code class="font-mono">--refresh-repo</code> is passed — so repeat runs skip the network entirely.</p>
+        <div class="tech"><span class="tech-label">Technically</span>repo_fetcher.py: fetch_repository() shells out to git clone --depth 1 --branch &lt;ref&gt; into .cache/&lt;repo-name&gt;/repo.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.12s">
+      <div class="rail"><div class="dot">4</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Java parsing <span class="modtag">java_parser.py: parse_source_tree()</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">Walks the repo's <code class="font-mono">.java</code> files (excluding <code class="font-mono">src/test/java</code> unless <code class="font-mono">--include-tests</code>), uses <code class="font-mono">javalang</code> to build an AST per file. Recurses into nested static classes. Extracts package, class type (heuristic: Spring stereotype annotations first, directory keywords as fallback), method signatures, annotations, and REST routes from <code class="font-mono">@RequestMapping</code>/<code class="font-mono">@GetMapping</code> etc. A file that fails to parse (e.g. unsupported syntax) is logged into <code class="font-mono">parse_errors</code> and skipped — the run continues.</p>
+        <div class="tech"><span class="tech-label">Technically</span>java_parser.py: parse_source_tree() runs each file through the javalang AST parser, extracting classes, methods, annotations, and REST routes; failures are caught and logged to parse_errors.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.16s">
+      <div class="rail"><div class="dot">5</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Complexity computation <span class="modtag">complexity.py</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">For every method, computes LOC and a heuristic cyclomatic complexity — <code class="font-mono">1 + count of if/for/while/case/catch/&amp;&amp;/||</code> on the method body, with strings/comments stripped first so keywords inside them don't get miscounted. Purely regex-based, zero LLM cost.</p>
+        <div class="tech"><span class="tech-label">Technically</span>complexity.py, called from pipeline._compute_all_complexity(), computes LOC and a regex-based cyclomatic estimate (1 + count of if/for/while/case/catch/&amp;&amp;/||) per method.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.20s">
+      <div class="rail"><div class="dot">6</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Cache check <span class="modtag">cache.py: LLMCache.get()</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">For every parsed class, <code class="font-mono">pipeline._analyze_classes()</code> renders its condensed prompt text and hashes it (<code class="font-mono">SHA-256(PROMPT_VERSION + rendered_text)</code>). If that exact hash is already in the on-disk cache, the class is served with zero LLM cost. Only cache misses go on to the next step.</p>
+        <div class="tech"><span class="tech-label">Technically</span>pipeline._analyze_classes() hashes each class's rendered prompt text (cache.compute_cache_key) and looks it up via LLMCache.get(), an on-disk JSON keyed by SHA-256(PROMPT_VERSION + text).</div>
+        <div class="fork">
+          <div class="fork-lane hit"><span class="lane-label">Cache hit</span>Reuse the saved description — skip straight to step 12, zero cost.</div>
+          <div class="fork-lane miss"><span class="lane-label">Cache miss</span>Enter the AI path below (steps 7–11).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-path">
+      <span class="ai-path-label">AI path · only for cache misses</span>
+
+      <div class="stage" style="--rail-color:var(--accent-ai); --dot-color:var(--accent-ai); animation-delay:.24s">
+        <div class="rail"><div class="dot">7</div></div>
+        <div class="card">
+          <div class="card-head"><h3>Batching <span class="modtag">chunker.py: build_batches()</span></h3><span class="chip ai">Prep</span></div>
+          <p class="plain">Cache-miss classes get grouped by source directory (so a batch shares feature/layer context), then capped two ways: a max class count (<code class="font-mono">--batch-size</code>, default 6) and a real token ceiling (default 4,000 input tokens) — measured via the Anthropic SDK's actual <code class="font-mono">count_tokens</code> endpoint, never a character-count guess. A single class too large on its own gets its methods split across sub-batches instead of truncated.</p>
+          <div class="tech"><span class="tech-label">Technically</span>chunker.py: build_batches() groups cache-misses by source directory, capped by --batch-size and a real token ceiling.</div>
+        </div>
+      </div>
+
+      <div class="stage" style="--rail-color:var(--accent-ai); --dot-color:var(--accent-ai); animation-delay:.28s">
+        <div class="rail"><div class="dot">8</div></div>
+        <div class="card">
+          <div class="card-head"><h3>Prompt rendering <span class="modtag">chunker.py: render_class_for_prompt()</span></h3><span class="chip ai">Prep</span></div>
+          <p class="plain">Each class is rendered into condensed signature/annotation/Javadoc/complexity-flag text — never raw source code. This is the key cost control: the LLM only sees what it needs to judge meaning, not syntax a parser already extracted for free.</p>
+          <div class="tech"><span class="tech-label">Technically</span>chunker.py: render_class_for_prompt() renders each class into condensed signature/annotation/Javadoc/complexity text — never raw source — and _count_tokens() verifies size via the Anthropic SDK's count_tokens endpoint.</div>
+        </div>
+      </div>
+
+      <div class="stage" style="--rail-color:var(--accent-ai); --dot-color:var(--accent-ai); animation-delay:.32s">
+        <div class="rail"><div class="dot">9</div></div>
+        <div class="card">
+          <div class="card-head"><h3>LLM call <span class="modtag">llm_client.py: LLMClient.analyze_batch()</span></h3><span class="chip ai">AI call</span></div>
+          <p class="plain">Wraps a single <code class="font-mono">ChatAnthropic</code> (LangChain) instance with <code class="font-mono">.with_structured_output(ClassBatchAnalysis)</code>, so the API/SDK — not prompt wording — guarantees schema-conformant JSON back. Token usage from each call is recorded onto a shared <code class="font-mono">UsageTracker</code>.</p>
+          <div class="tech"><span class="tech-label">Technically</span>llm_client.py: LLMClient.analyze_batch() calls a LangChain ChatAnthropic chain with .with_structured_output(ClassBatchAnalysis), guaranteeing schema-conformant JSON back.</div>
+        </div>
+      </div>
+
+      <div class="stage" style="--rail-color:var(--accent-ai); --dot-color:var(--accent-ai); animation-delay:.36s">
+        <div class="rail"><div class="dot">10</div></div>
+        <div class="card">
+          <div class="card-head"><h3>Merge results back <span class="modtag">pipeline.py: _process_batch() / _merge_fragments()</span></h3><span class="chip ai">Merge</span></div>
+          <p class="plain">Matches each returned <code class="font-mono">class_name</code> back to its source <code class="font-mono">ParsedClass</code> by exact string match. If a class was split across sub-batches, its method fragments get merged into one <code class="font-mono">ClassDescription</code>. A whole-class result (not split) gets written back into the cache via <code class="font-mono">cache.set()</code>.</p>
+          <div class="tech"><span class="tech-label">Technically</span>pipeline._process_batch() matches returned class_name values to source ParsedClass objects; _merge_fragments() recombines any class split across sub-batches.</div>
+        </div>
+      </div>
+
+      <div class="stage" style="--rail-color:var(--accent-ai); --dot-color:var(--accent-ai); animation-delay:.40s">
+        <div class="rail"><div class="dot">11</div></div>
+        <div class="card">
+          <div class="card-head"><h3>Project overview <span class="modtag">pipeline.py: _generate_overview()</span></h3><span class="chip ai">AI call</span></div>
+          <p class="plain">One additional LLM call: feeds a truncated README excerpt, a truncated build-file excerpt, and every class's one-line purpose (already generated in step 9) to <code class="font-mono">LLMClient.generate_overview()</code>, producing the project-wide summary, tech stack, and architecture description.</p>
+          <div class="tech"><span class="tech-label">Technically</span>pipeline._generate_overview() feeds a truncated README/build-file excerpt plus all per-class summaries into LLMClient.generate_overview().</div>
+        </div>
+      </div>
+
+      <div class="rejoin">↓ rejoins the main line at step 12, alongside every cache hit from step 6</div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.44s">
+      <div class="rail"><div class="dot">12</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Assembly <span class="modtag">pipeline.py: _assemble_classes()</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">Merges three independently-produced pieces of data per class — structural data from step 4, complexity metrics from step 5, and LLM descriptions from step 10 — into the final <code class="font-mono">ClassAnalysis</code> list. Any class or method the LLM never described gets an explicit <code class="font-mono">"Description unavailable."</code> placeholder rather than being silently dropped.</p>
+        <div class="tech"><span class="tech-label">Technically</span>pipeline._assemble_classes() merges ParsedClass (structure), ComplexityMetrics, and ClassDescription into the final ClassAnalysis list, defaulting missing descriptions to "Description unavailable.".</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); --dot-color:var(--accent-free); animation-delay:.48s">
+      <div class="rail"><div class="dot">13</div></div>
+      <div class="card">
+        <div class="card-head"><h3>Output generation <span class="modtag">pipeline.py: _write_outputs(), report_generator.py</span></h3><span class="chip free">Free</span></div>
+        <p class="plain">Everything assembles into one Pydantic model, <code class="font-mono">ProjectAnalysis</code>, which is the single source of truth rendered three ways: <code class="font-mono">analysis.json</code> (the data), <code class="font-mono">analysis.schema.json</code> (its JSON Schema, generated from the same Pydantic model), and <code class="font-mono">report.html</code> (Jinja2, autoescaped, self-contained). Since JSON and HTML both come from the same in-memory object, they can never disagree. A final summary line logs files parsed, cache hits vs. LLM calls, tokens, and estimated cost.</p>
+        <div class="tech"><span class="tech-label">Technically</span>pipeline._write_outputs() serializes the single ProjectAnalysis Pydantic model to analysis.json and analysis.schema.json (via model_json_schema()), and report_generator.write_report() renders it through an autoescaped Jinja2 template into report.html.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="artifacts">
+    <h2>What lands in <code class="font-mono">output/</code></h2>
+    <div class="artifact-grid">
+      <div class="artifact"><span class="fname">analysis.json</span><span class="fdesc">The structured deliverable — every class, method, and the project overview.</span></div>
+      <div class="artifact"><span class="fname">analysis.schema.json</span><span class="fdesc">The formal JSON Schema, generated from the same Pydantic model.</span></div>
+      <div class="artifact"><span class="fname">report.html</span><span class="fdesc">A self-contained, browsable report of the same data.</span></div>
+    </div>
+    <p class="aside" style="margin-top:14px">* Figures above are from a real full run against <span class="font-mono">spring-rest-sakila</span>: 187 of 188 discovered files parsed (1 skipped for unsupported syntax), 246 classes analyzed, 3 LLM calls made because 235 classes were already cached from a prior run.</p>
+  </div>
+</div>
+
+</body>
+</html>
