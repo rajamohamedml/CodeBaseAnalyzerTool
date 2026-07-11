@@ -26,13 +26,14 @@ DEFAULT_REPO_REF = "main"  # a git convention default, not repo-specific
 DEFAULT_BATCH_SIZE = 6
 DEFAULT_OUTPUT_PATH = Path("output/analysis.json")
 DEFAULT_TOKEN_CEILING_PER_BATCH = 4000
+DEFAULT_GIT_HISTORY_DEPTH = 200
 
 
 @dataclass(frozen=True)
 class Settings:
     """Fully-resolved, immutable configuration for one pipeline run."""
 
-    repo_url: str
+    repo_url: str | None
     repo_ref: str
     anthropic_api_key: str
     model: str
@@ -45,6 +46,8 @@ class Settings:
     refresh_repo: bool
     generate_html_report: bool
     cache_dir: Path
+    local_path: Path | None = None
+    git_history_depth: int = DEFAULT_GIT_HISTORY_DEPTH
 
     @property
     def llm_cache_path(self) -> Path:
@@ -100,7 +103,16 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--repo-url",
         default=None,
         help="Target GitHub repository URL. Required unless REPO_URL is set "
-        "via environment variable or .env. No default is built into this tool.",
+        "via environment variable or .env, or --local-path is given. No "
+        "default is built into this tool.",
+    )
+    parser.add_argument(
+        "--local-path",
+        default=None,
+        help="Analyze an already-checked-out local directory instead of "
+        "cloning --repo-url. Useful in CI (e.g. a GitHub Action step running "
+        "after actions/checkout, pointed at $GITHUB_WORKSPACE) where the "
+        "repo is already on disk.",
     )
     parser.add_argument(
         "--ref",
@@ -147,6 +159,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
         help="Re-clone the target repository even if it is already cached locally.",
     )
     parser.add_argument(
+        "--git-history-depth",
+        type=int,
+        default=None,
+        help=f"Commits of history to clone for churn analysis (default: {DEFAULT_GIT_HISTORY_DEPTH}). "
+        "Ignored with --local-path, since no clone happens.",
+    )
+    parser.add_argument(
         "--no-html-report",
         action="store_true",
         help="Skip generating output/report.html; only write the JSON deliverable.",
@@ -177,12 +196,14 @@ def resolve_settings(args: argparse.Namespace) -> Settings:
     # working directory instead; a missing file here is a silent no-op.
     load_dotenv(dotenv_path=Path.cwd() / ".env")
 
+    local_path = Path(args.local_path) if args.local_path else None
     repo_url = _first_non_empty(args.repo_url, os.environ.get("REPO_URL"))
-    if repo_url is None:
+    if repo_url is None and local_path is None:
         raise ConfigurationError(
             "No target repository configured. Pass --repo-url or set REPO_URL "
-            "(environment variable or .env). This tool never assumes a default "
-            "repository -- see .env.example for the expected format."
+            "(environment variable or .env) to clone a repo, or --local-path to "
+            "analyze an already-checked-out directory. This tool never assumes a "
+            "default repository -- see .env.example for the expected format."
         )
 
     api_key = _first_non_empty(os.environ.get("ANTHROPIC_API_KEY"))
@@ -197,6 +218,14 @@ def resolve_settings(args: argparse.Namespace) -> Settings:
     batch_size = args.batch_size or int(os.environ.get("BATCH_SIZE", DEFAULT_BATCH_SIZE))
     output_path = Path(args.output) if args.output else DEFAULT_OUTPUT_PATH
 
+    # A local path has no URL to derive a cache key from -- fall back to the
+    # directory's own name so side-by-side local/cloned analyses don't collide.
+    if local_path is not None:
+        cache_key_name = local_path.resolve().name
+    else:
+        assert repo_url is not None  # guaranteed by the fail-fast check above
+        cache_key_name = _derive_repo_name(repo_url)
+
     return Settings(
         repo_url=repo_url,
         repo_ref=repo_ref,
@@ -210,5 +239,7 @@ def resolve_settings(args: argparse.Namespace) -> Settings:
         refresh_cache=args.refresh_cache,
         refresh_repo=args.refresh_repo,
         generate_html_report=not args.no_html_report,
-        cache_dir=Path(".cache") / _derive_repo_name(repo_url),
+        cache_dir=Path(".cache") / (cache_key_name or "repo"),
+        local_path=local_path,
+        git_history_depth=args.git_history_depth or DEFAULT_GIT_HISTORY_DEPTH,
     )

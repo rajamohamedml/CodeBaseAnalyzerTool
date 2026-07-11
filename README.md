@@ -2,9 +2,10 @@
 
 A production grade Python project that analyzes a Java/Spring GitHub repository and extracts
 structured knowledge — a project overview, method-level signatures and
-descriptions, REST endpoints, and complexity signals — using an LLM
-(Claude Haiku 4.5, via LangChain). It is **repo-agnostic**: the target
-repository is always supplied by the caller, never hardcoded.
+descriptions, REST endpoints, complexity signals, deterministic security
+findings, an internal dependency graph, and git-churn-derived hotspots —
+using an LLM (Claude Haiku 4.5, via LangChain). It is **repo-agnostic**: the
+target repository is always supplied by the caller, never hardcoded.
 
 This project can run against any given github repository configured
 
@@ -55,8 +56,15 @@ the recommended way to review results in a browser. It includes:
   architecture summary (how the codebase is layered/organized), and a
   list of the main domain (business/feature) modules.
 - **Stats dashboard** — total files parsed, classes analyzed, methods
-  analyzed, REST endpoints discovered, and complexity outliers, at a
-  glance.
+  analyzed, REST endpoints discovered, complexity outliers, and
+  deterministic security findings, at a glance.
+- **Hotspots panel** — the top classes ranked by `git` churn x complexity
+  ("changed often, hard to change safely"), each with its commit count,
+  last-modified date, and high-complexity-method count.
+- **Most Relied-Upon Classes panel** — the classes with the highest
+  fan-in (most other classes depend on them), derived from the internal
+  import-based dependency graph — the highest-risk classes to change
+  carelessly.
 - **Module-grouped class cards** — every analyzed class, grouped by its
   source directory, showing:
   - its architectural role (`controller` / `service` / `repository` /
@@ -68,10 +76,14 @@ the recommended way to review results in a browser. It includes:
     (flagged when it's a high-complexity outlier)
   - any REST endpoints the class exposes (HTTP verb + path), derived
     directly from Spring mapping annotations
-- **Notable Findings rollup** — a consolidated list of noteworthy
-  design patterns, security-relevant logic, or other characteristics the
-  LLM flagged across all classes, surfaced in one place instead of buried
-  inside individual class cards.
+  - a security-findings badge (hardcoded credentials, SQL built via
+    concatenation, empty catch blocks) when the class has any
+  - which other internal classes it depends on, and its `git` commit
+    count / last-modified date, in the detail view
+- **Notable Findings rollup** — a consolidated, severity-grouped list of
+  deterministic security findings, statically-flagged high-complexity
+  methods, and every LLM-flagged notable aspect, surfaced in one place
+  instead of buried inside individual class cards.
 
 Pass `--no-html-report` to skip generating this file if only the JSON is
 needed.
@@ -102,11 +114,16 @@ different cost profiles, and to only pay LLM-token cost for the stage that
 genuinely needs it:
 
 1. **Free, deterministic static analysis** (`java_parser.py`,
-   `complexity.py`) — a Java grammar parser (`javalang`) extracts every
+   `complexity.py`, `security_scanner.py`, `dependency_graph.py`,
+   `churn.py`) — a Java grammar parser (`javalang`) extracts every
    class's structure: package, class type, method signatures, parameters,
-   annotations, Javadoc, and REST routes (from Spring mapping annotations).
-   A regex-based heuristic computes an approximate cyclomatic complexity
-   and line count per method. None of this costs a single LLM token.
+   annotations, Javadoc, imports, and REST routes (from Spring mapping
+   annotations). A regex-based heuristic computes an approximate
+   cyclomatic complexity and line count per method, plus three more
+   deterministic signals: hardcoded-credential/SQL-concatenation/empty-catch
+   findings, an internal class-to-class dependency graph built from import
+   statements, and a `git log`-derived commit count and last-modified date
+   per file. None of this costs a single LLM token.
 
 2. **Targeted, cached LLM calls** (`llm_client.py`, `chunker.py`,
    `cache.py`) — only the *semantic* part (what does this class/method do,
@@ -170,6 +187,10 @@ To see what the pipeline actually did on a given run:
 | Documentation extraction | A backward regex search for the nearest preceding `/** ... */` block per class/method, since `javalang` discards comments |
 | REST endpoint extraction | Combining a class-level `@RequestMapping` base path with method-level `@GetMapping`/etc., purely from annotation arguments |
 | Complexity signal | LOC + a heuristic cyclomatic-complexity estimate (`1 + count of if/for/while/case/catch/&&/\|\|`), with strings/comments stripped first so keywords inside them aren't miscounted |
+| Security findings | Regex-based checks over each class's full source text (`security_scanner.py`): hardcoded credential-like field values, SQL built via string concatenation, and empty/comment-only `catch` blocks |
+| Dependency graph | Import statements filtered down to internal-only edges (`dependency_graph.py`) — external JDK/framework/library imports never appear as an edge endpoint |
+| Hotspots | `churn.commit_count x (1 + high-complexity method count)` per class, ranked descending (`pipeline._compute_hotspots`) — "changed often AND hard to change safely" |
+| Git churn | A single `git log --name-only` pass (`churn.py`), re-anchored from the git top level to `repo_root` so keys match every other module's `file_path`; degrades to empty (never raises) without history |
 | Token-limit enforcement | Real token counts via the Anthropic SDK's `count_tokens` endpoint (never a character-count guess, never `tiktoken`), enforced per batch with a hard ceiling |
 | LLM orchestration | LangChain's `ChatAnthropic` + `.with_structured_output(PydanticModel)`, so the API/SDK — not prompt wording — guarantees schema-conformant JSON |
 | Cost control | Batching (several classes per call) + content-hash caching (`cache.py`) so unchanged files never pay for a second LLM call |
@@ -198,6 +219,7 @@ To see what the pipeline actually did on a given run:
 | 17 | Honest documentation of limitations (below), instead of overclaiming accuracy | this section |
 | 18 | Single source of truth for presentation — the HTML report renders the same model as the JSON, so they can't drift apart | `report_generator.py` |
 | 19 | Autoescaped templating (Jinja2 `autoescape=True`) — LLM-generated text can never be interpreted as HTML/JS in the report | `report_generator.py` |
+| 20 | Three additional free, deterministic signals (security findings, dependency graph, git churn) extend the same "no LLM cost" static-analysis phase rather than adding new paid calls | `security_scanner.py`, `dependency_graph.py`, `churn.py` |
 
 Two items the assignment calls out by name got a specific, verifiable answer rather than an approximation:
 
@@ -214,6 +236,9 @@ Two items the assignment calls out by name got a specific, verifiable answer rat
 - **Cost estimates use published list pricing** for the configured model at the time this was written and may not reflect promotional or negotiated rates.
 - **A class large enough to exceed the per-batch token ceiling on its own bypasses the cache** (its methods are split and analyzed fresh every run) rather than caching a partial result under the whole-class key. This is a rare edge case for typically-sized classes.
 - **Javadoc association is a nearest-preceding-comment heuristic**, not based on formal AST comment attachment (which `javalang` doesn't provide) — a Javadoc block separated from its declaration by unusual formatting could occasionally be missed.
+- **Security findings are regex-based pattern matching, not a certified static-analysis tool.** They catch the specific patterns `security_scanner.py` looks for (hardcoded credential-like fields, SQL string concatenation, empty catch blocks) — real vulnerabilities outside those three patterns are not flagged, and a legitimately-named non-secret field (e.g. `passwordMinLength`) could be a false positive.
+- **The dependency graph matches on simple class names, not fully-qualified/type-resolved references.** Two unrelated classes sharing the same simple name in different packages could produce a spurious edge; this is a heuristic, not a type-checker.
+- **Git churn quality depends on clone depth.** `--git-history-depth` (default 200) bounds how much history is cloned; a repo with more commits than that on the relevant files will under-report churn, and `--local-path` pointed at a shallow CI checkout (`fetch-depth: 1`) will show near-zero churn for everything. Churn is silently omitted (not an error) whenever `git log` has nothing to work with.
 
 ## Setup
 
@@ -248,6 +273,48 @@ Outputs land under `output/`:
 - `output/analysis.json` and `output/analysis.schema.json` are the machine-readable deliverable.
 
 A completed run prints a summary: files parsed, parse errors, LLM calls made vs. served from cache, total tokens, and estimated USD cost. Re-running the same command again should show most (or all) classes served from cache.
+
+## Use as a GitHub Action
+
+`action.yml` at the repo root makes this a reusable composite action. It runs against the
+repository the calling workflow already checked out — no separate clone (see `--local-path`
+below) — and persists the LLM response cache between runs via `actions/cache`, so a second
+run against unchanged code costs nothing extra.
+
+Add this to a workflow in the target repository (`.github/workflows/intellisource-scan.yml`):
+
+```yaml
+name: IntelliSource AI Scan
+on: [pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: rajamohamedml/intellisource-ai@master
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+```
+
+The job summary shows a one-glance table (files parsed, LLM calls made vs. cached, tokens,
+estimated cost), and `intellisource-output/report.html` + `analysis.json` are uploaded as a
+downloadable workflow artifact. See `action.yml` for the full input list (`model`, `max-files`,
+`include-tests`, `refresh-cache`, `output-dir`).
+
+Churn/hotspot quality in CI depends on the calling workflow's own checkout depth — `actions/checkout`
+defaults to `fetch-depth: 1`, which yields near-zero churn for every file. Add `fetch-depth: 0`
+(or a bounded depth) to the `actions/checkout` step if hotspots should reflect real history.
+
+## Analyzing an already-checked-out directory
+
+`--local-path <dir>` skips cloning entirely and parses a directory already on disk — this is
+what the GitHub Action uses internally, and it's also useful for analyzing local, uncommitted,
+or private-without-git-access code:
+
+```powershell
+python main.py --local-path C:\path\to\some\java\project
+```
 
 ## Development
 

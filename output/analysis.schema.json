@@ -1,5 +1,31 @@
 {
   "$defs": {
+    "ChurnMetrics": {
+      "description": "Git-derived change frequency for one file, computed by `churn.py`.\n\n`commit_count` and `last_modified` reflect however much history is\navailable in the local clone \u2014 a shallow clone (or a CI checkout with\n`fetch-depth: 1`) will under-report both. See `config.py`'s\n`--git-history-depth` for the clone-side knob that controls this.",
+      "properties": {
+        "commit_count": {
+          "title": "Commit Count",
+          "type": "integer"
+        },
+        "last_modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Modified"
+        }
+      },
+      "required": [
+        "commit_count"
+      ],
+      "title": "ChurnMetrics",
+      "type": "object"
+    },
     "ClassAnalysis": {
       "description": "One class in the final report.",
       "properties": {
@@ -42,6 +68,31 @@
           },
           "title": "Notable Aspects",
           "type": "array"
+        },
+        "security_findings": {
+          "items": {
+            "$ref": "#/$defs/SecurityFinding"
+          },
+          "title": "Security Findings",
+          "type": "array"
+        },
+        "depends_on": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "churn": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChurnMetrics"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -70,6 +121,25 @@
       ],
       "title": "ClassType",
       "type": "string"
+    },
+    "DependencyEdge": {
+      "description": "One directed \"depends on\" relationship between two classes in this\nrepository, derived from import statements in `dependency_graph.py`.\nExternal (JDK/framework/library) imports are excluded \u2014 both ends of\nevery edge are classes this run actually parsed.",
+      "properties": {
+        "from_class": {
+          "title": "From Class",
+          "type": "string"
+        },
+        "to_class": {
+          "title": "To Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_class",
+        "to_class"
+      ],
+      "title": "DependencyEdge",
+      "type": "object"
     },
     "MethodAnalysis": {
       "description": "One method in the final report: structure + complexity + LLM description.",
@@ -207,6 +277,11 @@
         "estimated_cost_usd": {
           "title": "Estimated Cost Usd",
           "type": "number"
+        },
+        "security_findings_total": {
+          "default": 0,
+          "title": "Security Findings Total",
+          "type": "integer"
         }
       },
       "required": [
@@ -221,12 +296,57 @@
       ],
       "title": "RunMetadata",
       "type": "object"
+    },
+    "SecurityFinding": {
+      "description": "One deterministic security/quality signal flagged by\n`security_scanner.py` \u2014 regex-based pattern matching over source text,\nthe same \"documented heuristic\" approach as `ComplexityMetrics`, not an\nLLM opinion. See that module for what each `category` actually detects.",
+      "properties": {
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/SecuritySeverity"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        }
+      },
+      "required": [
+        "category",
+        "severity",
+        "message"
+      ],
+      "title": "SecurityFinding",
+      "type": "object"
+    },
+    "SecuritySeverity": {
+      "description": "Severity of a `SecurityFinding`, independent of the LLM's own\n`notable_aspects` \u2014 these come from deterministic pattern matching in\n`security_scanner.py`, not model judgment.",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "SecuritySeverity",
+      "type": "string"
     }
   },
   "description": "The complete, schema-versioned deliverable written to `analysis.json`\nand rendered into `report.html` by `report_generator.py`. Both files are\nderived from one instance of this model, so they can never disagree.",
   "properties": {
     "schema_version": {
-      "default": "1.0",
+      "default": "1.1",
       "title": "Schema Version",
       "type": "string"
     },
@@ -242,6 +362,21 @@
     },
     "metadata": {
       "$ref": "#/$defs/RunMetadata"
+    },
+    "dependency_graph": {
+      "items": {
+        "$ref": "#/$defs/DependencyEdge"
+      },
+      "title": "Dependency Graph",
+      "type": "array"
+    },
+    "hotspots": {
+      "description": "class_name values ranked by churn x complexity, highest risk first.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Hotspots",
+      "type": "array"
     }
   },
   "required": [

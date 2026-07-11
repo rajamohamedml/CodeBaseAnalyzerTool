@@ -18,14 +18,17 @@ from anthropic import Anthropic
 
 from intellisource_ai.cache import LLMCache, compute_cache_key
 from intellisource_ai.chunker import ClassBatch, ComplexityIndex, build_batches, render_class_for_prompt
+from intellisource_ai.churn import compute_churn
 from intellisource_ai.complexity import compute_complexity
 from intellisource_ai.config import Settings
+from intellisource_ai.dependency_graph import build_dependency_graph, depends_on_by_class
 from intellisource_ai.exceptions import LLMExtractionError
 from intellisource_ai.java_parser import parse_source_tree
 from intellisource_ai.llm_client import LLMClient, UsageTracker
 from intellisource_ai.repo_fetcher import fetch_repository
 from intellisource_ai.report_generator import write_report
 from intellisource_ai.schemas import (
+    ChurnMetrics,
     ClassAnalysis,
     ClassDescription,
     MethodAnalysis,
@@ -33,7 +36,9 @@ from intellisource_ai.schemas import (
     ProjectAnalysis,
     ProjectOverview,
     RunMetadata,
+    SecurityFinding,
 )
+from intellisource_ai.security_scanner import scan_class
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +46,7 @@ _README_CANDIDATES = ["README.md", "Readme.md", "readme.md"]
 _BUILD_FILE_CANDIDATES = ["build.gradle.kts", "build.gradle", "pom.xml"]
 _README_CHAR_LIMIT = 4000
 _BUILD_FILE_CHAR_LIMIT = 3000
+_HOTSPOT_COUNT = 8
 
 ClassKey = tuple[str, str]  # (file_path, class_name)
 
@@ -55,14 +61,28 @@ def run_pipeline(settings: Settings) -> ProjectAnalysis:
     Returns:
         The fully assembled `ProjectAnalysis`, matching what was written to disk.
     """
-    repo_root = fetch_repository(
-        settings.repo_url, settings.repo_ref, settings.repo_clone_path, refresh=settings.refresh_repo
-    )
+    if settings.local_path is not None:
+        # Already-checked-out directory (e.g. a GitHub Action step running
+        # after actions/checkout) -- skip cloning entirely.
+        repo_root = settings.local_path
+    else:
+        assert settings.repo_url is not None  # guaranteed by config.resolve_settings
+        repo_root = fetch_repository(
+            settings.repo_url,
+            settings.repo_ref,
+            settings.repo_clone_path,
+            refresh=settings.refresh_repo,
+            depth=settings.git_history_depth,
+        )
 
     parse_result = parse_source_tree(
         repo_root, include_tests=settings.include_tests, max_files=settings.max_files
     )
     complexity_index = _compute_all_complexity(repo_root, parse_result.classes)
+    security_index = _scan_all_security(repo_root, parse_result.classes)
+    dependency_edges = build_dependency_graph(parse_result.classes)
+    depends_on_index = depends_on_by_class(dependency_edges)
+    churn_index = compute_churn(repo_root)
 
     anthropic_client = Anthropic(api_key=settings.anthropic_api_key)
     usage_tracker = UsageTracker(model=settings.model)
@@ -77,7 +97,10 @@ def run_pipeline(settings: Settings) -> ProjectAnalysis:
     cache.save()
 
     project_overview = _generate_overview(repo_root, parse_result.classes, descriptions, llm_client)
-    analyzed_classes = _assemble_classes(parse_result.classes, complexity_index, descriptions)
+    analyzed_classes = _assemble_classes(
+        parse_result.classes, complexity_index, descriptions, security_index, depends_on_index, churn_index
+    )
+    hotspots = _compute_hotspots(analyzed_classes)
 
     metadata = RunMetadata(
         generated_at=ProjectAnalysis.now_iso(),
@@ -89,9 +112,16 @@ def run_pipeline(settings: Settings) -> ProjectAnalysis:
         total_input_tokens=usage_tracker.input_tokens,
         total_output_tokens=usage_tracker.output_tokens,
         estimated_cost_usd=usage_tracker.estimated_cost_usd,
+        security_findings_total=sum(len(cls.security_findings) for cls in analyzed_classes),
     )
 
-    analysis = ProjectAnalysis(project=project_overview, classes=analyzed_classes, metadata=metadata)
+    analysis = ProjectAnalysis(
+        project=project_overview,
+        classes=analyzed_classes,
+        metadata=metadata,
+        dependency_graph=dependency_edges,
+        hotspots=hotspots,
+    )
     _write_outputs(analysis, settings)
     _log_summary(analysis)
     return analysis
@@ -114,6 +144,24 @@ def _compute_all_complexity(repo_root: Path, classes: list[ParsedClass]) -> Comp
                 index[(cls.file_path, cls.class_name, method.signature)] = compute_complexity(
                     source_lines, method
                 )
+    return index
+
+
+def _scan_all_security(repo_root: Path, classes: list[ParsedClass]) -> dict[ClassKey, list[SecurityFinding]]:
+    """Run `security_scanner.scan_class` for every class, reading each
+    underlying source file exactly once (same pattern as
+    `_compute_all_complexity`, for the same reason: multi-class files
+    would otherwise be read once per class instead of once per file).
+    """
+    index: dict[ClassKey, list[SecurityFinding]] = {}
+    classes_by_file: dict[str, list[ParsedClass]] = defaultdict(list)
+    for cls in classes:
+        classes_by_file[cls.file_path].append(cls)
+
+    for file_path, classes_in_file in classes_by_file.items():
+        source_lines = (repo_root / file_path).read_text(encoding="utf-8", errors="replace").splitlines()
+        for cls in classes_in_file:
+            index[(cls.file_path, cls.class_name)] = scan_class(source_lines, cls)
     return index
 
 
@@ -220,11 +268,15 @@ def _assemble_classes(
     classes: list[ParsedClass],
     complexity_index: ComplexityIndex,
     descriptions: dict[ClassKey, ClassDescription],
+    security_index: dict[ClassKey, list[SecurityFinding]],
+    depends_on_index: dict[str, list[str]],
+    churn_index: dict[str, ChurnMetrics],
 ) -> list[ClassAnalysis]:
-    """Merge structural data (java_parser), complexity metrics, and LLM
-    descriptions into the final `ClassAnalysis` list. A class or method
-    the LLM never described (e.g. its batch failed) gets an explicit
-    placeholder rather than being silently dropped from the report.
+    """Merge structural data (java_parser), complexity metrics, LLM
+    descriptions, and the three deterministic signals (security findings,
+    the dependency graph, git churn) into the final `ClassAnalysis` list.
+    A class or method the LLM never described (e.g. its batch failed) gets
+    an explicit placeholder rather than being silently dropped.
     """
     assembled: list[ClassAnalysis] = []
     for cls in classes:
@@ -254,9 +306,27 @@ def _assemble_classes(
                 rest_endpoints=cls.rest_endpoints,
                 methods=methods,
                 notable_aspects=description.notable_aspects if description else [],
+                security_findings=security_index.get((cls.file_path, cls.class_name), []),
+                depends_on=depends_on_index.get(cls.class_name, []),
+                churn=churn_index.get(cls.file_path),
             )
         )
     return assembled
+
+
+def _compute_hotspots(classes: list[ClassAnalysis]) -> list[str]:
+    """Rank classes by churn x complexity -- "changed often AND hard to
+    change safely" -- and return the top `_HOTSPOT_COUNT` class names,
+    highest risk first. A class with no churn data (e.g. git history
+    unavailable) scores 0 and is naturally excluded rather than favored.
+    """
+    scored = [
+        (cls.class_name, cls.churn.commit_count * (1 + sum(1 for m in cls.methods if m.high_complexity)))
+        for cls in classes
+        if cls.churn is not None
+    ]
+    ranked = sorted(scored, key=lambda pair: (-pair[1], pair[0]))
+    return [class_name for class_name, score in ranked if score > 0][:_HOTSPOT_COUNT]
 
 
 def _read_truncated(repo_root: Path, candidate_names: list[str], char_limit: int) -> str | None:

@@ -13,8 +13,12 @@ copy .env.example .env
 ## Commands
 
 ```powershell
-# Run analysis (--repo-url is always required, no default is baked in)
+# Run analysis (--repo-url is always required unless --local-path is used)
 python main.py --repo-url https://github.com/<owner>/<repo>
+
+# Analyze a directory already on disk instead of cloning (e.g. inside CI,
+# after actions/checkout) -- see action.yml, which uses exactly this
+python main.py --local-path C:\path\to\checked-out\repo
 
 # Cheap smoke test (analyze a small subset of files)
 python main.py --repo-url https://github.com/<owner>/<repo> --max-files 15
@@ -39,19 +43,24 @@ To run a single test file: `pytest tests/test_cache.py -v`
 The pipeline is a strict linear sequence with no backwards edges. Each stage has a single file:
 
 ```
-repo_fetcher.py  → shallow git clone of target repo
-java_parser.py   → AST parse of all .java files → ParsedClass / ParsedMethod
-complexity.py    → heuristic LOC + cyclomatic per method → ComplexityMetrics
-chunker.py       → group classes into token-bounded batches → ClassBatch
-llm_client.py    → LangChain ChatAnthropic calls with structured output
-cache.py         → content-hash cache for LLM results across runs
-pipeline.py      → orchestrates all stages, owns graceful-degradation policy
+repo_fetcher.py     → shallow git clone of target repo (skipped entirely if --local-path is given)
+java_parser.py      → AST parse of all .java files → ParsedClass / ParsedMethod (+ imports, class line bounds)
+complexity.py       → heuristic LOC + cyclomatic per method → ComplexityMetrics
+security_scanner.py → regex-based hardcoded-secret / SQL-concat / empty-catch checks → SecurityFinding
+dependency_graph.py → import-based internal class-to-class edges → DependencyEdge
+churn.py            → git log-derived commit count + last-modified per file → ChurnMetrics
+chunker.py          → group classes into token-bounded batches → ClassBatch
+llm_client.py       → LangChain ChatAnthropic calls with structured output
+cache.py            → content-hash cache for LLM results across runs
+pipeline.py         → orchestrates all stages, owns graceful-degradation policy
 report_generator.py → renders ProjectAnalysis → HTML (Jinja2 autoescape)
 ```
 
-All cross-module contracts are Pydantic models in `schemas.py` — never raw dicts. The four stages in order produce: `ParseResult` → `ComplexityMetrics` (keyed by `ComplexityIndex`) → `ClassDescription` (via LLM) → `ProjectAnalysis` (the final deliverable).
+All cross-module contracts are Pydantic models in `schemas.py` — never raw dicts. The stages produce: `ParseResult` → `ComplexityMetrics`/`SecurityFinding`/`DependencyEdge`/`ChurnMetrics` (all free, deterministic) → `ClassDescription` (via LLM) → `ProjectAnalysis` (the final deliverable, which also carries a `hotspots` ranking of `churn x complexity`).
 
-**Two-stage cost split**: static analysis (java_parser, complexity) runs free; the LLM is called only for semantic descriptions (what does this class *mean*). Raw source is never sent to the LLM — only condensed signature/annotation/complexity text produced by `chunker.render_class_for_prompt`.
+**Two-stage cost split**: static analysis (java_parser, complexity, security_scanner, dependency_graph, churn) runs free; the LLM is called only for semantic descriptions (what does this class *mean*). Raw source is never sent to the LLM — only condensed signature/annotation/complexity text produced by `chunker.render_class_for_prompt`.
+
+**Free deterministic signals beyond complexity**: `security_scanner.py` flags hardcoded credential-like fields, SQL built via string concatenation, and empty catch blocks — same "documented heuristic" posture as `ComplexityMetrics`, not a certified static-analysis tool. `dependency_graph.py` builds internal-only class-to-class edges from import statements (external/JDK/framework imports never appear as an edge). `churn.py` runs one `git log` pass per run; it re-anchors paths to `repo_root` (not necessarily the git top level) so churn keys line up with every other module's `file_path`, and degrades to an empty dict — never raises — if history isn't available (shallow clone, `--local-path` on a non-git directory, missing `git` binary). `--git-history-depth` (default 200) controls how much history `repo_fetcher.py` clones; ignored when `--local-path` is used, since no clone happens.
 
 **Batching**: Classes are grouped by source directory first, then capped by `--batch-size` (default 6) and a real token ceiling (default 4,000 input tokens). Token counts come from the Anthropic SDK's `count_tokens` endpoint — never a character-count heuristic or tiktoken.
 
@@ -63,8 +72,9 @@ All cross-module contracts are Pydantic models in `schemas.py` — never raw dic
 
 ## Key Design Constraints
 
-- `config.py` enforces fail-fast before any network call: `--repo-url`/`REPO_URL` and `ANTHROPIC_API_KEY` must be present or a `ConfigurationError` is raised.
+- `config.py` enforces fail-fast before any network call: either `--repo-url`/`REPO_URL` or `--local-path`, plus `ANTHROPIC_API_KEY`, must be present or a `ConfigurationError` is raised.
 - `mypy --strict` is enforced project-wide; the only exception is `javalang.*` (no stubs available).
-- The test suite (`tests/`) never makes real API calls — `LLMClient` and the token counter are injected/mocked via `conftest.py`. CI runs with no `ANTHROPIC_API_KEY`.
+- The test suite (`tests/`) never makes real API calls — `LLMClient` and the token counter are injected/mocked via `conftest.py`. CI runs with no `ANTHROPIC_API_KEY`. `test_churn.py` does exercise real local `git` commands against a throwaway repo in `tmp_path` — offline, but not mocked, since it's testing `git log` parsing itself.
 - `ClassType` classification is a heuristic: Spring stereotype annotations first, package directory keywords as fallback. Unconventional layouts classify as `OTHER`.
 - A class too large for a single batch is split across sub-batches by `chunker._split_oversized_class`; that class is not cached (a partial result would be stored under the whole-class key).
+- `action.yml` at the repo root makes this tool a reusable composite GitHub Action (`uses: rajamohamedml/intellisource-ai@<ref>`). It runs `main.py --local-path $GITHUB_WORKSPACE`, caches `.cache/` via `actions/cache` across runs, and writes a job-summary table.

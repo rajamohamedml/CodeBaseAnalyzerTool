@@ -17,7 +17,9 @@ from intellisource_ai.exceptions import RepoFetchError
 logger = logging.getLogger(__name__)
 
 
-def fetch_repository(repo_url: str, repo_ref: str, destination: Path, *, refresh: bool = False) -> Path:
+def fetch_repository(
+    repo_url: str, repo_ref: str, destination: Path, *, refresh: bool = False, depth: int = 1
+) -> Path:
     """Shallow-clone `repo_url` at `repo_ref` into `destination`.
 
     Args:
@@ -29,6 +31,10 @@ def fetch_repository(repo_url: str, repo_ref: str, destination: Path, *, refresh
             runs unless `refresh` is set, so repeated analyses of the same
             repo don't re-download it every time.
         refresh: If True, delete any existing clone at `destination` first.
+        depth: Number of most-recent commits to fetch. `1` (the default) is
+            enough for structural/LLM analysis; a larger value trades clone
+            time for real git history, which `churn.py` needs to compute
+            change-frequency signals -- see `--git-history-depth`.
 
     Returns:
         The path to the checked-out repository (same as `destination`).
@@ -55,7 +61,7 @@ def fetch_repository(repo_url: str, repo_ref: str, destination: Path, *, refresh
                 "git",
                 "clone",
                 "--depth",
-                "1",
+                str(depth),
                 "--branch",
                 repo_ref,
                 repo_url,

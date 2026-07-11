@@ -88,3 +88,17 @@ def test_no_html_report_flag_disables_report_generation(
     settings = resolve_settings(_parse(["--no-html-report"]))
 
     assert settings.generate_html_report is False
+
+
+def test_local_path_satisfies_missing_repo_url(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("REPO_URL", raising=False)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    local_repo = tmp_path / "checked-out-repo"
+    local_repo.mkdir()
+
+    settings = resolve_settings(_parse(["--local-path", str(local_repo)]))
+
+    assert settings.local_path == local_repo
+    assert settings.repo_url is None
+    assert settings.cache_dir.name == "checked-out-repo"

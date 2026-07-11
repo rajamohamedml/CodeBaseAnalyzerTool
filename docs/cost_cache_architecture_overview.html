@@ -271,8 +271,8 @@
       <div class="rail"><div class="dot">3</div></div>
       <div class="card">
         <div class="card-head"><h3>Repo fetch <span class="modtag">repo_fetcher.py: fetch_repository()</span></h3><span class="chip free">Free</span></div>
-        <p class="plain">Shells out to <code class="font-mono">git clone --depth 1 --branch &lt;ref&gt;</code>. Reuses an existing clone under <code class="font-mono">.cache/&lt;repo-name&gt;/repo</code> unless <code class="font-mono">--refresh-repo</code> is passed — so repeat runs skip the network entirely.</p>
-        <div class="tech"><span class="tech-label">Technically</span>repo_fetcher.py: fetch_repository() shells out to git clone --depth 1 --branch &lt;ref&gt; into .cache/&lt;repo-name&gt;/repo.</div>
+        <p class="plain">Shells out to <code class="font-mono">git clone --depth &lt;N&gt; --branch &lt;ref&gt;</code>, where N is <code class="font-mono">--git-history-depth</code> (default 200 — enough for real churn history, not a full clone). Reuses an existing clone under <code class="font-mono">.cache/&lt;repo-name&gt;/repo</code> unless <code class="font-mono">--refresh-repo</code> is passed. Skipped entirely when <code class="font-mono">--local-path</code> is given instead.</p>
+        <div class="tech"><span class="tech-label">Technically</span>repo_fetcher.py: fetch_repository() shells out to git clone --depth &lt;git_history_depth&gt; --branch &lt;ref&gt; into .cache/&lt;repo-name&gt;/repo, or is bypassed when settings.local_path is set.</div>
       </div>
     </div>
 
@@ -291,6 +291,13 @@
         <div class="card-head"><h3>Complexity computation <span class="modtag">complexity.py</span></h3><span class="chip free">Free</span></div>
         <p class="plain">For every method, computes LOC and a heuristic cyclomatic complexity — <code class="font-mono">1 + count of if/for/while/case/catch/&amp;&amp;/||</code> on the method body, with strings/comments stripped first so keywords inside them don't get miscounted. Purely regex-based, zero LLM cost.</p>
         <div class="tech"><span class="tech-label">Technically</span>complexity.py, called from pipeline._compute_all_complexity(), computes LOC and a regex-based cyclomatic estimate (1 + count of if/for/while/case/catch/&amp;&amp;/||) per method.</div>
+      </div>
+    </div>
+
+    <div class="stage" style="--rail-color:var(--accent-free); animation-delay:.18s">
+      <div class="rail"></div>
+      <div class="card" style="border-left:3px solid var(--accent-free); background:var(--accent-free-bg);">
+        <p class="plain" style="margin-bottom:0;"><b>Also free, added later:</b> <code class="font-mono">security_scanner.py</code> flags hardcoded secrets, SQL built via concatenation, and empty catch blocks; <code class="font-mono">dependency_graph.py</code> builds an import-based internal class graph; <code class="font-mono">churn.py</code> adds one <code class="font-mono">git log</code> pass for commit frequency, feeding the <code class="font-mono">hotspots</code> ranking (churn × complexity) computed alongside step 12. All three run in this same free phase — zero LLM cost — and degrade to empty rather than failing the run when unavailable (shallow clone, non-git <code class="font-mono">--local-path</code>, etc).</p>
       </div>
     </div>
 

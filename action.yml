@@ -1,0 +1,110 @@
+name: 'IntelliSource AI Scan'
+description: >-
+  Analyze a Java/Spring codebase and generate a structured JSON deliverable
+  and a browsable HTML report using Claude. Runs against the already
+  checked-out repository -- no separate clone.
+author: 'rajamohamedml'
+branding:
+  icon: 'compass'
+  color: 'purple'
+
+inputs:
+  anthropic-api-key:
+    description: 'Anthropic API key used for LLM analysis.'
+    required: true
+  model:
+    description: 'Anthropic model ID. Leave empty to use the tool default (claude-haiku-4-5).'
+    required: false
+    default: ''
+  max-files:
+    description: 'Cap the number of Java files analyzed, for a cheap smoke-test run. Leave empty to analyze everything.'
+    required: false
+    default: ''
+  include-tests:
+    description: 'Also analyze src/test/java sources.'
+    required: false
+    default: 'false'
+  refresh-cache:
+    description: 'Ignore the on-disk LLM cache and re-call the LLM for every class.'
+    required: false
+    default: 'false'
+  output-dir:
+    description: 'Directory (relative to the checked-out repo) to write analysis.json/report.html into.'
+    required: false
+    default: 'intellisource-output'
+
+outputs:
+  analysis-json:
+    description: 'Path to the generated analysis.json'
+    value: ${{ steps.run.outputs.analysis_json }}
+  report-html:
+    description: 'Path to the generated report.html'
+    value: ${{ steps.run.outputs.report_html }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install IntelliSource AI
+      shell: bash
+      run: pip install -e "${{ github.action_path }}"
+
+    # Keyed per-repo-per-branch so a re-run (or the next PR on the same
+    # branch) serves unchanged classes from cache at zero LLM cost --
+    # the same guarantee documented in docs/cost_cache_architecture_overview.html.
+    - name: Restore LLM response cache
+      uses: actions/cache@v4
+      with:
+        path: .cache
+        key: intellisource-cache-${{ github.repository }}-${{ github.ref_name }}
+        restore-keys: |
+          intellisource-cache-${{ github.repository }}-
+
+    - name: Run analysis
+      id: run
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+      run: |
+        set -e
+        ARGS=(--local-path "${{ github.workspace }}" --output "${{ inputs.output-dir }}/analysis.json")
+        if [ -n "${{ inputs.model }}" ]; then ARGS+=(--model "${{ inputs.model }}"); fi
+        if [ -n "${{ inputs.max-files }}" ]; then ARGS+=(--max-files "${{ inputs.max-files }}"); fi
+        if [ "${{ inputs.include-tests }}" = "true" ]; then ARGS+=(--include-tests); fi
+        if [ "${{ inputs.refresh-cache }}" = "true" ]; then ARGS+=(--refresh-cache); fi
+        python "${{ github.action_path }}/main.py" "${ARGS[@]}"
+        echo "analysis_json=${{ inputs.output-dir }}/analysis.json" >> "$GITHUB_OUTPUT"
+        echo "report_html=${{ inputs.output-dir }}/report.html" >> "$GITHUB_OUTPUT"
+
+    - name: Write job summary
+      shell: bash
+      run: |
+        python - "${{ inputs.output-dir }}/analysis.json" <<'PY' >> "$GITHUB_STEP_SUMMARY"
+        import json
+        import sys
+
+        data = json.load(open(sys.argv[1], encoding="utf-8"))
+        m = data["metadata"]
+        print("## IntelliSource AI Scan")
+        print()
+        print(f"**{data['project']['name']}** -- {len(data['classes'])} classes analyzed")
+        print()
+        print("| Metric | Value |")
+        print("|---|---|")
+        print(f"| Files parsed | {m['total_files_parsed']} |")
+        print(f"| Parse errors | {len(m['parse_errors'])} |")
+        print(f"| LLM calls made | {m['llm_calls_made']} |")
+        print(f"| Served from cache | {m['llm_calls_cached']} |")
+        print(f"| Tokens (in / out) | {m['total_input_tokens']} / {m['total_output_tokens']} |")
+        print(f"| Estimated cost | ${m['estimated_cost_usd']:.4f} |")
+        PY
+
+    - name: Upload report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: intellisource-report
+        path: ${{ inputs.output-dir }}

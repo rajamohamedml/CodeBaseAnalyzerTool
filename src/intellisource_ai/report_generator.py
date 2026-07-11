@@ -42,6 +42,19 @@ class _Finding(TypedDict):
     text: str
 
 
+class _Hotspot(TypedDict):
+    class_name: str
+    file_path: str
+    commit_count: int
+    last_modified: str | None
+    high_complexity_methods: int
+
+
+class _DependencyRank(TypedDict):
+    class_name: str
+    depended_on_by: int
+
+
 class _FindingSubcategory(TypedDict):
     label: str
     icon: str
@@ -224,16 +237,23 @@ def _group_by_module(classes: list[ClassAnalysis]) -> dict[str, list[ClassAnalys
     return dict(sorted(modules.items()))
 
 
+_SEVERITY_ORDER: tuple[str, ...] = ("high", "medium", "low")
+_SEVERITY_LABELS: dict[str, str] = {"high": "High", "medium": "Medium", "low": "Low"}
+_SEVERITY_ICONS: dict[str, str] = {"high": "\U0001f534", "medium": "\U0001f7e0", "low": "\U0001f7e1"}
+
+
 def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCategory]:
-    """Roll up every LLM-flagged notable aspect and every statically-flagged
-    high-complexity method into categorized, collapsible groups, so a
-    reviewer isn't stuck scrolling one flat list of hundreds of items to
-    find what's worth a closer look. Notable aspects are further split into
-    keyword-based subcategories (security, persistence, caching, ...) since
-    that single bucket is typically the largest by far.
+    """Roll up every LLM-flagged notable aspect, every statically-flagged
+    high-complexity method, and every deterministic security finding into
+    categorized, collapsible groups, so a reviewer isn't stuck scrolling
+    one flat list of hundreds of items to find what's worth a closer look.
+    Notable aspects and security findings are each further split into their
+    own subcategories (keyword-based, and by severity, respectively).
     """
     high_complexity: list[_Finding] = []
     aspects_by_category: dict[tuple[str, str], list[_Finding]] = {}
+    security_by_severity: dict[str, list[_Finding]] = {}
+
     for cls in classes:
         for aspect in cls.notable_aspects:
             finding: _Finding = {"class_name": cls.class_name, "file_path": cls.file_path, "text": aspect}
@@ -250,6 +270,15 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
                         ),
                     }
                 )
+        for security_finding in cls.security_findings:
+            location = f" (line {security_finding.line})" if security_finding.line else ""
+            security_by_severity.setdefault(security_finding.severity.value, []).append(
+                {
+                    "class_name": cls.class_name,
+                    "file_path": cls.file_path,
+                    "text": f"{security_finding.message}{location}",
+                }
+            )
 
     sorted_categories = sorted(aspects_by_category.items(), key=lambda kv: len(kv[1]), reverse=True)
     notable_subcategories: list[_FindingSubcategory] = [
@@ -257,7 +286,26 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
     ]
     all_aspects = [finding for subcategory in notable_subcategories for finding in subcategory["findings"]]
 
+    security_subcategories: list[_FindingSubcategory] = [
+        {
+            "label": _SEVERITY_LABELS[severity],
+            "icon": _SEVERITY_ICONS[severity],
+            "findings": security_by_severity[severity],
+        }
+        for severity in _SEVERITY_ORDER
+        if severity in security_by_severity
+    ]
+    all_security_findings = [
+        finding for subcategory in security_subcategories for finding in subcategory["findings"]
+    ]
+
     categories: list[_FindingCategory] = [
+        {
+            "label": "Security Findings",
+            "icon": "\U0001f6e1️",
+            "findings": all_security_findings,
+            "subcategories": security_subcategories,
+        },
         {"label": "High-Complexity Methods", "icon": "⚠️", "findings": high_complexity, "subcategories": []},
         {
             "label": "Notable Aspects",
@@ -267,6 +315,43 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
         },
     ]
     return [category for category in categories if category["findings"]]
+
+
+def _collect_hotspots(classes: list[ClassAnalysis], hotspot_names: list[str]) -> list[_Hotspot]:
+    """Build the display row for each class named in `hotspots`, in the
+    same highest-risk-first order `pipeline._compute_hotspots` ranked them.
+    """
+    by_name = {cls.class_name: cls for cls in classes}
+    rows: list[_Hotspot] = []
+    for name in hotspot_names:
+        cls = by_name.get(name)
+        if cls is None or cls.churn is None:
+            continue
+        rows.append(
+            {
+                "class_name": cls.class_name,
+                "file_path": cls.file_path,
+                "commit_count": cls.churn.commit_count,
+                "last_modified": cls.churn.last_modified,
+                "high_complexity_methods": sum(1 for m in cls.methods if m.high_complexity),
+            }
+        )
+    return rows
+
+
+def _collect_top_dependencies(classes: list[ClassAnalysis], limit: int = 6) -> list[_DependencyRank]:
+    """Rank classes by fan-in (how many other classes depend on them),
+    derived from each class's own `depends_on` list -- the most
+    relied-upon classes in the codebase, and therefore the riskiest to
+    change carelessly.
+    """
+    fan_in: dict[str, int] = {}
+    for cls in classes:
+        for target in cls.depends_on:
+            fan_in[target] = fan_in.get(target, 0) + 1
+
+    ranked = sorted(fan_in.items(), key=lambda kv: (-kv[1], kv[0]))[:limit]
+    return [{"class_name": name, "depended_on_by": count} for name, count in ranked if count > 0]
 
 
 def render_report(analysis: ProjectAnalysis) -> str:
@@ -289,6 +374,8 @@ def render_report(analysis: ProjectAnalysis) -> str:
         modules=_group_by_module(analysis.classes),
         accent_colors=_ACCENT_COLORS,
         notable_findings=_collect_notable_findings(analysis.classes),
+        hotspots=_collect_hotspots(analysis.classes, analysis.hotspots),
+        top_dependencies=_collect_top_dependencies(analysis.classes),
         total_classes=len(analysis.classes),
         total_methods=sum(len(c.methods) for c in analysis.classes),
         total_endpoints=sum(len(c.rest_endpoints) for c in analysis.classes),

@@ -388,11 +388,15 @@
       <div class="stage">
         <div class="stage-num">2</div>
         <span class="file-tag">repo_fetcher.py</span>
-        <h3>Clone the target repo</h3>
+        <h3>Clone the target repo — or skip this entirely</h3>
         <p>
-          Shells out to the system <code>git</code> for a shallow (<code>--depth 1</code>) clone
-          into <code>.cache/&lt;repo-name&gt;/repo</code>. Reuses that folder on the next run
-          unless <code>--refresh-repo</code> is passed — so you only pay the clone cost once.
+          Shells out to the system <code>git</code> for a clone, depth controlled by
+          <code>--git-history-depth</code> (default 200 commits — enough for real churn
+          history, not a full clone), into <code>.cache/&lt;repo-name&gt;/repo</code>. Reuses
+          that folder on the next run unless <code>--refresh-repo</code> is passed. If
+          <code>--local-path &lt;dir&gt;</code> is given instead (e.g. a GitHub Action step
+          running after <code>actions/checkout</code>), this whole stage is skipped and that
+          directory is used as-is.
         </p>
         <div class="calls-out"><code>fetch_repository()</code> returns the local path to the checked-out code</div>
       </div>
@@ -425,6 +429,49 @@
 
       <div class="stage">
         <div class="stage-num">5</div>
+        <span class="file-tag">security_scanner.py</span>
+        <h3>Flag hardcoded secrets, SQL concatenation, empty catches — still free</h3>
+        <p>
+          Scans each class's <em>whole</em> body text (fields included, not just method
+          bodies — a hardcoded secret is usually a field) for three regex-based patterns:
+          credential-like field values, SQL strings built via <code>+</code> concatenation,
+          and empty/comment-only <code>catch</code> blocks. Same "documented heuristic"
+          posture as the complexity estimate above, not a certified security scanner.
+        </p>
+        <div class="calls-out"><code>scan_class()</code> returns a list of <code>SecurityFinding</code>, called from <code>pipeline._scan_all_security()</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">6</div>
+        <span class="file-tag">dependency_graph.py</span>
+        <h3>Build the internal dependency graph — also free</h3>
+        <p>
+          Reads the import statements <code>java_parser.py</code> already captured, keeps
+          only the ones whose simple class name matches another class parsed this run
+          (external JDK/framework/library imports are dropped), and builds directed
+          <code>from_class → to_class</code> edges. Later ranked by fan-in to surface the
+          most relied-upon classes in the report.
+        </p>
+        <div class="calls-out"><code>build_dependency_graph()</code> → edges; <code>depends_on_by_class()</code> groups them per class</div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">7</div>
+        <span class="file-tag">churn.py</span>
+        <h3>One git log pass for commit frequency — still free</h3>
+        <p>
+          Runs a single <code>git log --name-only</code> against the checked-out repo and
+          counts commits per file. Re-anchors paths to <code>repo_root</code> rather than the
+          git top level, so a <code>--local-path</code> pointed at a subdirectory of a larger
+          repo still lines up with every other stage's <code>file_path</code>. Never raises —
+          a shallow clone, a non-git directory, or a missing <code>git</code> binary all just
+          degrade to "no churn data" for that run.
+        </p>
+        <div class="calls-out"><code>compute_churn()</code> returns <code>{file_path: ChurnMetrics}</code>; combined with complexity in <code>pipeline._compute_hotspots()</code></div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-num">8</div>
         <span class="file-tag">chunker.py</span>
         <h3>Group classes into LLM-sized batches</h3>
         <p>
@@ -437,7 +484,7 @@
       </div>
 
       <div class="stage">
-        <div class="stage-num">6</div>
+        <div class="stage-num">9</div>
         <span class="file-tag">cache.py + llm_client.py</span>
         <h3>Ask the LLM what the code means</h3>
         <p>
@@ -452,22 +499,24 @@
       </div>
 
       <div class="stage">
-        <div class="stage-num">7</div>
+        <div class="stage-num">10</div>
         <span class="file-tag">pipeline.py</span>
         <h3>Assemble the final record</h3>
         <p>
-          Merges the parser's structure, the complexity scores, and the LLM's descriptions back
-          together into one <code>ClassAnalysis</code> per class. A class whose LLM call failed
-          gets an explicit <code>"Description unavailable."</code> placeholder rather than being
-          silently dropped. One more LLM call — <code>generate_overview()</code> — produces the
-          single project-wide summary from the README, build file, and every class's one-line
-          purpose.
+          Merges the parser's structure, the complexity scores, the LLM's descriptions, and the
+          three deterministic signals from stages 5–7 (security findings, dependency edges,
+          churn) back together into one <code>ClassAnalysis</code> per class. A class whose LLM
+          call failed gets an explicit <code>"Description unavailable."</code> placeholder
+          rather than being silently dropped. One more LLM call —
+          <code>generate_overview()</code> — produces the single project-wide summary from the
+          README, build file, and every class's one-line purpose. Churn x complexity is then
+          ranked into a <code>hotspots</code> list of the riskiest classes.
         </p>
-        <div class="calls-out"><code>_assemble_classes()</code> + <code>_generate_overview()</code> → one <code>ProjectAnalysis</code></div>
+        <div class="calls-out"><code>_assemble_classes()</code> + <code>_generate_overview()</code> + <code>_compute_hotspots()</code> → one <code>ProjectAnalysis</code></div>
       </div>
 
       <div class="stage">
-        <div class="stage-num">8</div>
+        <div class="stage-num">11</div>
         <span class="file-tag">report_generator.py</span>
         <h3>Write the three output files</h3>
         <p>
@@ -519,7 +568,25 @@
       <dd>
         <code>.cache/</code> holds the cloned repo and the LLM response cache — disposable,
         regenerated on demand. <code>output/</code> holds the three deliverables described in
-        stage 8 above — what you actually came here for.
+        stage 11 above — what you actually came here for.
+      </dd>
+
+      <dt>hotspots = churn x complexity</dt>
+      <dd>
+        <code>pipeline._compute_hotspots()</code> scores every class as
+        <code>churn.commit_count * (1 + high-complexity method count)</code> and keeps the top 8.
+        A class with no churn data (history unavailable) scores 0 and is excluded rather than
+        favored — "risky" here always means both signals agreeing, not either alone.
+      </dd>
+
+      <dt>action.yml — the same pipeline, as a GitHub Action</dt>
+      <dd>
+        The repo root's <code>action.yml</code> is a composite action wrapping this exact CLI:
+        it runs <code>main.py --local-path $GITHUB_WORKSPACE</code> (stage 2 skipped, since
+        <code>actions/checkout</code> already did the equivalent), caches <code>.cache/</code>
+        across runs via <code>actions/cache</code>, and writes a job-summary table from
+        <code>analysis.json</code>'s <code>metadata</code>. See the README's "Use as a GitHub
+        Action" section for the copy-paste workflow snippet.
       </dd>
     </dl>
   </section>
@@ -544,6 +611,12 @@
         <div class="line">&nbsp;</div>
         <div class="line"><span class="comment"># force a fresh clone and bypass the LLM cache</span></div>
         <div class="line"><span class="prompt">PS&gt;</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt; --refresh-repo --refresh-cache</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># analyze a directory already on disk -- no clone at all</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --local-path C:\path\to\checked-out\repo</div>
+        <div class="line">&nbsp;</div>
+        <div class="line"><span class="comment"># clone more history so churn/hotspots reflect real activity</span></div>
+        <div class="line"><span class="prompt">PS&gt;</span> python main.py --repo-url https://github.com/&lt;owner&gt;/&lt;repo&gt; --git-history-depth 500</div>
         <div class="line">&nbsp;</div>
         <div class="line"><span class="comment"># see every flag</span></div>
         <div class="line"><span class="prompt">PS&gt;</span> python main.py --help</div>
@@ -618,6 +691,14 @@
           <tr>
             <td class="cmd"><code>python main.py --repo-url URL --max-files 15</code></td>
             <td class="desc">Cheap smoke test on a small subset</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>python main.py --local-path DIR</code></td>
+            <td class="desc">Analyze a directory already on disk -- skip cloning entirely</td>
+          </tr>
+          <tr>
+            <td class="cmd"><code>python main.py --repo-url URL --git-history-depth 500</code></td>
+            <td class="desc">Clone more history so churn/hotspots reflect real activity</td>
           </tr>
           <tr>
             <td class="cmd"><code>python main.py --help</code></td>

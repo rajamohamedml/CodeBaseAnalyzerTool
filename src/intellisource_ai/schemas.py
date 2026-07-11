@@ -18,7 +18,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 
 class ClassType(StrEnum):
@@ -64,6 +64,54 @@ class RestEndpoint(BaseModel):
     path: str
 
 
+class SecuritySeverity(StrEnum):
+    """Severity of a `SecurityFinding`, independent of the LLM's own
+    `notable_aspects` — these come from deterministic pattern matching in
+    `security_scanner.py`, not model judgment.
+    """
+
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class SecurityFinding(BaseModel):
+    """One deterministic security/quality signal flagged by
+    `security_scanner.py` — regex-based pattern matching over source text,
+    the same "documented heuristic" approach as `ComplexityMetrics`, not an
+    LLM opinion. See that module for what each `category` actually detects.
+    """
+
+    category: str
+    severity: SecuritySeverity
+    message: str
+    line: int | None = None
+
+
+class ChurnMetrics(BaseModel):
+    """Git-derived change frequency for one file, computed by `churn.py`.
+
+    `commit_count` and `last_modified` reflect however much history is
+    available in the local clone — a shallow clone (or a CI checkout with
+    `fetch-depth: 1`) will under-report both. See `config.py`'s
+    `--git-history-depth` for the clone-side knob that controls this.
+    """
+
+    commit_count: int
+    last_modified: str | None = None
+
+
+class DependencyEdge(BaseModel):
+    """One directed "depends on" relationship between two classes in this
+    repository, derived from import statements in `dependency_graph.py`.
+    External (JDK/framework/library) imports are excluded — both ends of
+    every edge are classes this run actually parsed.
+    """
+
+    from_class: str
+    to_class: str
+
+
 class ParsedMethod(BaseModel):
     """Structural facts about one method/constructor, extracted purely by
     parsing the AST. `start_line`/`end_line` are 1-indexed and are what
@@ -100,6 +148,9 @@ class ParsedClass(BaseModel):
     annotations: list[AnnotationInfo] = Field(default_factory=list)
     methods: list[ParsedMethod] = Field(default_factory=list)
     rest_endpoints: list[RestEndpoint] = Field(default_factory=list)
+    imports: list[str] = Field(default_factory=list)
+    start_line: int = 1
+    end_line: int = 1
 
 
 class ParseResult(BaseModel):
@@ -215,6 +266,9 @@ class ClassAnalysis(BaseModel):
     rest_endpoints: list[RestEndpoint] = Field(default_factory=list)
     methods: list[MethodAnalysis] = Field(default_factory=list)
     notable_aspects: list[str] = Field(default_factory=list)
+    security_findings: list[SecurityFinding] = Field(default_factory=list)
+    depends_on: list[str] = Field(default_factory=list)
+    churn: ChurnMetrics | None = None
 
 
 class RunMetadata(BaseModel):
@@ -232,6 +286,7 @@ class RunMetadata(BaseModel):
     total_input_tokens: int
     total_output_tokens: int
     estimated_cost_usd: float
+    security_findings_total: int = 0
 
 
 class ProjectAnalysis(BaseModel):
@@ -244,6 +299,11 @@ class ProjectAnalysis(BaseModel):
     project: ProjectOverview
     classes: list[ClassAnalysis] = Field(default_factory=list)
     metadata: RunMetadata
+    dependency_graph: list[DependencyEdge] = Field(default_factory=list)
+    hotspots: list[str] = Field(
+        default_factory=list,
+        description="class_name values ranked by churn x complexity, highest risk first.",
+    )
 
     @staticmethod
     def now_iso() -> str:

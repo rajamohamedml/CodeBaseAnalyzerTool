@@ -257,9 +257,10 @@ def _extract_rest_endpoints(
     return endpoints
 
 
-def _compute_method_end_line(source_lines: list[str], start_line: int) -> int:
-    """Determine the last line of a method's body by counting brace depth
-    from its declaration onward.
+def _compute_block_end_line(source_lines: list[str], start_line: int) -> int:
+    """Determine the last line of a `{ ... }` block (a method body or a
+    class/interface/enum body) by counting brace depth from its
+    declaration onward.
 
     `javalang` records where a declaration *starts* but not where its body
     *ends*, so this scans forward, tracking whether we're inside a string,
@@ -354,7 +355,7 @@ def _parse_method(node: Any, source_lines: list[str], source: str) -> ParsedMeth
     return_type_name = return_type.name if return_type is not None else "void"
     start_line = node.position.line if node.position else 1
     column = node.position.column if node.position else None
-    end_line = _compute_method_end_line(source_lines, start_line)
+    end_line = _compute_block_end_line(source_lines, start_line)
     signature = f"{return_type_name} {node.name}({', '.join(parameters)})"
     method_offset = _offset_for_position(source_lines, start_line, column)
 
@@ -399,6 +400,7 @@ def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
 
     package = tree.package.name if tree.package else ""
     relative_path = str(path.relative_to(repo_root)).replace("\\", "/")
+    imports = [imp.path for imp in (tree.imports or [])]
     classes: list[ParsedClass] = []
 
     # javalang's Node.filter() matches by exact type, not isinstance() --
@@ -417,6 +419,12 @@ def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
         for method_node in method_nodes:
             methods.append(_parse_method(method_node, source_lines, source))
 
+        # Used by security_scanner.py to bound a whole-class text scan
+        # (fields included, not just method bodies) -- the same
+        # brace-counting heuristic _parse_method uses for a method body.
+        class_start_line = type_node.position.line if type_node.position else 1
+        class_end_line = _compute_block_end_line(source_lines, class_start_line)
+
         all_method_annotations = [ann for m in methods for ann in m.annotations]
         classes.append(
             ParsedClass(
@@ -428,6 +436,9 @@ def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
                 annotations=class_annotations,
                 methods=methods,
                 rest_endpoints=_extract_rest_endpoints(class_annotations, all_method_annotations),
+                imports=imports,
+                start_line=class_start_line,
+                end_line=class_end_line,
             )
         )
 
