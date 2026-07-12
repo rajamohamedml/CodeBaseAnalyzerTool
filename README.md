@@ -7,7 +7,11 @@ findings, an internal dependency graph, and git-churn-derived hotspots —
 using an LLM (Claude Haiku 4.5, via LangChain). It is **repo-agnostic**: the
 target repository is always supplied by the caller, never hardcoded.
 
-This project can run against any given github repository configured
+The structural engine currently supports Java/Spring Boot codebases; Python,
+TypeScript, and JavaScript support is on the roadmap — only the parsing
+stage (`java_parser.py`) is language-specific, everything downstream
+(batching, caching, the LLM layer, report rendering) already operates on
+language-agnostic schemas.
 
 ## About
 
@@ -22,9 +26,14 @@ JSON and as a human-readable HTML report, so a new contributor, a
 reviewer, or a technical lead can get oriented in a large codebase in
 minutes rather than hours.
 
-It is deliberately **not** a linter, a test generator, or a security
-scanner — it answers one question well: *"What does this codebase
-contain, and what does each part of it do?"* Everything downstream (the
+It is deliberately **not** a general-purpose linter, a test generator, or
+a comprehensive security-scanning tool (no substitute for a real SAST
+product like Semgrep or Snyk) — it answers one question well: *"What does
+this codebase contain, what does each part of it do, and where's the
+risk?"* A narrow, deterministic security-signal layer (hardcoded
+credentials, SQL built via concatenation, empty catch blocks — see
+`security_scanner.py`) is one part of answering that question, not a
+claim to replace dedicated security tooling. Everything downstream (the
 project overview, the per-class descriptions, the REST API surface, the
 complexity hotspots) is derived from that single question.
 
@@ -105,7 +114,10 @@ side effect: files parsed, any files that failed to parse (and why),
 number of LLM calls made vs. served from cache, total input/output
 tokens, and an estimated USD cost. Re-running the same command against an
 unchanged repository should serve most or all classes from cache, at
-zero additional token cost.
+zero additional token cost. For reference, a full run against a
+247-class, 188-file production Spring Boot repository
+(`spring-rest-sakila`) completed for roughly $0.02–$0.08 depending on
+cache state — a real, reproducible figure, not a projected estimate.
 
 ## Approach
 

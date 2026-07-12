@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "intellisource-ai"
 version = "1.0.0"
-description = "Analyzes a Java/Spring codebase and extracts structured knowledge (overview, method signatures, complexity) using an LLM via LangChain."
+description = "Analyzes a Java/Spring codebase and extracts structured knowledge (overview, method signatures, complexity, security findings, dependency graph, git-churn hotspots) using an LLM via LangChain."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
