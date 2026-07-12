@@ -27,6 +27,7 @@ from javalang.tree import (
     InterfaceDeclaration,
 )
 
+from intellisource_ai.complexity import _strip_comments_and_literals
 from intellisource_ai.exceptions import JavaParseError
 from intellisource_ai.schemas import (
     AnnotationInfo,
@@ -372,6 +373,173 @@ def _parse_method(node: Any, source_lines: list[str], source: str) -> ParsedMeth
     )
 
 
+_SWITCH_KEYWORD = re.compile(r"(?<![\w$])switch(?![\w$])")
+
+
+def _find_switch_body_open_braces(masked: str) -> set[int]:
+    """Locate the opening `{` of every `switch (...) { ... }` body in
+    `masked` (a same-length, string/comment-blanked copy of the source --
+    see `complexity._strip_comments_and_literals` -- so a `switch` inside a
+    string/comment, or a stray `{`/`}` inside one, can't cause a false
+    match). Used to distinguish a switch's own top-level `case`/`default`
+    labels from ones nested inside an unrelated block.
+    """
+    positions: set[int] = set()
+    n = len(masked)
+    for match in _SWITCH_KEYWORD.finditer(masked):
+        paren_start = masked.find("(", match.end())
+        if paren_start == -1:
+            continue
+        depth = 0
+        j = paren_start
+        while j < n:
+            if masked[j] == "(":
+                depth += 1
+            elif masked[j] == ")":
+                depth -= 1
+                if depth == 0:
+                    break
+            j += 1
+        else:
+            continue  # unbalanced parens -- malformed, skip rather than guess
+        k = j + 1
+        while k < n and masked[k] in " \t\r\n":
+            k += 1
+        if k < n and masked[k] == "{":
+            positions.add(k)
+    return positions
+
+
+def _find_label_terminator(masked: str, start: int) -> int | None:
+    """From just after a `case`/`default` keyword, scan forward (skipping
+    over any parenthesized/bracketed label content, e.g. a record-pattern
+    label) to find the label's terminator.
+
+    Returns the offset of `->` if this is an arrow-style label (the thing
+    this whole normalization exists to rewrite), or `None` if it's already
+    colon-style or the file doesn't have the shape this function expects
+    (in which case the caller leaves it untouched rather than guessing).
+    """
+    n = len(masked)
+    depth = 0
+    i = start
+    while i < n:
+        ch = masked[i]
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth -= 1
+        elif depth == 0:
+            if masked[i : i + 2] == "->":
+                return i
+            if ch in ":{};":
+                return None
+        i += 1
+    return None
+
+
+def _find_top_level_commas(masked: str, start: int, end: int) -> list[int]:
+    """Offsets of the comma(s) separating a multi-label case
+    (`case A, B ->`) within `masked[start:end]`, skipping any comma nested
+    inside parens/brackets (e.g. a record-pattern label's own argument
+    list). `javalang` predates multi-label cases entirely -- even in
+    colon form -- so each one found here gets turned into its own
+    `case`, achieving the same fallthrough semantics the old way.
+    """
+    positions: list[int] = []
+    depth = 0
+    for offset in range(start, end):
+        ch = masked[offset]
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            positions.append(offset)
+    return positions
+
+
+def _normalize_arrow_switches(source: str) -> str:
+    """Best-effort rewrite of Java 14+ arrow-style `switch` case labels
+    (`case X -> stmt;`, `default -> stmt;`) into `javalang`-compatible
+    colon-style (`case X: stmt; break;`), so files using this newer syntax
+    can still be parsed structurally.
+
+    Only ever inserts same-line text (`: ` in place of `->`, `break; `
+    appended at each arm's end) -- never a newline -- so every line number
+    in the result matches the original exactly, which is what lets the
+    rest of this module keep treating line numbers as ground truth.
+
+    Deliberately does not attempt to detect whether a given `switch` is a
+    *statement* (what this rewrite actually fixes) or an *expression*
+    (`var x = switch (y) { ... }`, a different grammar addition entirely
+    that recoloring case labels can't fix). That's safe by construction:
+    `javalang` has no notion of switch-as-expression regardless of label
+    style, so an expression-form switch simply fails to parse again after
+    this rewrite too -- same outcome as today, never a silently wrong tree.
+    """
+    masked = _strip_comments_and_literals(source)
+    switch_open_braces = _find_switch_body_open_braces(masked)
+    if not switch_open_braces:
+        return source
+
+    n = len(masked)
+    edits: list[tuple[int, int, str]] = []
+    brace_depth = 0
+    switch_body_depths: list[int] = []
+    pending_break: list[bool] = []
+    i = 0
+    while i < n:
+        ch = masked[i]
+        if ch == "{":
+            brace_depth += 1
+            if i in switch_open_braces:
+                switch_body_depths.append(brace_depth)
+                pending_break.append(False)
+            i += 1
+            continue
+        if ch == "}":
+            if switch_body_depths and switch_body_depths[-1] == brace_depth:
+                if pending_break[-1]:
+                    edits.append((i, i, "break; "))
+                switch_body_depths.pop()
+                pending_break.pop()
+            brace_depth -= 1
+            i += 1
+            continue
+
+        if switch_body_depths and brace_depth == switch_body_depths[-1]:
+            is_case = masked[i : i + 4] == "case" and (i == 0 or not masked[i - 1].isalnum())
+            is_default = masked[i : i + 7] == "default" and (i == 0 or not masked[i - 1].isalnum())
+            label_end = i + 4 if is_case else i + 7 if is_default else None
+            if label_end is not None and not masked[label_end : label_end + 1].isalnum():
+                arrow_pos = _find_label_terminator(masked, label_end)
+                if arrow_pos is not None:
+                    if pending_break[-1]:
+                        edits.append((i, i, "break; "))
+                    if is_case:
+                        for comma_pos in _find_top_level_commas(masked, label_end, arrow_pos):
+                            edits.append((comma_pos, comma_pos + 1, ": case"))
+                    edits.append((arrow_pos, arrow_pos + 2, ": "))
+                    pending_break[-1] = True
+                    i = arrow_pos + 2
+                    continue
+        i += 1
+
+    if not edits:
+        return source
+
+    edits.sort(key=lambda edit: edit[0])
+    result: list[str] = []
+    cursor = 0
+    for start, end, replacement in edits:
+        result.append(source[cursor:start])
+        result.append(replacement)
+        cursor = end
+    result.append(source[cursor:])
+    return "".join(result)
+
+
 def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
     """Parse one `.java` file into zero or more `ParsedClass` records
     (zero for files with no type declarations; more than one for files
@@ -383,21 +551,41 @@ def parse_java_file(path: Path, repo_root: Path) -> list[ParsedClass]:
             and continue, not abort the whole run.
     """
     source = path.read_text(encoding="utf-8", errors="replace")
-    source_lines = source.splitlines()
     try:
         tree = javalang.parse.parse(source)
     except javalang.parser.JavaSyntaxError as exc:
-        # JavaSyntaxError.__init__ calls super().__init__() with no
-        # arguments, so str(exc) is always empty -- the actual detail lives
-        # in .description ("Expected ':'") and .at (the offending token and
-        # its position), which is what we want surfaced instead.
-        detail = exc.description
-        if exc.at is not None:
-            detail = f"{detail} (at {exc.at})"
-        raise JavaParseError(f"{path}: {detail}") from exc
+        # `javalang` doesn't understand Java 14+ arrow-style `case X -> ...`
+        # switch labels at all. Retry once against a normalized copy before
+        # giving up -- see _normalize_arrow_switches for why this can only
+        # help, never silently produce a wrong parse.
+        recovered_tree = None
+        if "->" in source:
+            normalized = _normalize_arrow_switches(source)
+            if normalized != source:
+                try:
+                    recovered_tree = javalang.parse.parse(normalized)
+                    source = normalized
+                except (javalang.parser.JavaSyntaxError, javalang.tokenizer.LexerError):
+                    recovered_tree = None
+
+        if recovered_tree is None:
+            # JavaSyntaxError.__init__ calls super().__init__() with no
+            # arguments, so str(exc) is always empty -- the actual detail
+            # lives in .description ("Expected ':'") and .at (the offending
+            # token and its position), which is what we want surfaced instead.
+            detail = exc.description
+            if exc.at is not None:
+                detail = f"{detail} (at {exc.at})"
+            raise JavaParseError(f"{path}: {detail}") from exc
+
+        logger.info(
+            "%s: recovered using arrow-switch (`case X -> ...`) compatibility normalization", path
+        )
+        tree = recovered_tree
     except javalang.tokenizer.LexerError as exc:
         raise JavaParseError(f"{path}: {exc}") from exc
 
+    source_lines = source.splitlines()
     package = tree.package.name if tree.package else ""
     relative_path = str(path.relative_to(repo_root)).replace("\\", "/")
     imports = [imp.path for imp in (tree.imports or [])]

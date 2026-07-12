@@ -2,38 +2,38 @@
   "schema_version": "1.1",
   "project": {
     "name": "spring-rest-sakila",
-    "description": "A Spring Boot REST API service that provides full CRUD operations and complex query support for the MySQL Sakila sample database, which models a DVD rental store company. The service exposes endpoints for managing films, actors, customers, rentals, payments, staff, stores, and locations, with features including role-based access control, JWT authentication, and HAL-based hypermedia responses.",
+    "description": "A REST API service that provides CRUD and complex query operations on the Sakila sample database, a MySQL database modeling a DVD rental store company. The service exposes endpoints for managing core business entities including actors, films, customers, rentals, payments, staff, stores, and locations. It offers comprehensive API capabilities including role-based access control, JWT authentication, transactional support, caching via Redis, and detailed API documentation through OpenAPI/Swagger and REST Docs.",
     "tech_stack": [
-      "Spring Boot",
+      "Spring Boot Web",
       "Spring Data JPA",
       "Spring HATEOAS",
-      "Spring REST Docs",
       "Spring Security",
-      "Spring Actuator",
+      "Spring REST Docs",
       "Spring Validation",
-      "Hibernate",
-      "Blaze-Persistence",
-      "QueryDSL",
-      "MapStruct",
-      "Lombok",
-      "JWT (JJWT)",
+      "Spring Actuator",
+      "Spring Data Redis",
       "MySQL Connector",
-      "Gradle",
-      "Redis",
-      "Prometheus"
+      "Lombok",
+      "MapStruct",
+      "QueryDSL",
+      "Blaze-Persistence",
+      "JJWT (JWT)",
+      "Prometheus",
+      "Kotlin",
+      "Gradle"
     ],
-    "architecture_summary": "The application follows a layered architecture with clear separation of concerns: a REST controller layer handling HTTP endpoints, a service layer containing business logic, a repository layer providing data access with both standard Spring Data JPA and custom implementations, mapper components for DTOs, and a comprehensive configuration layer. The code is organized into feature modules (actors, films, customers, rentals, payments, staff, stores, locations, authentication, reporting) with each module containing its own controllers, services, repositories, DTOs, and entities. Cross-cutting concerns are handled through centralized configuration classes and filters (security, authentication, logging, exception handling).",
+    "architecture_summary": "The application follows a layered architecture with clear separation of concerns: Controller layer (REST endpoints with role-based security), Service layer (business logic with transactional support), Repository layer (Spring Data JPA with custom QueryDSL/Blaze-Persistence queries), Entity layer (JPA-mapped domain objects), and DTO layer (data transfer objects with MapStruct mappers). Cross-cutting concerns are handled through filters (JWT authentication, MDC logging), configuration classes (Security, Redis, Persistence), and custom exception handling. The codebase is organized into distinct domain modules (actor, film, customer, rental, payment, staff, store, location, authentication) each with their own controllers, services, repositories, entities, and DTOs.",
     "main_modules": [
       "Actor Management",
       "Film Management",
       "Customer Management",
       "Rental Management",
-      "Payment Processing",
+      "Payment Management",
       "Staff Management",
       "Store Management",
-      "Location Management (Addresses, Cities, Countries, Languages)",
-      "Authentication & Authorization",
-      "Reporting (Sales Reports)"
+      "Location Management",
+      "Authentication/Authorization",
+      "Reporting"
     ]
   },
   "classes": [
@@ -239,7 +239,7 @@
       "package": "com.example.app.common.constant",
       "class_name": "Constants",
       "class_type": "other",
-      "description": "Constants class for film categories, providing enumerated constant values for category classification.",
+      "description": "Holds constant values related to film categories.",
       "rest_endpoints": [],
       "methods": [],
       "notable_aspects": [],
@@ -2376,6 +2376,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2418,6 +2419,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2460,6 +2462,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2502,6 +2505,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2541,6 +2545,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2580,6 +2585,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2622,6 +2628,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -2672,6 +2679,7 @@
         "FilmRating",
         "Language",
         "LanguageDto",
+        "LocalDateYearSerializer",
         "NullCheckable",
         "SpecialFeature"
       ],
@@ -3094,6 +3102,75 @@
       "churn": {
         "commit_count": 1,
         "last_modified": "2023-06-28"
+      }
+    },
+    {
+      "file_path": "src/main/java/com/example/app/services/catalog/domain/serializer/LocalDateYearSerializer.java",
+      "package": "com.example.app.services.catalog.domain.serializer",
+      "class_name": "LocalDateYearSerializer",
+      "class_type": "other",
+      "description": "A custom Jackson serializer for LocalDate objects that serializes dates as year-only values, extending LocalDateSerializer with configurable formatting and timestamp options.",
+      "rest_endpoints": [],
+      "methods": [
+        {
+          "signature": "void LocalDateYearSerializer()",
+          "description": "Default no-argument constructor that initializes the serializer with default settings.",
+          "loc": 3,
+          "cyclomatic_estimate": 1,
+          "high_complexity": false
+        },
+        {
+          "signature": "void LocalDateYearSerializer(LocalDateSerializer base, Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat shape)",
+          "description": "Constructor that initializes the serializer with a base LocalDateSerializer and configuration parameters for timestamp formatting and shape.",
+          "loc": 4,
+          "cyclomatic_estimate": 1,
+          "high_complexity": false
+        },
+        {
+          "signature": "void LocalDateYearSerializer(DateTimeFormatter formatter)",
+          "description": "Constructor that initializes the serializer with a custom DateTimeFormatter for year-based date formatting.",
+          "loc": 3,
+          "cyclomatic_estimate": 1,
+          "high_complexity": false
+        },
+        {
+          "signature": "LocalDateYearSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat shape)",
+          "description": "Description unavailable.",
+          "loc": 3,
+          "cyclomatic_estimate": 1,
+          "high_complexity": false
+        },
+        {
+          "signature": "void serialize(LocalDate date, JsonGenerator gen, SerializerProvider provider)",
+          "description": "Description unavailable.",
+          "loc": 13,
+          "cyclomatic_estimate": 3,
+          "high_complexity": false
+        },
+        {
+          "signature": "void serializeWithType(LocalDate value, JsonGenerator gen, SerializerProvider provider, TypeSerializer typeSer)",
+          "description": "Description unavailable.",
+          "loc": 11,
+          "cyclomatic_estimate": 3,
+          "high_complexity": false
+        },
+        {
+          "signature": "void _serializeAsArrayContents(LocalDate value, JsonGenerator gen, SerializerProvider provider)",
+          "description": "Helper method that serializes a LocalDate as array contents in the year-only format.",
+          "loc": 4,
+          "cyclomatic_estimate": 1,
+          "high_complexity": false
+        }
+      ],
+      "notable_aspects": [
+        "Custom Jackson serializer extending LocalDateSerializer for year-only date serialization",
+        "Cyclomatic complexity of 3 in serialize() and serializeWithType() methods suggests conditional branching for multiple output format cases"
+      ],
+      "security_findings": [],
+      "depends_on": [],
+      "churn": {
+        "commit_count": 2,
+        "last_modified": "2023-07-05"
       }
     },
     {
@@ -9842,12 +9919,12 @@
       "package": "com.example.app",
       "class_name": "SpringRestSakilaApplication",
       "class_type": "other",
-      "description": "Description unavailable.",
+      "description": "Entry point for the Spring Boot application that launches the REST API service using the Sakila database schema.",
       "rest_endpoints": [],
       "methods": [
         {
           "signature": "void main(String args)",
-          "description": "Description unavailable.",
+          "description": "Static main method that bootstraps and starts the Spring Boot application.",
           "loc": 3,
           "cyclomatic_estimate": 1,
           "high_complexity": false
@@ -9863,17 +9940,15 @@
     }
   ],
   "metadata": {
-    "generated_at": "2026-07-12T03:33:37.580149+00:00",
+    "generated_at": "2026-07-12T04:55:15.383840+00:00",
     "model_used": "claude-haiku-4-5",
-    "total_files_parsed": 187,
-    "parse_errors": [
-      ".cache\\spring-rest-sakila\\repo\\src\\main\\java\\com\\example\\app\\services\\catalog\\domain\\serializer\\LocalDateYearSerializer.java: Expected ':' (at Keyword \"case\" line 57, position 13)"
-    ],
-    "llm_calls_made": 74,
-    "llm_calls_cached": 43,
-    "total_input_tokens": 124710,
-    "total_output_tokens": 50155,
-    "estimated_cost_usd": 0.37548499999999996,
+    "total_files_parsed": 188,
+    "parse_errors": [],
+    "llm_calls_made": 4,
+    "llm_calls_cached": 240,
+    "total_input_tokens": 14506,
+    "total_output_tokens": 1291,
+    "estimated_cost_usd": 0.020961,
     "security_findings_total": 0
   },
   "dependency_graph": [
@@ -10235,6 +10310,10 @@
     },
     {
       "from_class": "FilmDto",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmDto",
       "to_class": "NullCheckable"
     },
     {
@@ -10263,6 +10342,10 @@
     },
     {
       "from_class": "Film",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "Film",
       "to_class": "NullCheckable"
     },
     {
@@ -10291,6 +10374,10 @@
     },
     {
       "from_class": "FilmRequest",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmRequest",
       "to_class": "NullCheckable"
     },
     {
@@ -10319,6 +10406,10 @@
     },
     {
       "from_class": "FilmResponse",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmResponse",
       "to_class": "NullCheckable"
     },
     {
@@ -10347,6 +10438,10 @@
     },
     {
       "from_class": "FilmCategory",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmCategory",
       "to_class": "NullCheckable"
     },
     {
@@ -10375,6 +10470,10 @@
     },
     {
       "from_class": "FilmActor",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmActor",
       "to_class": "NullCheckable"
     },
     {
@@ -10403,6 +10502,10 @@
     },
     {
       "from_class": "FilmText",
+      "to_class": "LocalDateYearSerializer"
+    },
+    {
+      "from_class": "FilmText",
       "to_class": "NullCheckable"
     },
     {
@@ -10428,6 +10531,10 @@
     {
       "from_class": "FilterOption",
       "to_class": "LanguageDto"
+    },
+    {
+      "from_class": "FilterOption",
+      "to_class": "LocalDateYearSerializer"
     },
     {
       "from_class": "FilterOption",

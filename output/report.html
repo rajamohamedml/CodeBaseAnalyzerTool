@@ -387,53 +387,53 @@
 
 <header class="hero">
   <h1>spring-rest-sakila</h1>
-  <p class="desc">A Spring Boot REST API service that provides full CRUD operations and complex query support for the MySQL Sakila sample database, which models a DVD rental store company. The service exposes endpoints for managing films, actors, customers, rentals, payments, staff, stores, and locations, with features including role-based access control, JWT authentication, and HAL-based hypermedia responses.</p>
+  <p class="desc">A REST API service that provides CRUD and complex query operations on the Sakila sample database, a MySQL database modeling a DVD rental store company. The service exposes endpoints for managing core business entities including actors, films, customers, rentals, payments, staff, stores, and locations. It offers comprehensive API capabilities including role-based access control, JWT authentication, transactional support, caching via Redis, and detailed API documentation through OpenAPI/Swagger and REST Docs.</p>
   <div class="generated-meta">
     <span aria-hidden="true">🕐</span>
-    Generated July 12, 2026 at 03:33 AM UTC
+    Generated July 12, 2026 at 04:55 AM UTC
   </div>
   
   <div class="badges">
     <span class="badges-label">Technology Stack:</span>
     
-    <span class="tech-badge">Spring Boot</span>
+    <span class="tech-badge">Spring Boot Web</span>
     
     <span class="tech-badge">Spring Data JPA</span>
     
     <span class="tech-badge">Spring HATEOAS</span>
     
-    <span class="tech-badge">Spring REST Docs</span>
-    
     <span class="tech-badge">Spring Security</span>
     
-    <span class="tech-badge">Spring Actuator</span>
+    <span class="tech-badge">Spring REST Docs</span>
     
     <span class="tech-badge">Spring Validation</span>
     
-    <span class="tech-badge">Hibernate</span>
+    <span class="tech-badge">Spring Actuator</span>
     
-    <span class="tech-badge">Blaze-Persistence</span>
-    
-    <span class="tech-badge">QueryDSL</span>
-    
-    <span class="tech-badge">MapStruct</span>
-    
-    <span class="tech-badge">Lombok</span>
-    
-    <span class="tech-badge">JWT (JJWT)</span>
+    <span class="tech-badge">Spring Data Redis</span>
     
     <span class="tech-badge">MySQL Connector</span>
     
-    <span class="tech-badge">Gradle</span>
+    <span class="tech-badge">Lombok</span>
     
-    <span class="tech-badge">Redis</span>
+    <span class="tech-badge">MapStruct</span>
+    
+    <span class="tech-badge">QueryDSL</span>
+    
+    <span class="tech-badge">Blaze-Persistence</span>
+    
+    <span class="tech-badge">JJWT (JWT)</span>
     
     <span class="tech-badge">Prometheus</span>
+    
+    <span class="tech-badge">Kotlin</span>
+    
+    <span class="tech-badge">Gradle</span>
     
   </div>
   
   
-  <div class="architecture-note">The application follows a layered architecture with clear separation of concerns: a REST controller layer handling HTTP endpoints, a service layer containing business logic, a repository layer providing data access with both standard Spring Data JPA and custom implementations, mapper components for DTOs, and a comprehensive configuration layer. The code is organized into feature modules (actors, films, customers, rentals, payments, staff, stores, locations, authentication, reporting) with each module containing its own controllers, services, repositories, DTOs, and entities. Cross-cutting concerns are handled through centralized configuration classes and filters (security, authentication, logging, exception handling).</div>
+  <div class="architecture-note">The application follows a layered architecture with clear separation of concerns: Controller layer (REST endpoints with role-based security), Service layer (business logic with transactional support), Repository layer (Spring Data JPA with custom QueryDSL/Blaze-Persistence queries), Entity layer (JPA-mapped domain objects), and DTO layer (data transfer objects with MapStruct mappers). Cross-cutting concerns are handled through filters (JWT authentication, MDC logging), configuration classes (Security, Redis, Persistence), and custom exception handling. The codebase is organized into distinct domain modules (actor, film, customer, rental, payment, staff, store, location, authentication) each with their own controllers, services, repositories, entities, and DTOs.</div>
   
   
   <div class="key-modules">
@@ -447,17 +447,17 @@
     
     <span class="module-chip">Rental Management</span>
     
-    <span class="module-chip">Payment Processing</span>
+    <span class="module-chip">Payment Management</span>
     
     <span class="module-chip">Staff Management</span>
     
     <span class="module-chip">Store Management</span>
     
-    <span class="module-chip">Location Management (Addresses, Cities, Countries, Languages)</span>
+    <span class="module-chip">Location Management</span>
     
-    <span class="module-chip">Authentication &amp; Authorization</span>
+    <span class="module-chip">Authentication/Authorization</span>
     
-    <span class="module-chip">Reporting (Sales Reports)</span>
+    <span class="module-chip">Reporting</span>
     
   </div>
   
@@ -466,13 +466,13 @@
 <main>
 
   <div class="stats-grid">
-    <div class="stat-card"><div class="value">246</div><div class="label">Classes Analyzed</div></div>
-    <div class="stat-card"><div class="value">601</div><div class="label">Methods</div></div>
+    <div class="stat-card"><div class="value">247</div><div class="label">Classes Analyzed</div></div>
+    <div class="stat-card"><div class="value">608</div><div class="label">Methods</div></div>
     <div class="stat-card"><div class="value">70</div><div class="label">REST Endpoints</div></div>
     <div class="stat-card"><div class="value">11</div><div class="label">High Complexity</div></div>
     <div class="stat-card"><div class="value">0</div><div class="label">Security Findings</div></div>
-    <div class="stat-card"><div class="value">36.8%</div><div class="label">Cache Hit Rate</div></div>
-    <div class="stat-card"><div class="value">$0.3755</div><div class="label">Estimated Cost</div></div>
+    <div class="stat-card"><div class="value">98.4%</div><div class="label">Cache Hit Rate</div></div>
+    <div class="stat-card"><div class="value">$0.0210</div><div class="label">Estimated Cost</div></div>
   </div>
 
   
@@ -490,7 +490,7 @@
     
     <a href="#module-3">
       <span class="nav-dot" style="background: #c98500;" aria-hidden="true"></span>
-      catalog <span class="nav-count">62</span>
+      catalog <span class="nav-count">63</span>
     </a>
     
     <a href="#module-4">
@@ -748,7 +748,7 @@
       <summary>
         <span aria-hidden="true">💡</span>
         <span>Notable Aspects</span>
-        <span class="count-badge">317</span>
+        <span class="count-badge">319</span>
       </summary>
       
       <div class="findings-subcategories">
@@ -1495,7 +1495,7 @@
           <summary>
             <span aria-hidden="true">🔹</span>
             <span>Other</span>
-            <span class="count-badge">41</span>
+            <span class="count-badge">42</span>
           </summary>
           <div class="findings-list">
             
@@ -1572,6 +1572,11 @@
             <div class="finding-item">
               <span class="finding-text">filmId is ignored during DTO-to-entity conversion, preserving database-generated identifier semantics</span>
               <span class="source">FilmMapper &mdash; src/main/java/com/example/app/services/catalog/domain/mapper/FilmMapper.java</span>
+            </div>
+            
+            <div class="finding-item">
+              <span class="finding-text">Custom Jackson serializer extending LocalDateSerializer for year-only date serialization</span>
+              <span class="source">LocalDateYearSerializer &mdash; src/main/java/com/example/app/services/catalog/domain/serializer/LocalDateYearSerializer.java</span>
             </div>
             
             <div class="finding-item">
@@ -1711,7 +1716,7 @@
           <summary>
             <span aria-hidden="true">📐</span>
             <span>Code Complexity &amp; Structure</span>
-            <span class="count-badge">39</span>
+            <span class="count-badge">40</span>
           </summary>
           <div class="findings-list">
             
@@ -1763,6 +1768,11 @@
             <div class="finding-item">
               <span class="finding-text">Lombok annotations provide generated getter, setter, and toString implementations</span>
               <span class="source">FilterOption &mdash; src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</span>
+            </div>
+            
+            <div class="finding-item">
+              <span class="finding-text">Cyclomatic complexity of 3 in serialize() and serializeWithType() methods suggests conditional branching for multiple output format cases</span>
+              <span class="source">LocalDateYearSerializer &mdash; src/main/java/com/example/app/services/catalog/domain/serializer/LocalDateYearSerializer.java</span>
             </div>
             
             <div class="finding-item">
@@ -2490,7 +2500,7 @@
             
           </div>
           <div class="file-path">src/main/java/com/example/app/SpringRestSakilaApplication.java</div>
-          <div class="class-description clamp">Description unavailable.</div>
+          <div class="class-description clamp">Entry point for the Spring Boot application that launches the REST API service using the Sakila database schema.</div>
 
           
 
@@ -2518,7 +2528,7 @@
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
           <div class="dialog-body">
-            <div class="class-description">Description unavailable.</div>
+            <div class="class-description">Entry point for the Spring Boot application that launches the REST API service using the Sakila database schema.</div>
 
             
 
@@ -2537,7 +2547,7 @@
                       void main(String args)
                       
                     </td>
-                    <td>Description unavailable.</td>
+                    <td>Static main method that bootstraps and starts the Spring Boot application.</td>
                   </tr>
                   
                 </tbody>
@@ -3545,7 +3555,7 @@
     <details class="module-block" id="module-3" style="--module-color: #c98500;">
       <summary>
         <span class="module-name">catalog</span>
-        <span class="module-count">62 classes</span>
+        <span class="module-count">63 classes</span>
       </summary>
       <div class="module-body">
       <div class="class-grid">
@@ -5699,6 +5709,8 @@
               
               <span class="dep-chip">LanguageDto</span>
               
+              <span class="dep-chip">LocalDateYearSerializer</span>
+              
               <span class="dep-chip">NullCheckable</span>
               
               <span class="dep-chip">SpecialFeature</span>
@@ -5770,6 +5782,8 @@
               <span class="dep-chip">Language</span>
               
               <span class="dep-chip">LanguageDto</span>
+              
+              <span class="dep-chip">LocalDateYearSerializer</span>
               
               <span class="dep-chip">NullCheckable</span>
               
@@ -5876,6 +5890,8 @@
               
               <span class="dep-chip">LanguageDto</span>
               
+              <span class="dep-chip">LocalDateYearSerializer</span>
+              
               <span class="dep-chip">NullCheckable</span>
               
               <span class="dep-chip">SpecialFeature</span>
@@ -5980,6 +5996,8 @@
               <span class="dep-chip">Language</span>
               
               <span class="dep-chip">LanguageDto</span>
+              
+              <span class="dep-chip">LocalDateYearSerializer</span>
               
               <span class="dep-chip">NullCheckable</span>
               
@@ -6086,6 +6104,8 @@
               
               <span class="dep-chip">LanguageDto</span>
               
+              <span class="dep-chip">LocalDateYearSerializer</span>
+              
               <span class="dep-chip">NullCheckable</span>
               
               <span class="dep-chip">SpecialFeature</span>
@@ -6183,6 +6203,8 @@
               
               <span class="dep-chip">LanguageDto</span>
               
+              <span class="dep-chip">LocalDateYearSerializer</span>
+              
               <span class="dep-chip">NullCheckable</span>
               
               <span class="dep-chip">SpecialFeature</span>
@@ -6279,6 +6301,8 @@
               <span class="dep-chip">Language</span>
               
               <span class="dep-chip">LanguageDto</span>
+              
+              <span class="dep-chip">LocalDateYearSerializer</span>
               
               <span class="dep-chip">NullCheckable</span>
               
@@ -6384,6 +6408,8 @@
               <span class="dep-chip">Language</span>
               
               <span class="dep-chip">LanguageDto</span>
+              
+              <span class="dep-chip">LocalDateYearSerializer</span>
               
               <span class="dep-chip">NullCheckable</span>
               
@@ -7450,6 +7476,132 @@
              aria-haspopup="dialog" aria-controls="class-dialog-53"
              data-dialog-target="class-dialog-53">
           <div class="class-card-header">
+            <span class="class-name">LocalDateYearSerializer</span>
+            <span class="type-badge other">other</span>
+            
+          </div>
+          <div class="file-path">src/main/java/com/example/app/services/catalog/domain/serializer/LocalDateYearSerializer.java</div>
+          <div class="class-description clamp">A custom Jackson serializer for LocalDate objects that serializes dates as year-only values, extending LocalDateSerializer with configurable formatting and timestamp options.</div>
+
+          
+
+          <div class="card-footer">
+            <span>
+              7 methods &middot; 2 notable
+            </span>
+            <span class="view-details">View details &rarr;</span>
+          </div>
+        </div>
+
+        <dialog id="class-dialog-53" class="class-dialog" aria-label="LocalDateYearSerializer details">
+          <div class="dialog-header">
+            <div class="dialog-header-text">
+              <div class="class-card-header">
+                <span class="class-name">LocalDateYearSerializer</span>
+                <span class="type-badge other">other</span>
+              </div>
+              <div class="file-path">src/main/java/com/example/app/services/catalog/domain/serializer/LocalDateYearSerializer.java</div>
+              <div class="file-path package-path">package com.example.app.services.catalog.domain.serializer</div>
+              
+              <div class="churn-note">2 commits &middot; last modified 2023-07-05</div>
+              
+            </div>
+            <button type="button" class="dialog-close" aria-label="Close">&times;</button>
+          </div>
+          <div class="dialog-body">
+            <div class="class-description">A custom Jackson serializer for LocalDate objects that serializes dates as year-only values, extending LocalDateSerializer with configurable formatting and timestamp options.</div>
+
+            
+
+            
+
+            
+
+            
+            <div class="methods-wrapper">
+              <table class="methods">
+                <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                <tbody>
+                  
+                  <tr >
+                    <td class="signature">
+                      void LocalDateYearSerializer()
+                      
+                    </td>
+                    <td>Default no-argument constructor that initializes the serializer with default settings.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      void LocalDateYearSerializer(LocalDateSerializer base, Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat shape)
+                      
+                    </td>
+                    <td>Constructor that initializes the serializer with a base LocalDateSerializer and configuration parameters for timestamp formatting and shape.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      void LocalDateYearSerializer(DateTimeFormatter formatter)
+                      
+                    </td>
+                    <td>Constructor that initializes the serializer with a custom DateTimeFormatter for year-based date formatting.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      LocalDateYearSerializer withFormat(Boolean useTimestamp, DateTimeFormatter dtf, JsonFormat shape)
+                      
+                    </td>
+                    <td>Description unavailable.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      void serialize(LocalDate date, JsonGenerator gen, SerializerProvider provider)
+                      
+                    </td>
+                    <td>Description unavailable.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      void serializeWithType(LocalDate value, JsonGenerator gen, SerializerProvider provider, TypeSerializer typeSer)
+                      
+                    </td>
+                    <td>Description unavailable.</td>
+                  </tr>
+                  
+                  <tr >
+                    <td class="signature">
+                      void _serializeAsArrayContents(LocalDate value, JsonGenerator gen, SerializerProvider provider)
+                      
+                    </td>
+                    <td>Helper method that serializes a LocalDate as array contents in the year-only format.</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+            
+
+            
+            <div class="notable-tags">
+              
+              <span class="notable-tag">Custom Jackson serializer extending LocalDateSerializer for year-only date serialization</span>
+              
+              <span class="notable-tag">Cyclomatic complexity of 3 in serialize() and serializeWithType() methods suggests conditional branching for multiple output format cases</span>
+              
+            </div>
+            
+          </div>
+        </dialog>
+        
+        
+        
+        <div class="class-card clickable" tabindex="0" role="button"
+             aria-haspopup="dialog" aria-controls="class-dialog-54"
+             data-dialog-target="class-dialog-54">
+          <div class="class-card-header">
             <span class="class-name">ActorRepository</span>
             <span class="type-badge repository">repository</span>
             
@@ -7467,7 +7619,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-53" class="class-dialog" aria-label="ActorRepository details">
+        <dialog id="class-dialog-54" class="class-dialog" aria-label="ActorRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7526,8 +7678,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-54"
-             data-dialog-target="class-dialog-54">
+             aria-haspopup="dialog" aria-controls="class-dialog-55"
+             data-dialog-target="class-dialog-55">
           <div class="class-card-header">
             <span class="class-name">CategoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -7546,7 +7698,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-54" class="class-dialog" aria-label="CategoryRepository details">
+        <dialog id="class-dialog-55" class="class-dialog" aria-label="CategoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7588,8 +7740,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-55"
-             data-dialog-target="class-dialog-55">
+             aria-haspopup="dialog" aria-controls="class-dialog-56"
+             data-dialog-target="class-dialog-56">
           <div class="class-card-header">
             <span class="class-name">CustomActorRepository</span>
             <span class="type-badge repository">repository</span>
@@ -7608,7 +7760,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-55" class="class-dialog" aria-label="CustomActorRepository details">
+        <dialog id="class-dialog-56" class="class-dialog" aria-label="CustomActorRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7717,8 +7869,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-56"
-             data-dialog-target="class-dialog-56">
+             aria-haspopup="dialog" aria-controls="class-dialog-57"
+             data-dialog-target="class-dialog-57">
           <div class="class-card-header">
             <span class="class-name">CustomActorRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -7737,7 +7889,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-56" class="class-dialog" aria-label="CustomActorRepositoryImpl details">
+        <dialog id="class-dialog-57" class="class-dialog" aria-label="CustomActorRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7872,8 +8024,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-57"
-             data-dialog-target="class-dialog-57">
+             aria-haspopup="dialog" aria-controls="class-dialog-58"
+             data-dialog-target="class-dialog-58">
           <div class="class-card-header">
             <span class="class-name">CustomCategoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -7892,7 +8044,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-57" class="class-dialog" aria-label="CustomCategoryRepository details">
+        <dialog id="class-dialog-58" class="class-dialog" aria-label="CustomCategoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7925,8 +8077,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-58"
-             data-dialog-target="class-dialog-58">
+             aria-haspopup="dialog" aria-controls="class-dialog-59"
+             data-dialog-target="class-dialog-59">
           <div class="class-card-header">
             <span class="class-name">CustomCategoryRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -7945,7 +8097,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-58" class="class-dialog" aria-label="CustomCategoryRepositoryImpl details">
+        <dialog id="class-dialog-59" class="class-dialog" aria-label="CustomCategoryRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -7978,8 +8130,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-59"
-             data-dialog-target="class-dialog-59">
+             aria-haspopup="dialog" aria-controls="class-dialog-60"
+             data-dialog-target="class-dialog-60">
           <div class="class-card-header">
             <span class="class-name">CustomFilmActorRepository</span>
             <span class="type-badge repository">repository</span>
@@ -7998,7 +8150,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-59" class="class-dialog" aria-label="CustomFilmActorRepository details">
+        <dialog id="class-dialog-60" class="class-dialog" aria-label="CustomFilmActorRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8031,8 +8183,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-60"
-             data-dialog-target="class-dialog-60">
+             aria-haspopup="dialog" aria-controls="class-dialog-61"
+             data-dialog-target="class-dialog-61">
           <div class="class-card-header">
             <span class="class-name">CustomFilmActorRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -8051,7 +8203,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-60" class="class-dialog" aria-label="CustomFilmActorRepositoryImpl details">
+        <dialog id="class-dialog-61" class="class-dialog" aria-label="CustomFilmActorRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8084,8 +8236,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-61"
-             data-dialog-target="class-dialog-61">
+             aria-haspopup="dialog" aria-controls="class-dialog-62"
+             data-dialog-target="class-dialog-62">
           <div class="class-card-header">
             <span class="class-name">CustomFilmCategoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8104,7 +8256,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-61" class="class-dialog" aria-label="CustomFilmCategoryRepository details">
+        <dialog id="class-dialog-62" class="class-dialog" aria-label="CustomFilmCategoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8137,8 +8289,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-62"
-             data-dialog-target="class-dialog-62">
+             aria-haspopup="dialog" aria-controls="class-dialog-63"
+             data-dialog-target="class-dialog-63">
           <div class="class-card-header">
             <span class="class-name">CustomFilmCategoryRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -8157,7 +8309,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-62" class="class-dialog" aria-label="CustomFilmCategoryRepositoryImpl details">
+        <dialog id="class-dialog-63" class="class-dialog" aria-label="CustomFilmCategoryRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8190,8 +8342,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-63"
-             data-dialog-target="class-dialog-63">
+             aria-haspopup="dialog" aria-controls="class-dialog-64"
+             data-dialog-target="class-dialog-64">
           <div class="class-card-header">
             <span class="class-name">CustomFilmRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8210,7 +8362,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-63" class="class-dialog" aria-label="CustomFilmRepository details">
+        <dialog id="class-dialog-64" class="class-dialog" aria-label="CustomFilmRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8311,8 +8463,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-64"
-             data-dialog-target="class-dialog-64">
+             aria-haspopup="dialog" aria-controls="class-dialog-65"
+             data-dialog-target="class-dialog-65">
           <div class="class-card-header">
             <span class="class-name">CustomFilmRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -8331,7 +8483,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-64" class="class-dialog" aria-label="CustomFilmRepositoryImpl details">
+        <dialog id="class-dialog-65" class="class-dialog" aria-label="CustomFilmRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8460,8 +8612,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-65"
-             data-dialog-target="class-dialog-65">
+             aria-haspopup="dialog" aria-controls="class-dialog-66"
+             data-dialog-target="class-dialog-66">
           <div class="class-card-header">
             <span class="class-name">CustomFilmTextRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8480,7 +8632,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-65" class="class-dialog" aria-label="CustomFilmTextRepository details">
+        <dialog id="class-dialog-66" class="class-dialog" aria-label="CustomFilmTextRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8513,8 +8665,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-66"
-             data-dialog-target="class-dialog-66">
+             aria-haspopup="dialog" aria-controls="class-dialog-67"
+             data-dialog-target="class-dialog-67">
           <div class="class-card-header">
             <span class="class-name">CustomFilmTextRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -8533,7 +8685,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-66" class="class-dialog" aria-label="CustomFilmTextRepositoryImpl details">
+        <dialog id="class-dialog-67" class="class-dialog" aria-label="CustomFilmTextRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8566,8 +8718,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-67"
-             data-dialog-target="class-dialog-67">
+             aria-haspopup="dialog" aria-controls="class-dialog-68"
+             data-dialog-target="class-dialog-68">
           <div class="class-card-header">
             <span class="class-name">RentalRateProjection</span>
             <span class="type-badge repository">repository</span>
@@ -8586,7 +8738,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-67" class="class-dialog" aria-label="RentalRateProjection details">
+        <dialog id="class-dialog-68" class="class-dialog" aria-label="RentalRateProjection details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8636,8 +8788,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-68"
-             data-dialog-target="class-dialog-68">
+             aria-haspopup="dialog" aria-controls="class-dialog-69"
+             data-dialog-target="class-dialog-69">
           <div class="class-card-header">
             <span class="class-name">FilmActorRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8656,7 +8808,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-68" class="class-dialog" aria-label="FilmActorRepository details">
+        <dialog id="class-dialog-69" class="class-dialog" aria-label="FilmActorRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8698,8 +8850,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-69"
-             data-dialog-target="class-dialog-69">
+             aria-haspopup="dialog" aria-controls="class-dialog-70"
+             data-dialog-target="class-dialog-70">
           <div class="class-card-header">
             <span class="class-name">FilmCategoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8718,7 +8870,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-69" class="class-dialog" aria-label="FilmCategoryRepository details">
+        <dialog id="class-dialog-70" class="class-dialog" aria-label="FilmCategoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8760,8 +8912,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-70"
-             data-dialog-target="class-dialog-70">
+             aria-haspopup="dialog" aria-controls="class-dialog-71"
+             data-dialog-target="class-dialog-71">
           <div class="class-card-header">
             <span class="class-name">FilmRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8780,7 +8932,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-70" class="class-dialog" aria-label="FilmRepository details">
+        <dialog id="class-dialog-71" class="class-dialog" aria-label="FilmRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8841,8 +8993,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-71"
-             data-dialog-target="class-dialog-71">
+             aria-haspopup="dialog" aria-controls="class-dialog-72"
+             data-dialog-target="class-dialog-72">
           <div class="class-card-header">
             <span class="class-name">FilmTextRepository</span>
             <span class="type-badge repository">repository</span>
@@ -8861,7 +9013,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-71" class="class-dialog" aria-label="FilmTextRepository details">
+        <dialog id="class-dialog-72" class="class-dialog" aria-label="FilmTextRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -8903,8 +9055,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-72"
-             data-dialog-target="class-dialog-72">
+             aria-haspopup="dialog" aria-controls="class-dialog-73"
+             data-dialog-target="class-dialog-73">
           <div class="class-card-header">
             <span class="class-name">ActorService</span>
             <span class="type-badge service">service</span>
@@ -8923,7 +9075,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-72" class="class-dialog" aria-label="ActorService details">
+        <dialog id="class-dialog-73" class="class-dialog" aria-label="ActorService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9082,8 +9234,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-73"
-             data-dialog-target="class-dialog-73">
+             aria-haspopup="dialog" aria-controls="class-dialog-74"
+             data-dialog-target="class-dialog-74">
           <div class="class-card-header">
             <span class="class-name">ActorServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -9102,7 +9254,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-73" class="class-dialog" aria-label="ActorServiceImpl details">
+        <dialog id="class-dialog-74" class="class-dialog" aria-label="ActorServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9277,8 +9429,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-74"
-             data-dialog-target="class-dialog-74">
+             aria-haspopup="dialog" aria-controls="class-dialog-75"
+             data-dialog-target="class-dialog-75">
           <div class="class-card-header">
             <span class="class-name">FilmService</span>
             <span class="type-badge service">service</span>
@@ -9297,7 +9449,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-74" class="class-dialog" aria-label="FilmService details">
+        <dialog id="class-dialog-75" class="class-dialog" aria-label="FilmService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9438,8 +9590,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-75"
-             data-dialog-target="class-dialog-75">
+             aria-haspopup="dialog" aria-controls="class-dialog-76"
+             data-dialog-target="class-dialog-76">
           <div class="class-card-header">
             <span class="class-name">FilmServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -9458,7 +9610,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-75" class="class-dialog" aria-label="FilmServiceImpl details">
+        <dialog id="class-dialog-76" class="class-dialog" aria-label="FilmServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9628,8 +9780,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-76"
-             data-dialog-target="class-dialog-76">
+             aria-haspopup="dialog" aria-controls="class-dialog-77"
+             data-dialog-target="class-dialog-77">
           <div class="class-card-header">
             <span class="class-name">AuthConfig</span>
             <span class="type-badge config">config</span>
@@ -9648,7 +9800,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-76" class="class-dialog" aria-label="AuthConfig details">
+        <dialog id="class-dialog-77" class="class-dialog" aria-label="AuthConfig details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9719,8 +9871,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-77"
-             data-dialog-target="class-dialog-77">
+             aria-haspopup="dialog" aria-controls="class-dialog-78"
+             data-dialog-target="class-dialog-78">
           <div class="class-card-header">
             <span class="class-name">LoggingFilterConfig</span>
             <span class="type-badge config">config</span>
@@ -9739,7 +9891,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-77" class="class-dialog" aria-label="LoggingFilterConfig details">
+        <dialog id="class-dialog-78" class="class-dialog" aria-label="LoggingFilterConfig details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9804,8 +9956,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-78"
-             data-dialog-target="class-dialog-78">
+             aria-haspopup="dialog" aria-controls="class-dialog-79"
+             data-dialog-target="class-dialog-79">
           <div class="class-card-header">
             <span class="class-name">PersistenceConfig</span>
             <span class="type-badge config">config</span>
@@ -9824,7 +9976,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-78" class="class-dialog" aria-label="PersistenceConfig details">
+        <dialog id="class-dialog-79" class="class-dialog" aria-label="PersistenceConfig details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -9922,8 +10074,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-79"
-             data-dialog-target="class-dialog-79">
+             aria-haspopup="dialog" aria-controls="class-dialog-80"
+             data-dialog-target="class-dialog-80">
           <div class="class-card-header">
             <span class="class-name">RedisConfig</span>
             <span class="type-badge config">config</span>
@@ -9942,7 +10094,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-79" class="class-dialog" aria-label="RedisConfig details">
+        <dialog id="class-dialog-80" class="class-dialog" aria-label="RedisConfig details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10016,8 +10168,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-80"
-             data-dialog-target="class-dialog-80">
+             aria-haspopup="dialog" aria-controls="class-dialog-81"
+             data-dialog-target="class-dialog-81">
           <div class="class-card-header">
             <span class="class-name">SecurityFilterConfig</span>
             <span class="type-badge config">config</span>
@@ -10036,7 +10188,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-80" class="class-dialog" aria-label="SecurityFilterConfig details">
+        <dialog id="class-dialog-81" class="class-dialog" aria-label="SecurityFilterConfig details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10114,8 +10266,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-81"
-             data-dialog-target="class-dialog-81">
+             aria-haspopup="dialog" aria-controls="class-dialog-82"
+             data-dialog-target="class-dialog-82">
           <div class="class-card-header">
             <span class="class-name">Constants</span>
             <span class="type-badge other">other</span>
@@ -10134,7 +10286,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-81" class="class-dialog" aria-label="Constants details">
+        <dialog id="class-dialog-82" class="class-dialog" aria-label="Constants details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10167,8 +10319,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-82"
-             data-dialog-target="class-dialog-82">
+             aria-haspopup="dialog" aria-controls="class-dialog-83"
+             data-dialog-target="class-dialog-83">
           <div class="class-card-header">
             <span class="class-name">Category</span>
             <span class="type-badge other">other</span>
@@ -10187,7 +10339,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-82" class="class-dialog" aria-label="Category details">
+        <dialog id="class-dialog-83" class="class-dialog" aria-label="Category details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10233,8 +10385,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-83"
-             data-dialog-target="class-dialog-83">
+             aria-haspopup="dialog" aria-controls="class-dialog-84"
+             data-dialog-target="class-dialog-84">
           <div class="class-card-header">
             <span class="class-name">Constants</span>
             <span class="type-badge other">other</span>
@@ -10253,7 +10405,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-83" class="class-dialog" aria-label="Constants details">
+        <dialog id="class-dialog-84" class="class-dialog" aria-label="Constants details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10286,8 +10438,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-84"
-             data-dialog-target="class-dialog-84">
+             aria-haspopup="dialog" aria-controls="class-dialog-85"
+             data-dialog-target="class-dialog-85">
           <div class="class-card-header">
             <span class="class-name">Country</span>
             <span class="type-badge other">other</span>
@@ -10306,7 +10458,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-84" class="class-dialog" aria-label="Country details">
+        <dialog id="class-dialog-85" class="class-dialog" aria-label="Country details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10371,8 +10523,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-85"
-             data-dialog-target="class-dialog-85">
+             aria-haspopup="dialog" aria-controls="class-dialog-86"
+             data-dialog-target="class-dialog-86">
           <div class="class-card-header">
             <span class="class-name">ErrorCode</span>
             <span class="type-badge other">other</span>
@@ -10391,7 +10543,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-85" class="class-dialog" aria-label="ErrorCode details">
+        <dialog id="class-dialog-86" class="class-dialog" aria-label="ErrorCode details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10430,8 +10582,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-86"
-             data-dialog-target="class-dialog-86">
+             aria-haspopup="dialog" aria-controls="class-dialog-87"
+             data-dialog-target="class-dialog-87">
           <div class="class-card-header">
             <span class="class-name">ErrorLevel</span>
             <span class="type-badge other">other</span>
@@ -10450,7 +10602,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-86" class="class-dialog" aria-label="ErrorLevel details">
+        <dialog id="class-dialog-87" class="class-dialog" aria-label="ErrorLevel details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10489,8 +10641,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-87"
-             data-dialog-target="class-dialog-87">
+             aria-haspopup="dialog" aria-controls="class-dialog-88"
+             data-dialog-target="class-dialog-88">
           <div class="class-card-header">
             <span class="class-name">Constants</span>
             <span class="type-badge other">other</span>
@@ -10509,7 +10661,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-87" class="class-dialog" aria-label="Constants details">
+        <dialog id="class-dialog-88" class="class-dialog" aria-label="Constants details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10542,8 +10694,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-88"
-             data-dialog-target="class-dialog-88">
+             aria-haspopup="dialog" aria-controls="class-dialog-89"
+             data-dialog-target="class-dialog-89">
           <div class="class-card-header">
             <span class="class-name">FilmRating</span>
             <span class="type-badge other">other</span>
@@ -10562,7 +10714,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-88" class="class-dialog" aria-label="FilmRating details">
+        <dialog id="class-dialog-89" class="class-dialog" aria-label="FilmRating details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10595,8 +10747,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-89"
-             data-dialog-target="class-dialog-89">
+             aria-haspopup="dialog" aria-controls="class-dialog-90"
+             data-dialog-target="class-dialog-90">
           <div class="class-card-header">
             <span class="class-name">HalRelation</span>
             <span class="type-badge other">other</span>
@@ -10615,7 +10767,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-89" class="class-dialog" aria-label="HalRelation details">
+        <dialog id="class-dialog-90" class="class-dialog" aria-label="HalRelation details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10648,8 +10800,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-90"
-             data-dialog-target="class-dialog-90">
+             aria-haspopup="dialog" aria-controls="class-dialog-91"
+             data-dialog-target="class-dialog-91">
           <div class="class-card-header">
             <span class="class-name">Constants</span>
             <span class="type-badge other">other</span>
@@ -10668,7 +10820,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-90" class="class-dialog" aria-label="Constants details">
+        <dialog id="class-dialog-91" class="class-dialog" aria-label="Constants details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10701,8 +10853,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-91"
-             data-dialog-target="class-dialog-91">
+             aria-haspopup="dialog" aria-controls="class-dialog-92"
+             data-dialog-target="class-dialog-92">
           <div class="class-card-header">
             <span class="class-name">Language</span>
             <span class="type-badge other">other</span>
@@ -10721,7 +10873,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-91" class="class-dialog" aria-label="Language details">
+        <dialog id="class-dialog-92" class="class-dialog" aria-label="Language details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10754,15 +10906,15 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-92"
-             data-dialog-target="class-dialog-92">
+             aria-haspopup="dialog" aria-controls="class-dialog-93"
+             data-dialog-target="class-dialog-93">
           <div class="class-card-header">
             <span class="class-name">Constants</span>
             <span class="type-badge other">other</span>
             
           </div>
           <div class="file-path">src/main/java/com/example/app/common/constant/SpecialFeature.java</div>
-          <div class="class-description clamp">Constants class for film categories, providing enumerated constant values for category classification.</div>
+          <div class="class-description clamp">Holds constant values related to film categories.</div>
 
           
 
@@ -10774,7 +10926,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-92" class="class-dialog" aria-label="Constants details">
+        <dialog id="class-dialog-93" class="class-dialog" aria-label="Constants details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10790,7 +10942,7 @@
             <button type="button" class="dialog-close" aria-label="Close">&times;</button>
           </div>
           <div class="dialog-body">
-            <div class="class-description">Constants class for film categories, providing enumerated constant values for category classification.</div>
+            <div class="class-description">Holds constant values related to film categories.</div>
 
             
 
@@ -10807,8 +10959,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-93"
-             data-dialog-target="class-dialog-93">
+             aria-haspopup="dialog" aria-controls="class-dialog-94"
+             data-dialog-target="class-dialog-94">
           <div class="class-card-header">
             <span class="class-name">SpecialFeature</span>
             <span class="type-badge other">other</span>
@@ -10827,7 +10979,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-93" class="class-dialog" aria-label="SpecialFeature details">
+        <dialog id="class-dialog-94" class="class-dialog" aria-label="SpecialFeature details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10873,8 +11025,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-94"
-             data-dialog-target="class-dialog-94">
+             aria-haspopup="dialog" aria-controls="class-dialog-95"
+             data-dialog-target="class-dialog-95">
           <div class="class-card-header">
             <span class="class-name">CustomerDetailsRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -10893,7 +11045,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-94" class="class-dialog" aria-label="CustomerDetailsRepresentationModelAssembler details">
+        <dialog id="class-dialog-95" class="class-dialog" aria-label="CustomerDetailsRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -10972,8 +11124,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-95"
-             data-dialog-target="class-dialog-95">
+             aria-haspopup="dialog" aria-controls="class-dialog-96"
+             data-dialog-target="class-dialog-96">
           <div class="class-card-header">
             <span class="class-name">CustomerRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -10992,7 +11144,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-95" class="class-dialog" aria-label="CustomerRepresentationModelAssembler details">
+        <dialog id="class-dialog-96" class="class-dialog" aria-label="CustomerRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11071,8 +11223,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-96"
-             data-dialog-target="class-dialog-96">
+             aria-haspopup="dialog" aria-controls="class-dialog-97"
+             data-dialog-target="class-dialog-97">
           <div class="class-card-header">
             <span class="class-name">CustomerController</span>
             <span class="type-badge controller">controller</span>
@@ -11106,7 +11258,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-96" class="class-dialog" aria-label="CustomerController details">
+        <dialog id="class-dialog-97" class="class-dialog" aria-label="CustomerController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11269,8 +11421,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-97"
-             data-dialog-target="class-dialog-97">
+             aria-haspopup="dialog" aria-controls="class-dialog-98"
+             data-dialog-target="class-dialog-98">
           <div class="class-card-header">
             <span class="class-name">CustomerDetailsDto</span>
             <span class="type-badge dto">dto</span>
@@ -11289,7 +11441,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-97" class="class-dialog" aria-label="CustomerDetailsDto details">
+        <dialog id="class-dialog-98" class="class-dialog" aria-label="CustomerDetailsDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11331,8 +11483,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-98"
-             data-dialog-target="class-dialog-98">
+             aria-haspopup="dialog" aria-controls="class-dialog-99"
+             data-dialog-target="class-dialog-99">
           <div class="class-card-header">
             <span class="class-name">CustomerDetails</span>
             <span class="type-badge dto">dto</span>
@@ -11351,7 +11503,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-98" class="class-dialog" aria-label="CustomerDetails details">
+        <dialog id="class-dialog-99" class="class-dialog" aria-label="CustomerDetails details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11428,8 +11580,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-99"
-             data-dialog-target="class-dialog-99">
+             aria-haspopup="dialog" aria-controls="class-dialog-100"
+             data-dialog-target="class-dialog-100">
           <div class="class-card-header">
             <span class="class-name">CustomerDetailsResponse</span>
             <span class="type-badge dto">dto</span>
@@ -11448,7 +11600,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-99" class="class-dialog" aria-label="CustomerDetailsResponse details">
+        <dialog id="class-dialog-100" class="class-dialog" aria-label="CustomerDetailsResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11523,8 +11675,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-100"
-             data-dialog-target="class-dialog-100">
+             aria-haspopup="dialog" aria-controls="class-dialog-101"
+             data-dialog-target="class-dialog-101">
           <div class="class-card-header">
             <span class="class-name">CustomerDto</span>
             <span class="type-badge dto">dto</span>
@@ -11543,7 +11695,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-100" class="class-dialog" aria-label="CustomerDto details">
+        <dialog id="class-dialog-101" class="class-dialog" aria-label="CustomerDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11589,8 +11741,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-101"
-             data-dialog-target="class-dialog-101">
+             aria-haspopup="dialog" aria-controls="class-dialog-102"
+             data-dialog-target="class-dialog-102">
           <div class="class-card-header">
             <span class="class-name">Customer</span>
             <span class="type-badge dto">dto</span>
@@ -11609,7 +11761,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-101" class="class-dialog" aria-label="Customer details">
+        <dialog id="class-dialog-102" class="class-dialog" aria-label="Customer details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11690,8 +11842,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-102"
-             data-dialog-target="class-dialog-102">
+             aria-haspopup="dialog" aria-controls="class-dialog-103"
+             data-dialog-target="class-dialog-103">
           <div class="class-card-header">
             <span class="class-name">CustomerRequest</span>
             <span class="type-badge dto">dto</span>
@@ -11710,7 +11862,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-102" class="class-dialog" aria-label="CustomerRequest details">
+        <dialog id="class-dialog-103" class="class-dialog" aria-label="CustomerRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11791,8 +11943,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-103"
-             data-dialog-target="class-dialog-103">
+             aria-haspopup="dialog" aria-controls="class-dialog-104"
+             data-dialog-target="class-dialog-104">
           <div class="class-card-header">
             <span class="class-name">CustomerResponse</span>
             <span class="type-badge dto">dto</span>
@@ -11811,7 +11963,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-103" class="class-dialog" aria-label="CustomerResponse details">
+        <dialog id="class-dialog-104" class="class-dialog" aria-label="CustomerResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -11892,8 +12044,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-104"
-             data-dialog-target="class-dialog-104">
+             aria-haspopup="dialog" aria-controls="class-dialog-105"
+             data-dialog-target="class-dialog-105">
           <div class="class-card-header">
             <span class="class-name">CustomerEntity</span>
             <span class="type-badge entity">entity</span>
@@ -11912,7 +12064,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-104" class="class-dialog" aria-label="CustomerEntity details">
+        <dialog id="class-dialog-105" class="class-dialog" aria-label="CustomerEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12003,8 +12155,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-105"
-             data-dialog-target="class-dialog-105">
+             aria-haspopup="dialog" aria-controls="class-dialog-106"
+             data-dialog-target="class-dialog-106">
           <div class="class-card-header">
             <span class="class-name">CustomerMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -12023,7 +12175,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-105" class="class-dialog" aria-label="CustomerMapper details">
+        <dialog id="class-dialog-106" class="class-dialog" aria-label="CustomerMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12104,8 +12256,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-106"
-             data-dialog-target="class-dialog-106">
+             aria-haspopup="dialog" aria-controls="class-dialog-107"
+             data-dialog-target="class-dialog-107">
           <div class="class-card-header">
             <span class="class-name">CustomCustomerRepository</span>
             <span class="type-badge repository">repository</span>
@@ -12124,7 +12276,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-106" class="class-dialog" aria-label="CustomCustomerRepository details">
+        <dialog id="class-dialog-107" class="class-dialog" aria-label="CustomCustomerRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12211,8 +12363,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-107"
-             data-dialog-target="class-dialog-107">
+             aria-haspopup="dialog" aria-controls="class-dialog-108"
+             data-dialog-target="class-dialog-108">
           <div class="class-card-header">
             <span class="class-name">CustomCustomerRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -12231,7 +12383,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-107" class="class-dialog" aria-label="CustomCustomerRepositoryImpl details">
+        <dialog id="class-dialog-108" class="class-dialog" aria-label="CustomCustomerRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12340,8 +12492,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-108"
-             data-dialog-target="class-dialog-108">
+             aria-haspopup="dialog" aria-controls="class-dialog-109"
+             data-dialog-target="class-dialog-109">
           <div class="class-card-header">
             <span class="class-name">CustomerRepository</span>
             <span class="type-badge repository">repository</span>
@@ -12360,7 +12512,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-108" class="class-dialog" aria-label="CustomerRepository details">
+        <dialog id="class-dialog-109" class="class-dialog" aria-label="CustomerRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12402,8 +12554,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-109"
-             data-dialog-target="class-dialog-109">
+             aria-haspopup="dialog" aria-controls="class-dialog-110"
+             data-dialog-target="class-dialog-110">
           <div class="class-card-header">
             <span class="class-name">CustomerService</span>
             <span class="type-badge service">service</span>
@@ -12422,7 +12574,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-109" class="class-dialog" aria-label="CustomerService details">
+        <dialog id="class-dialog-110" class="class-dialog" aria-label="CustomerService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12551,8 +12703,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-110"
-             data-dialog-target="class-dialog-110">
+             aria-haspopup="dialog" aria-controls="class-dialog-111"
+             data-dialog-target="class-dialog-111">
           <div class="class-card-header">
             <span class="class-name">CustomerServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -12571,7 +12723,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-110" class="class-dialog" aria-label="CustomerServiceImpl details">
+        <dialog id="class-dialog-111" class="class-dialog" aria-label="CustomerServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12729,8 +12881,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-111"
-             data-dialog-target="class-dialog-111">
+             aria-haspopup="dialog" aria-controls="class-dialog-112"
+             data-dialog-target="class-dialog-112">
           <div class="class-card-header">
             <span class="class-name">ErrorResponseDto</span>
             <span class="type-badge dto">dto</span>
@@ -12749,7 +12901,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-111" class="class-dialog" aria-label="ErrorResponseDto details">
+        <dialog id="class-dialog-112" class="class-dialog" aria-label="ErrorResponseDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12806,8 +12958,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-112"
-             data-dialog-target="class-dialog-112">
+             aria-haspopup="dialog" aria-controls="class-dialog-113"
+             data-dialog-target="class-dialog-113">
           <div class="class-card-header">
             <span class="class-name">FullName</span>
             <span class="type-badge dto">dto</span>
@@ -12826,7 +12978,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-112" class="class-dialog" aria-label="FullName details">
+        <dialog id="class-dialog-113" class="class-dialog" aria-label="FullName details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12865,8 +13017,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-113"
-             data-dialog-target="class-dialog-113">
+             aria-haspopup="dialog" aria-controls="class-dialog-114"
+             data-dialog-target="class-dialog-114">
           <div class="class-card-header">
             <span class="class-name">NullCheckable</span>
             <span class="type-badge dto">dto</span>
@@ -12885,7 +13037,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-113" class="class-dialog" aria-label="NullCheckable details">
+        <dialog id="class-dialog-114" class="class-dialog" aria-label="NullCheckable details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -12935,8 +13087,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-114"
-             data-dialog-target="class-dialog-114">
+             aria-haspopup="dialog" aria-controls="class-dialog-115"
+             data-dialog-target="class-dialog-115">
           <div class="class-card-header">
             <span class="class-name">Updatable</span>
             <span class="type-badge dto">dto</span>
@@ -12955,7 +13107,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-114" class="class-dialog" aria-label="Updatable details">
+        <dialog id="class-dialog-115" class="class-dialog" aria-label="Updatable details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13018,8 +13170,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-115"
-             data-dialog-target="class-dialog-115">
+             aria-haspopup="dialog" aria-controls="class-dialog-116"
+             data-dialog-target="class-dialog-116">
           <div class="class-card-header">
             <span class="class-name">FullName</span>
             <span class="type-badge entity">entity</span>
@@ -13038,7 +13190,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-115" class="class-dialog" aria-label="FullName details">
+        <dialog id="class-dialog-116" class="class-dialog" aria-label="FullName details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13084,8 +13236,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-116"
-             data-dialog-target="class-dialog-116">
+             aria-haspopup="dialog" aria-controls="class-dialog-117"
+             data-dialog-target="class-dialog-117">
           <div class="class-card-header">
             <span class="class-name">GlobalExceptionHandler</span>
             <span class="type-badge exception">exception</span>
@@ -13104,7 +13256,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-116" class="class-dialog" aria-label="GlobalExceptionHandler details">
+        <dialog id="class-dialog-117" class="class-dialog" aria-label="GlobalExceptionHandler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13187,8 +13339,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-117"
-             data-dialog-target="class-dialog-117">
+             aria-haspopup="dialog" aria-controls="class-dialog-118"
+             data-dialog-target="class-dialog-118">
           <div class="class-card-header">
             <span class="class-name">ResourceNotAvailableException</span>
             <span class="type-badge exception">exception</span>
@@ -13207,7 +13359,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-117" class="class-dialog" aria-label="ResourceNotAvailableException details">
+        <dialog id="class-dialog-118" class="class-dialog" aria-label="ResourceNotAvailableException details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13257,8 +13409,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-118"
-             data-dialog-target="class-dialog-118">
+             aria-haspopup="dialog" aria-controls="class-dialog-119"
+             data-dialog-target="class-dialog-119">
           <div class="class-card-header">
             <span class="class-name">ResourceNotFoundException</span>
             <span class="type-badge exception">exception</span>
@@ -13277,7 +13429,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-118" class="class-dialog" aria-label="ResourceNotFoundException details">
+        <dialog id="class-dialog-119" class="class-dialog" aria-label="ResourceNotFoundException details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13340,8 +13492,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-119"
-             data-dialog-target="class-dialog-119">
+             aria-haspopup="dialog" aria-controls="class-dialog-120"
+             data-dialog-target="class-dialog-120">
           <div class="class-card-header">
             <span class="class-name">MdcLoggingFilter</span>
             <span class="type-badge other">other</span>
@@ -13360,7 +13512,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-119" class="class-dialog" aria-label="MdcLoggingFilter details">
+        <dialog id="class-dialog-120" class="class-dialog" aria-label="MdcLoggingFilter details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13431,8 +13583,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-120"
-             data-dialog-target="class-dialog-120">
+             aria-haspopup="dialog" aria-controls="class-dialog-121"
+             data-dialog-target="class-dialog-121">
           <div class="class-card-header">
             <span class="class-name">AddressRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -13451,7 +13603,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-120" class="class-dialog" aria-label="AddressRepresentationModelAssembler details">
+        <dialog id="class-dialog-121" class="class-dialog" aria-label="AddressRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13536,8 +13688,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-121"
-             data-dialog-target="class-dialog-121">
+             aria-haspopup="dialog" aria-controls="class-dialog-122"
+             data-dialog-target="class-dialog-122">
           <div class="class-card-header">
             <span class="class-name">CityRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -13556,7 +13708,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-121" class="class-dialog" aria-label="CityRepresentationModelAssembler details">
+        <dialog id="class-dialog-122" class="class-dialog" aria-label="CityRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13633,8 +13785,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-122"
-             data-dialog-target="class-dialog-122">
+             aria-haspopup="dialog" aria-controls="class-dialog-123"
+             data-dialog-target="class-dialog-123">
           <div class="class-card-header">
             <span class="class-name">LocationController</span>
             <span class="type-badge controller">controller</span>
@@ -13668,7 +13820,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-122" class="class-dialog" aria-label="LocationController details">
+        <dialog id="class-dialog-123" class="class-dialog" aria-label="LocationController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13851,8 +14003,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-123"
-             data-dialog-target="class-dialog-123">
+             aria-haspopup="dialog" aria-controls="class-dialog-124"
+             data-dialog-target="class-dialog-124">
           <div class="class-card-header">
             <span class="class-name">CountryConverter</span>
             <span class="type-badge other">other</span>
@@ -13871,7 +14023,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-123" class="class-dialog" aria-label="CountryConverter details">
+        <dialog id="class-dialog-124" class="class-dialog" aria-label="CountryConverter details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -13936,8 +14088,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-124"
-             data-dialog-target="class-dialog-124">
+             aria-haspopup="dialog" aria-controls="class-dialog-125"
+             data-dialog-target="class-dialog-125">
           <div class="class-card-header">
             <span class="class-name">GeometryConverter</span>
             <span class="type-badge other">other</span>
@@ -13956,7 +14108,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-124" class="class-dialog" aria-label="GeometryConverter details">
+        <dialog id="class-dialog-125" class="class-dialog" aria-label="GeometryConverter details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14020,8 +14172,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-125"
-             data-dialog-target="class-dialog-125">
+             aria-haspopup="dialog" aria-controls="class-dialog-126"
+             data-dialog-target="class-dialog-126">
           <div class="class-card-header">
             <span class="class-name">LanguageConverter</span>
             <span class="type-badge other">other</span>
@@ -14040,7 +14192,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-125" class="class-dialog" aria-label="LanguageConverter details">
+        <dialog id="class-dialog-126" class="class-dialog" aria-label="LanguageConverter details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14105,8 +14257,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-126"
-             data-dialog-target="class-dialog-126">
+             aria-haspopup="dialog" aria-controls="class-dialog-127"
+             data-dialog-target="class-dialog-127">
           <div class="class-card-header">
             <span class="class-name">AddressDto</span>
             <span class="type-badge dto">dto</span>
@@ -14125,7 +14277,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-126" class="class-dialog" aria-label="AddressDto details">
+        <dialog id="class-dialog-127" class="class-dialog" aria-label="AddressDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14165,8 +14317,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-127"
-             data-dialog-target="class-dialog-127">
+             aria-haspopup="dialog" aria-controls="class-dialog-128"
+             data-dialog-target="class-dialog-128">
           <div class="class-card-header">
             <span class="class-name">Address</span>
             <span class="type-badge dto">dto</span>
@@ -14185,7 +14337,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-127" class="class-dialog" aria-label="Address details">
+        <dialog id="class-dialog-128" class="class-dialog" aria-label="Address details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14256,8 +14408,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-128"
-             data-dialog-target="class-dialog-128">
+             aria-haspopup="dialog" aria-controls="class-dialog-129"
+             data-dialog-target="class-dialog-129">
           <div class="class-card-header">
             <span class="class-name">AddressRequest</span>
             <span class="type-badge dto">dto</span>
@@ -14276,7 +14428,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-128" class="class-dialog" aria-label="AddressRequest details">
+        <dialog id="class-dialog-129" class="class-dialog" aria-label="AddressRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14341,8 +14493,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-129"
-             data-dialog-target="class-dialog-129">
+             aria-haspopup="dialog" aria-controls="class-dialog-130"
+             data-dialog-target="class-dialog-130">
           <div class="class-card-header">
             <span class="class-name">AddressResponse</span>
             <span class="type-badge dto">dto</span>
@@ -14361,7 +14513,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-129" class="class-dialog" aria-label="AddressResponse details">
+        <dialog id="class-dialog-130" class="class-dialog" aria-label="AddressResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14432,8 +14584,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-130"
-             data-dialog-target="class-dialog-130">
+             aria-haspopup="dialog" aria-controls="class-dialog-131"
+             data-dialog-target="class-dialog-131">
           <div class="class-card-header">
             <span class="class-name">CityDto</span>
             <span class="type-badge dto">dto</span>
@@ -14452,7 +14604,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-130" class="class-dialog" aria-label="CityDto details">
+        <dialog id="class-dialog-131" class="class-dialog" aria-label="CityDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14492,8 +14644,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-131"
-             data-dialog-target="class-dialog-131">
+             aria-haspopup="dialog" aria-controls="class-dialog-132"
+             data-dialog-target="class-dialog-132">
           <div class="class-card-header">
             <span class="class-name">City</span>
             <span class="type-badge dto">dto</span>
@@ -14512,7 +14664,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-131" class="class-dialog" aria-label="City details">
+        <dialog id="class-dialog-132" class="class-dialog" aria-label="City details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14577,8 +14729,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-132"
-             data-dialog-target="class-dialog-132">
+             aria-haspopup="dialog" aria-controls="class-dialog-133"
+             data-dialog-target="class-dialog-133">
           <div class="class-card-header">
             <span class="class-name">CityRequest</span>
             <span class="type-badge dto">dto</span>
@@ -14597,7 +14749,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-132" class="class-dialog" aria-label="CityRequest details">
+        <dialog id="class-dialog-133" class="class-dialog" aria-label="CityRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14670,8 +14822,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-133"
-             data-dialog-target="class-dialog-133">
+             aria-haspopup="dialog" aria-controls="class-dialog-134"
+             data-dialog-target="class-dialog-134">
           <div class="class-card-header">
             <span class="class-name">CityResponse</span>
             <span class="type-badge dto">dto</span>
@@ -14690,7 +14842,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-133" class="class-dialog" aria-label="CityResponse details">
+        <dialog id="class-dialog-134" class="class-dialog" aria-label="CityResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14763,8 +14915,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-134"
-             data-dialog-target="class-dialog-134">
+             aria-haspopup="dialog" aria-controls="class-dialog-135"
+             data-dialog-target="class-dialog-135">
           <div class="class-card-header">
             <span class="class-name">CountryDto</span>
             <span class="type-badge dto">dto</span>
@@ -14783,7 +14935,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-134" class="class-dialog" aria-label="CountryDto details">
+        <dialog id="class-dialog-135" class="class-dialog" aria-label="CountryDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14823,8 +14975,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-135"
-             data-dialog-target="class-dialog-135">
+             aria-haspopup="dialog" aria-controls="class-dialog-136"
+             data-dialog-target="class-dialog-136">
           <div class="class-card-header">
             <span class="class-name">Country</span>
             <span class="type-badge dto">dto</span>
@@ -14843,7 +14995,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-135" class="class-dialog" aria-label="Country details">
+        <dialog id="class-dialog-136" class="class-dialog" aria-label="Country details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14916,8 +15068,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-136"
-             data-dialog-target="class-dialog-136">
+             aria-haspopup="dialog" aria-controls="class-dialog-137"
+             data-dialog-target="class-dialog-137">
           <div class="class-card-header">
             <span class="class-name">LanguageDto</span>
             <span class="type-badge dto">dto</span>
@@ -14936,7 +15088,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-136" class="class-dialog" aria-label="LanguageDto details">
+        <dialog id="class-dialog-137" class="class-dialog" aria-label="LanguageDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -14969,8 +15121,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-137"
-             data-dialog-target="class-dialog-137">
+             aria-haspopup="dialog" aria-controls="class-dialog-138"
+             data-dialog-target="class-dialog-138">
           <div class="class-card-header">
             <span class="class-name">Language</span>
             <span class="type-badge dto">dto</span>
@@ -14989,7 +15141,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-137" class="class-dialog" aria-label="Language details">
+        <dialog id="class-dialog-138" class="class-dialog" aria-label="Language details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15055,8 +15207,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-138"
-             data-dialog-target="class-dialog-138">
+             aria-haspopup="dialog" aria-controls="class-dialog-139"
+             data-dialog-target="class-dialog-139">
           <div class="class-card-header">
             <span class="class-name">AddressEntity</span>
             <span class="type-badge entity">entity</span>
@@ -15075,7 +15227,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-138" class="class-dialog" aria-label="AddressEntity details">
+        <dialog id="class-dialog-139" class="class-dialog" aria-label="AddressEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15158,8 +15310,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-139"
-             data-dialog-target="class-dialog-139">
+             aria-haspopup="dialog" aria-controls="class-dialog-140"
+             data-dialog-target="class-dialog-140">
           <div class="class-card-header">
             <span class="class-name">CityEntity</span>
             <span class="type-badge entity">entity</span>
@@ -15178,7 +15330,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-139" class="class-dialog" aria-label="CityEntity details">
+        <dialog id="class-dialog-140" class="class-dialog" aria-label="CityEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15263,8 +15415,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-140"
-             data-dialog-target="class-dialog-140">
+             aria-haspopup="dialog" aria-controls="class-dialog-141"
+             data-dialog-target="class-dialog-141">
           <div class="class-card-header">
             <span class="class-name">CountryEntity</span>
             <span class="type-badge entity">entity</span>
@@ -15283,7 +15435,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-140" class="class-dialog" aria-label="CountryEntity details">
+        <dialog id="class-dialog-141" class="class-dialog" aria-label="CountryEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15366,8 +15518,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-141"
-             data-dialog-target="class-dialog-141">
+             aria-haspopup="dialog" aria-controls="class-dialog-142"
+             data-dialog-target="class-dialog-142">
           <div class="class-card-header">
             <span class="class-name">LanguageEntity</span>
             <span class="type-badge entity">entity</span>
@@ -15386,7 +15538,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-141" class="class-dialog" aria-label="LanguageEntity details">
+        <dialog id="class-dialog-142" class="class-dialog" aria-label="LanguageEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15469,8 +15621,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-142"
-             data-dialog-target="class-dialog-142">
+             aria-haspopup="dialog" aria-controls="class-dialog-143"
+             data-dialog-target="class-dialog-143">
           <div class="class-card-header">
             <span class="class-name">AddressMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -15489,7 +15641,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-142" class="class-dialog" aria-label="AddressMapper details">
+        <dialog id="class-dialog-143" class="class-dialog" aria-label="AddressMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15568,8 +15720,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-143"
-             data-dialog-target="class-dialog-143">
+             aria-haspopup="dialog" aria-controls="class-dialog-144"
+             data-dialog-target="class-dialog-144">
           <div class="class-card-header">
             <span class="class-name">CityMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -15588,7 +15740,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-143" class="class-dialog" aria-label="CityMapper details">
+        <dialog id="class-dialog-144" class="class-dialog" aria-label="CityMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15659,8 +15811,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-144"
-             data-dialog-target="class-dialog-144">
+             aria-haspopup="dialog" aria-controls="class-dialog-145"
+             data-dialog-target="class-dialog-145">
           <div class="class-card-header">
             <span class="class-name">AddressRepository</span>
             <span class="type-badge repository">repository</span>
@@ -15679,7 +15831,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-144" class="class-dialog" aria-label="AddressRepository details">
+        <dialog id="class-dialog-145" class="class-dialog" aria-label="AddressRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15721,8 +15873,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-145"
-             data-dialog-target="class-dialog-145">
+             aria-haspopup="dialog" aria-controls="class-dialog-146"
+             data-dialog-target="class-dialog-146">
           <div class="class-card-header">
             <span class="class-name">CityRepository</span>
             <span class="type-badge repository">repository</span>
@@ -15741,7 +15893,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-145" class="class-dialog" aria-label="CityRepository details">
+        <dialog id="class-dialog-146" class="class-dialog" aria-label="CityRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15783,8 +15935,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-146"
-             data-dialog-target="class-dialog-146">
+             aria-haspopup="dialog" aria-controls="class-dialog-147"
+             data-dialog-target="class-dialog-147">
           <div class="class-card-header">
             <span class="class-name">CountryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -15803,7 +15955,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-146" class="class-dialog" aria-label="CountryRepository details">
+        <dialog id="class-dialog-147" class="class-dialog" aria-label="CountryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15845,8 +15997,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-147"
-             data-dialog-target="class-dialog-147">
+             aria-haspopup="dialog" aria-controls="class-dialog-148"
+             data-dialog-target="class-dialog-148">
           <div class="class-card-header">
             <span class="class-name">CustomAddressRepository</span>
             <span class="type-badge repository">repository</span>
@@ -15865,7 +16017,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-147" class="class-dialog" aria-label="CustomAddressRepository details">
+        <dialog id="class-dialog-148" class="class-dialog" aria-label="CustomAddressRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -15930,8 +16082,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-148"
-             data-dialog-target="class-dialog-148">
+             aria-haspopup="dialog" aria-controls="class-dialog-149"
+             data-dialog-target="class-dialog-149">
           <div class="class-card-header">
             <span class="class-name">CustomAddressRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -15950,7 +16102,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-148" class="class-dialog" aria-label="CustomAddressRepositoryImpl details">
+        <dialog id="class-dialog-149" class="class-dialog" aria-label="CustomAddressRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16023,8 +16175,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-149"
-             data-dialog-target="class-dialog-149">
+             aria-haspopup="dialog" aria-controls="class-dialog-150"
+             data-dialog-target="class-dialog-150">
           <div class="class-card-header">
             <span class="class-name">CustomCityRepository</span>
             <span class="type-badge repository">repository</span>
@@ -16043,7 +16195,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-149" class="class-dialog" aria-label="CustomCityRepository details">
+        <dialog id="class-dialog-150" class="class-dialog" aria-label="CustomCityRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16076,8 +16228,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-150"
-             data-dialog-target="class-dialog-150">
+             aria-haspopup="dialog" aria-controls="class-dialog-151"
+             data-dialog-target="class-dialog-151">
           <div class="class-card-header">
             <span class="class-name">CustomCityRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -16096,7 +16248,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-150" class="class-dialog" aria-label="CustomCityRepositoryImpl details">
+        <dialog id="class-dialog-151" class="class-dialog" aria-label="CustomCityRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16137,8 +16289,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-151"
-             data-dialog-target="class-dialog-151">
+             aria-haspopup="dialog" aria-controls="class-dialog-152"
+             data-dialog-target="class-dialog-152">
           <div class="class-card-header">
             <span class="class-name">CustomCountryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -16157,7 +16309,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-151" class="class-dialog" aria-label="CustomCountryRepository details">
+        <dialog id="class-dialog-152" class="class-dialog" aria-label="CustomCountryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16190,8 +16342,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-152"
-             data-dialog-target="class-dialog-152">
+             aria-haspopup="dialog" aria-controls="class-dialog-153"
+             data-dialog-target="class-dialog-153">
           <div class="class-card-header">
             <span class="class-name">CustomCountryRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -16210,7 +16362,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-152" class="class-dialog" aria-label="CustomCountryRepositoryImpl details">
+        <dialog id="class-dialog-153" class="class-dialog" aria-label="CustomCountryRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16251,8 +16403,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-153"
-             data-dialog-target="class-dialog-153">
+             aria-haspopup="dialog" aria-controls="class-dialog-154"
+             data-dialog-target="class-dialog-154">
           <div class="class-card-header">
             <span class="class-name">CustomLanguageRepository</span>
             <span class="type-badge repository">repository</span>
@@ -16271,7 +16423,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-153" class="class-dialog" aria-label="CustomLanguageRepository details">
+        <dialog id="class-dialog-154" class="class-dialog" aria-label="CustomLanguageRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16304,8 +16456,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-154"
-             data-dialog-target="class-dialog-154">
+             aria-haspopup="dialog" aria-controls="class-dialog-155"
+             data-dialog-target="class-dialog-155">
           <div class="class-card-header">
             <span class="class-name">CustomLanguageRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -16324,7 +16476,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-154" class="class-dialog" aria-label="CustomLanguageRepositoryImpl details">
+        <dialog id="class-dialog-155" class="class-dialog" aria-label="CustomLanguageRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16357,8 +16509,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-155"
-             data-dialog-target="class-dialog-155">
+             aria-haspopup="dialog" aria-controls="class-dialog-156"
+             data-dialog-target="class-dialog-156">
           <div class="class-card-header">
             <span class="class-name">LanguageRepository</span>
             <span class="type-badge repository">repository</span>
@@ -16377,7 +16529,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-155" class="class-dialog" aria-label="LanguageRepository details">
+        <dialog id="class-dialog-156" class="class-dialog" aria-label="LanguageRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16419,8 +16571,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-156"
-             data-dialog-target="class-dialog-156">
+             aria-haspopup="dialog" aria-controls="class-dialog-157"
+             data-dialog-target="class-dialog-157">
           <div class="class-card-header">
             <span class="class-name">LocationService</span>
             <span class="type-badge service">service</span>
@@ -16439,7 +16591,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-156" class="class-dialog" aria-label="LocationService details">
+        <dialog id="class-dialog-157" class="class-dialog" aria-label="LocationService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16586,8 +16738,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-157"
-             data-dialog-target="class-dialog-157">
+             aria-haspopup="dialog" aria-controls="class-dialog-158"
+             data-dialog-target="class-dialog-158">
           <div class="class-card-header">
             <span class="class-name">LocationServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -16606,7 +16758,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-157" class="class-dialog" aria-label="LocationServiceImpl details">
+        <dialog id="class-dialog-158" class="class-dialog" aria-label="LocationServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16786,8 +16938,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-158"
-             data-dialog-target="class-dialog-158">
+             aria-haspopup="dialog" aria-controls="class-dialog-159"
+             data-dialog-target="class-dialog-159">
           <div class="class-card-header">
             <span class="class-name">FullNameMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -16806,7 +16958,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-158" class="class-dialog" aria-label="FullNameMapper details">
+        <dialog id="class-dialog-159" class="class-dialog" aria-label="FullNameMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16871,8 +17023,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-159"
-             data-dialog-target="class-dialog-159">
+             aria-haspopup="dialog" aria-controls="class-dialog-160"
+             data-dialog-target="class-dialog-160">
           <div class="class-card-header">
             <span class="class-name">GenericMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -16891,7 +17043,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-159" class="class-dialog" aria-label="GenericMapper details">
+        <dialog id="class-dialog-160" class="class-dialog" aria-label="GenericMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -16996,8 +17148,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-160"
-             data-dialog-target="class-dialog-160">
+             aria-haspopup="dialog" aria-controls="class-dialog-161"
+             data-dialog-target="class-dialog-161">
           <div class="class-card-header">
             <span class="class-name">PaymentRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -17016,7 +17168,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-160" class="class-dialog" aria-label="PaymentRepresentationModelAssembler details">
+        <dialog id="class-dialog-161" class="class-dialog" aria-label="PaymentRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17085,8 +17237,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-161"
-             data-dialog-target="class-dialog-161">
+             aria-haspopup="dialog" aria-controls="class-dialog-162"
+             data-dialog-target="class-dialog-162">
           <div class="class-card-header">
             <span class="class-name">PaymentController</span>
             <span class="type-badge controller">controller</span>
@@ -17120,7 +17272,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-161" class="class-dialog" aria-label="PaymentController details">
+        <dialog id="class-dialog-162" class="class-dialog" aria-label="PaymentController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17237,8 +17389,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-162"
-             data-dialog-target="class-dialog-162">
+             aria-haspopup="dialog" aria-controls="class-dialog-163"
+             data-dialog-target="class-dialog-163">
           <div class="class-card-header">
             <span class="class-name">PaymentDto</span>
             <span class="type-badge dto">dto</span>
@@ -17257,7 +17409,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-162" class="class-dialog" aria-label="PaymentDto details">
+        <dialog id="class-dialog-163" class="class-dialog" aria-label="PaymentDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17301,8 +17453,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-163"
-             data-dialog-target="class-dialog-163">
+             aria-haspopup="dialog" aria-controls="class-dialog-164"
+             data-dialog-target="class-dialog-164">
           <div class="class-card-header">
             <span class="class-name">Payment</span>
             <span class="type-badge dto">dto</span>
@@ -17321,7 +17473,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-163" class="class-dialog" aria-label="Payment details">
+        <dialog id="class-dialog-164" class="class-dialog" aria-label="Payment details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17400,8 +17552,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-164"
-             data-dialog-target="class-dialog-164">
+             aria-haspopup="dialog" aria-controls="class-dialog-165"
+             data-dialog-target="class-dialog-165">
           <div class="class-card-header">
             <span class="class-name">PaymentRequest</span>
             <span class="type-badge dto">dto</span>
@@ -17420,7 +17572,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-164" class="class-dialog" aria-label="PaymentRequest details">
+        <dialog id="class-dialog-165" class="class-dialog" aria-label="PaymentRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17499,8 +17651,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-165"
-             data-dialog-target="class-dialog-165">
+             aria-haspopup="dialog" aria-controls="class-dialog-166"
+             data-dialog-target="class-dialog-166">
           <div class="class-card-header">
             <span class="class-name">PaymentResponse</span>
             <span class="type-badge dto">dto</span>
@@ -17519,7 +17671,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-165" class="class-dialog" aria-label="PaymentResponse details">
+        <dialog id="class-dialog-166" class="class-dialog" aria-label="PaymentResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17598,8 +17750,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-166"
-             data-dialog-target="class-dialog-166">
+             aria-haspopup="dialog" aria-controls="class-dialog-167"
+             data-dialog-target="class-dialog-167">
           <div class="class-card-header">
             <span class="class-name">PaymentEntity</span>
             <span class="type-badge entity">entity</span>
@@ -17618,7 +17770,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-166" class="class-dialog" aria-label="PaymentEntity details">
+        <dialog id="class-dialog-167" class="class-dialog" aria-label="PaymentEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17709,8 +17861,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-167"
-             data-dialog-target="class-dialog-167">
+             aria-haspopup="dialog" aria-controls="class-dialog-168"
+             data-dialog-target="class-dialog-168">
           <div class="class-card-header">
             <span class="class-name">PaymentMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -17729,7 +17881,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-167" class="class-dialog" aria-label="PaymentMapper details">
+        <dialog id="class-dialog-168" class="class-dialog" aria-label="PaymentMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17802,8 +17954,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-168"
-             data-dialog-target="class-dialog-168">
+             aria-haspopup="dialog" aria-controls="class-dialog-169"
+             data-dialog-target="class-dialog-169">
           <div class="class-card-header">
             <span class="class-name">CustomPaymentRepository</span>
             <span class="type-badge repository">repository</span>
@@ -17822,7 +17974,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-168" class="class-dialog" aria-label="CustomPaymentRepository details">
+        <dialog id="class-dialog-169" class="class-dialog" aria-label="CustomPaymentRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -17907,8 +18059,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-169"
-             data-dialog-target="class-dialog-169">
+             aria-haspopup="dialog" aria-controls="class-dialog-170"
+             data-dialog-target="class-dialog-170">
           <div class="class-card-header">
             <span class="class-name">CustomPaymentRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -17927,7 +18079,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-169" class="class-dialog" aria-label="CustomPaymentRepositoryImpl details">
+        <dialog id="class-dialog-170" class="class-dialog" aria-label="CustomPaymentRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18030,8 +18182,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-170"
-             data-dialog-target="class-dialog-170">
+             aria-haspopup="dialog" aria-controls="class-dialog-171"
+             data-dialog-target="class-dialog-171">
           <div class="class-card-header">
             <span class="class-name">PaymentRepository</span>
             <span class="type-badge repository">repository</span>
@@ -18050,7 +18202,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-170" class="class-dialog" aria-label="PaymentRepository details">
+        <dialog id="class-dialog-171" class="class-dialog" aria-label="PaymentRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18092,8 +18244,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-171"
-             data-dialog-target="class-dialog-171">
+             aria-haspopup="dialog" aria-controls="class-dialog-172"
+             data-dialog-target="class-dialog-172">
           <div class="class-card-header">
             <span class="class-name">PaymentService</span>
             <span class="type-badge service">service</span>
@@ -18112,7 +18264,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-171" class="class-dialog" aria-label="PaymentService details">
+        <dialog id="class-dialog-172" class="class-dialog" aria-label="PaymentService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18223,8 +18375,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-172"
-             data-dialog-target="class-dialog-172">
+             aria-haspopup="dialog" aria-controls="class-dialog-173"
+             data-dialog-target="class-dialog-173">
           <div class="class-card-header">
             <span class="class-name">PaymentServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -18243,7 +18395,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-172" class="class-dialog" aria-label="PaymentServiceImpl details">
+        <dialog id="class-dialog-173" class="class-dialog" aria-label="PaymentServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18383,8 +18535,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-173"
-             data-dialog-target="class-dialog-173">
+             aria-haspopup="dialog" aria-controls="class-dialog-174"
+             data-dialog-target="class-dialog-174">
           <div class="class-card-header">
             <span class="class-name">RentalRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -18403,7 +18555,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-173" class="class-dialog" aria-label="RentalRepresentationModelAssembler details">
+        <dialog id="class-dialog-174" class="class-dialog" aria-label="RentalRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18472,8 +18624,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-174"
-             data-dialog-target="class-dialog-174">
+             aria-haspopup="dialog" aria-controls="class-dialog-175"
+             data-dialog-target="class-dialog-175">
           <div class="class-card-header">
             <span class="class-name">RentalController</span>
             <span class="type-badge controller">controller</span>
@@ -18507,7 +18659,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-174" class="class-dialog" aria-label="RentalController details">
+        <dialog id="class-dialog-175" class="class-dialog" aria-label="RentalController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18636,8 +18788,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-175"
-             data-dialog-target="class-dialog-175">
+             aria-haspopup="dialog" aria-controls="class-dialog-176"
+             data-dialog-target="class-dialog-176">
           <div class="class-card-header">
             <span class="class-name">RentalDto</span>
             <span class="type-badge dto">dto</span>
@@ -18656,7 +18808,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-175" class="class-dialog" aria-label="RentalDto details">
+        <dialog id="class-dialog-176" class="class-dialog" aria-label="RentalDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18700,8 +18852,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-176"
-             data-dialog-target="class-dialog-176">
+             aria-haspopup="dialog" aria-controls="class-dialog-177"
+             data-dialog-target="class-dialog-177">
           <div class="class-card-header">
             <span class="class-name">Rental</span>
             <span class="type-badge dto">dto</span>
@@ -18720,7 +18872,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-176" class="class-dialog" aria-label="Rental details">
+        <dialog id="class-dialog-177" class="class-dialog" aria-label="Rental details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18797,8 +18949,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-177"
-             data-dialog-target="class-dialog-177">
+             aria-haspopup="dialog" aria-controls="class-dialog-178"
+             data-dialog-target="class-dialog-178">
           <div class="class-card-header">
             <span class="class-name">RentalCreateRequest</span>
             <span class="type-badge dto">dto</span>
@@ -18817,7 +18969,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-177" class="class-dialog" aria-label="RentalCreateRequest details">
+        <dialog id="class-dialog-178" class="class-dialog" aria-label="RentalCreateRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18892,8 +19044,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-178"
-             data-dialog-target="class-dialog-178">
+             aria-haspopup="dialog" aria-controls="class-dialog-179"
+             data-dialog-target="class-dialog-179">
           <div class="class-card-header">
             <span class="class-name">RentalUpdateRequest</span>
             <span class="type-badge dto">dto</span>
@@ -18912,7 +19064,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-178" class="class-dialog" aria-label="RentalUpdateRequest details">
+        <dialog id="class-dialog-179" class="class-dialog" aria-label="RentalUpdateRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -18987,8 +19139,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-179"
-             data-dialog-target="class-dialog-179">
+             aria-haspopup="dialog" aria-controls="class-dialog-180"
+             data-dialog-target="class-dialog-180">
           <div class="class-card-header">
             <span class="class-name">ReturnCreateRequest</span>
             <span class="type-badge dto">dto</span>
@@ -19007,7 +19159,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-179" class="class-dialog" aria-label="ReturnCreateRequest details">
+        <dialog id="class-dialog-180" class="class-dialog" aria-label="ReturnCreateRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19051,8 +19203,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-180"
-             data-dialog-target="class-dialog-180">
+             aria-haspopup="dialog" aria-controls="class-dialog-181"
+             data-dialog-target="class-dialog-181">
           <div class="class-card-header">
             <span class="class-name">RentalResponse</span>
             <span class="type-badge dto">dto</span>
@@ -19071,7 +19223,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-180" class="class-dialog" aria-label="RentalResponse details">
+        <dialog id="class-dialog-181" class="class-dialog" aria-label="RentalResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19148,8 +19300,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-181"
-             data-dialog-target="class-dialog-181">
+             aria-haspopup="dialog" aria-controls="class-dialog-182"
+             data-dialog-target="class-dialog-182">
           <div class="class-card-header">
             <span class="class-name">RentalEntity</span>
             <span class="type-badge entity">entity</span>
@@ -19168,7 +19320,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-181" class="class-dialog" aria-label="RentalEntity details">
+        <dialog id="class-dialog-182" class="class-dialog" aria-label="RentalEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19261,8 +19413,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-182"
-             data-dialog-target="class-dialog-182">
+             aria-haspopup="dialog" aria-controls="class-dialog-183"
+             data-dialog-target="class-dialog-183">
           <div class="class-card-header">
             <span class="class-name">RentalMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -19281,7 +19433,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-182" class="class-dialog" aria-label="RentalMapper details">
+        <dialog id="class-dialog-183" class="class-dialog" aria-label="RentalMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19386,8 +19538,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-183"
-             data-dialog-target="class-dialog-183">
+             aria-haspopup="dialog" aria-controls="class-dialog-184"
+             data-dialog-target="class-dialog-184">
           <div class="class-card-header">
             <span class="class-name">RentalStatus</span>
             <span class="type-badge other">other</span>
@@ -19406,7 +19558,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-183" class="class-dialog" aria-label="RentalStatus details">
+        <dialog id="class-dialog-184" class="class-dialog" aria-label="RentalStatus details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19439,8 +19591,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-184"
-             data-dialog-target="class-dialog-184">
+             aria-haspopup="dialog" aria-controls="class-dialog-185"
+             data-dialog-target="class-dialog-185">
           <div class="class-card-header">
             <span class="class-name">CustomRentalRepository</span>
             <span class="type-badge repository">repository</span>
@@ -19459,7 +19611,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-184" class="class-dialog" aria-label="CustomRentalRepository details">
+        <dialog id="class-dialog-185" class="class-dialog" aria-label="CustomRentalRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19516,8 +19668,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-185"
-             data-dialog-target="class-dialog-185">
+             aria-haspopup="dialog" aria-controls="class-dialog-186"
+             data-dialog-target="class-dialog-186">
           <div class="class-card-header">
             <span class="class-name">CustomRentalRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -19536,7 +19688,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-185" class="class-dialog" aria-label="CustomRentalRepositoryImpl details">
+        <dialog id="class-dialog-186" class="class-dialog" aria-label="CustomRentalRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19599,8 +19751,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-186"
-             data-dialog-target="class-dialog-186">
+             aria-haspopup="dialog" aria-controls="class-dialog-187"
+             data-dialog-target="class-dialog-187">
           <div class="class-card-header">
             <span class="class-name">RentalRepository</span>
             <span class="type-badge repository">repository</span>
@@ -19619,7 +19771,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-186" class="class-dialog" aria-label="RentalRepository details">
+        <dialog id="class-dialog-187" class="class-dialog" aria-label="RentalRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19661,8 +19813,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-187"
-             data-dialog-target="class-dialog-187">
+             aria-haspopup="dialog" aria-controls="class-dialog-188"
+             data-dialog-target="class-dialog-188">
           <div class="class-card-header">
             <span class="class-name">RentalService</span>
             <span class="type-badge service">service</span>
@@ -19681,7 +19833,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-187" class="class-dialog" aria-label="RentalService details">
+        <dialog id="class-dialog-188" class="class-dialog" aria-label="RentalService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19794,8 +19946,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-188"
-             data-dialog-target="class-dialog-188">
+             aria-haspopup="dialog" aria-controls="class-dialog-189"
+             data-dialog-target="class-dialog-189">
           <div class="class-card-header">
             <span class="class-name">RentalServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -19814,7 +19966,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-188" class="class-dialog" aria-label="RentalServiceImpl details">
+        <dialog id="class-dialog-189" class="class-dialog" aria-label="RentalServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -19968,8 +20120,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-189"
-             data-dialog-target="class-dialog-189">
+             aria-haspopup="dialog" aria-controls="class-dialog-190"
+             data-dialog-target="class-dialog-190">
           <div class="class-card-header">
             <span class="class-name">JwtAuthenticationFilter</span>
             <span class="type-badge other">other</span>
@@ -19988,7 +20140,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-189" class="class-dialog" aria-label="JwtAuthenticationFilter details">
+        <dialog id="class-dialog-190" class="class-dialog" aria-label="JwtAuthenticationFilter details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20054,8 +20206,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-190"
-             data-dialog-target="class-dialog-190">
+             aria-haspopup="dialog" aria-controls="class-dialog-191"
+             data-dialog-target="class-dialog-191">
           <div class="class-card-header">
             <span class="class-name">JwtAuthenticationProvider</span>
             <span class="type-badge other">other</span>
@@ -20074,7 +20226,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-190" class="class-dialog" aria-label="JwtAuthenticationProvider details">
+        <dialog id="class-dialog-191" class="class-dialog" aria-label="JwtAuthenticationProvider details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20147,8 +20299,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-191"
-             data-dialog-target="class-dialog-191">
+             aria-haspopup="dialog" aria-controls="class-dialog-192"
+             data-dialog-target="class-dialog-192">
           <div class="class-card-header">
             <span class="class-name">JwtAuthenticationToken</span>
             <span class="type-badge other">other</span>
@@ -20167,7 +20319,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-191" class="class-dialog" aria-label="JwtAuthenticationToken details">
+        <dialog id="class-dialog-192" class="class-dialog" aria-label="JwtAuthenticationToken details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20249,8 +20401,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-192"
-             data-dialog-target="class-dialog-192">
+             aria-haspopup="dialog" aria-controls="class-dialog-193"
+             data-dialog-target="class-dialog-193">
           <div class="class-card-header">
             <span class="class-name">JwtTokenProvider</span>
             <span class="type-badge other">other</span>
@@ -20269,7 +20421,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-192" class="class-dialog" aria-label="JwtTokenProvider details">
+        <dialog id="class-dialog-193" class="class-dialog" aria-label="JwtTokenProvider details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20356,8 +20508,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-193"
-             data-dialog-target="class-dialog-193">
+             aria-haspopup="dialog" aria-controls="class-dialog-194"
+             data-dialog-target="class-dialog-194">
           <div class="class-card-header">
             <span class="class-name">NullToEmptyStringSerializer</span>
             <span class="type-badge other">other</span>
@@ -20376,7 +20528,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-193" class="class-dialog" aria-label="NullToEmptyStringSerializer details">
+        <dialog id="class-dialog-194" class="class-dialog" aria-label="NullToEmptyStringSerializer details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20489,8 +20641,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-194"
-             data-dialog-target="class-dialog-194">
+             aria-haspopup="dialog" aria-controls="class-dialog-195"
+             data-dialog-target="class-dialog-195">
           <div class="class-card-header">
             <span class="class-name">StaffDetailsRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -20509,7 +20661,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-194" class="class-dialog" aria-label="StaffDetailsRepresentationModelAssembler details">
+        <dialog id="class-dialog-195" class="class-dialog" aria-label="StaffDetailsRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20578,8 +20730,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-195"
-             data-dialog-target="class-dialog-195">
+             aria-haspopup="dialog" aria-controls="class-dialog-196"
+             data-dialog-target="class-dialog-196">
           <div class="class-card-header">
             <span class="class-name">StaffRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -20598,7 +20750,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-195" class="class-dialog" aria-label="StaffRepresentationModelAssembler details">
+        <dialog id="class-dialog-196" class="class-dialog" aria-label="StaffRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20675,8 +20827,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-196"
-             data-dialog-target="class-dialog-196">
+             aria-haspopup="dialog" aria-controls="class-dialog-197"
+             data-dialog-target="class-dialog-197">
           <div class="class-card-header">
             <span class="class-name">StaffController</span>
             <span class="type-badge controller">controller</span>
@@ -20710,7 +20862,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-196" class="class-dialog" aria-label="StaffController details">
+        <dialog id="class-dialog-197" class="class-dialog" aria-label="StaffController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20841,8 +20993,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-197"
-             data-dialog-target="class-dialog-197">
+             aria-haspopup="dialog" aria-controls="class-dialog-198"
+             data-dialog-target="class-dialog-198">
           <div class="class-card-header">
             <span class="class-name">StaffDetailsDto</span>
             <span class="type-badge dto">dto</span>
@@ -20861,7 +21013,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-197" class="class-dialog" aria-label="StaffDetailsDto details">
+        <dialog id="class-dialog-198" class="class-dialog" aria-label="StaffDetailsDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20903,8 +21055,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-198"
-             data-dialog-target="class-dialog-198">
+             aria-haspopup="dialog" aria-controls="class-dialog-199"
+             data-dialog-target="class-dialog-199">
           <div class="class-card-header">
             <span class="class-name">StaffDetails</span>
             <span class="type-badge dto">dto</span>
@@ -20923,7 +21075,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-198" class="class-dialog" aria-label="StaffDetails details">
+        <dialog id="class-dialog-199" class="class-dialog" aria-label="StaffDetails details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -20996,8 +21148,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-199"
-             data-dialog-target="class-dialog-199">
+             aria-haspopup="dialog" aria-controls="class-dialog-200"
+             data-dialog-target="class-dialog-200">
           <div class="class-card-header">
             <span class="class-name">StaffDetailsResponse</span>
             <span class="type-badge dto">dto</span>
@@ -21016,7 +21168,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-199" class="class-dialog" aria-label="StaffDetailsResponse details">
+        <dialog id="class-dialog-200" class="class-dialog" aria-label="StaffDetailsResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21089,8 +21241,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-200"
-             data-dialog-target="class-dialog-200">
+             aria-haspopup="dialog" aria-controls="class-dialog-201"
+             data-dialog-target="class-dialog-201">
           <div class="class-card-header">
             <span class="class-name">StaffDto</span>
             <span class="type-badge dto">dto</span>
@@ -21109,7 +21261,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-200" class="class-dialog" aria-label="StaffDto details">
+        <dialog id="class-dialog-201" class="class-dialog" aria-label="StaffDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21155,8 +21307,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-201"
-             data-dialog-target="class-dialog-201">
+             aria-haspopup="dialog" aria-controls="class-dialog-202"
+             data-dialog-target="class-dialog-202">
           <div class="class-card-header">
             <span class="class-name">Staff</span>
             <span class="type-badge dto">dto</span>
@@ -21175,7 +21327,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-201" class="class-dialog" aria-label="Staff details">
+        <dialog id="class-dialog-202" class="class-dialog" aria-label="Staff details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21252,8 +21404,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-202"
-             data-dialog-target="class-dialog-202">
+             aria-haspopup="dialog" aria-controls="class-dialog-203"
+             data-dialog-target="class-dialog-203">
           <div class="class-card-header">
             <span class="class-name">StaffRequest</span>
             <span class="type-badge dto">dto</span>
@@ -21272,7 +21424,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-202" class="class-dialog" aria-label="StaffRequest details">
+        <dialog id="class-dialog-203" class="class-dialog" aria-label="StaffRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21349,8 +21501,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-203"
-             data-dialog-target="class-dialog-203">
+             aria-haspopup="dialog" aria-controls="class-dialog-204"
+             data-dialog-target="class-dialog-204">
           <div class="class-card-header">
             <span class="class-name">StaffResponse</span>
             <span class="type-badge dto">dto</span>
@@ -21369,7 +21521,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-203" class="class-dialog" aria-label="StaffResponse details">
+        <dialog id="class-dialog-204" class="class-dialog" aria-label="StaffResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21450,8 +21602,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-204"
-             data-dialog-target="class-dialog-204">
+             aria-haspopup="dialog" aria-controls="class-dialog-205"
+             data-dialog-target="class-dialog-205">
           <div class="class-card-header">
             <span class="class-name">StaffEntity</span>
             <span class="type-badge entity">entity</span>
@@ -21470,7 +21622,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-204" class="class-dialog" aria-label="StaffEntity details">
+        <dialog id="class-dialog-205" class="class-dialog" aria-label="StaffEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21561,8 +21713,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-205"
-             data-dialog-target="class-dialog-205">
+             aria-haspopup="dialog" aria-controls="class-dialog-206"
+             data-dialog-target="class-dialog-206">
           <div class="class-card-header">
             <span class="class-name">StaffMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -21581,7 +21733,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-205" class="class-dialog" aria-label="StaffMapper details">
+        <dialog id="class-dialog-206" class="class-dialog" aria-label="StaffMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21664,8 +21816,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-206"
-             data-dialog-target="class-dialog-206">
+             aria-haspopup="dialog" aria-controls="class-dialog-207"
+             data-dialog-target="class-dialog-207">
           <div class="class-card-header">
             <span class="class-name">CustomStaffRepository</span>
             <span class="type-badge repository">repository</span>
@@ -21684,7 +21836,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-206" class="class-dialog" aria-label="CustomStaffRepository details">
+        <dialog id="class-dialog-207" class="class-dialog" aria-label="CustomStaffRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21749,8 +21901,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-207"
-             data-dialog-target="class-dialog-207">
+             aria-haspopup="dialog" aria-controls="class-dialog-208"
+             data-dialog-target="class-dialog-208">
           <div class="class-card-header">
             <span class="class-name">CustomStaffRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -21769,7 +21921,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-207" class="class-dialog" aria-label="CustomStaffRepositoryImpl details">
+        <dialog id="class-dialog-208" class="class-dialog" aria-label="CustomStaffRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21850,8 +22002,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-208"
-             data-dialog-target="class-dialog-208">
+             aria-haspopup="dialog" aria-controls="class-dialog-209"
+             data-dialog-target="class-dialog-209">
           <div class="class-card-header">
             <span class="class-name">StaffRepository</span>
             <span class="type-badge repository">repository</span>
@@ -21870,7 +22022,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-208" class="class-dialog" aria-label="StaffRepository details">
+        <dialog id="class-dialog-209" class="class-dialog" aria-label="StaffRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -21912,8 +22064,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-209"
-             data-dialog-target="class-dialog-209">
+             aria-haspopup="dialog" aria-controls="class-dialog-210"
+             data-dialog-target="class-dialog-210">
           <div class="class-card-header">
             <span class="class-name">StaffService</span>
             <span class="type-badge service">service</span>
@@ -21932,7 +22084,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-209" class="class-dialog" aria-label="StaffService details">
+        <dialog id="class-dialog-210" class="class-dialog" aria-label="StaffService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22039,8 +22191,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-210"
-             data-dialog-target="class-dialog-210">
+             aria-haspopup="dialog" aria-controls="class-dialog-211"
+             data-dialog-target="class-dialog-211">
           <div class="class-card-header">
             <span class="class-name">StaffServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -22059,7 +22211,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-210" class="class-dialog" aria-label="StaffServiceImpl details">
+        <dialog id="class-dialog-211" class="class-dialog" aria-label="StaffServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22197,8 +22349,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-211"
-             data-dialog-target="class-dialog-211">
+             aria-haspopup="dialog" aria-controls="class-dialog-212"
+             data-dialog-target="class-dialog-212">
           <div class="class-card-header">
             <span class="class-name">CategorySalesRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -22217,7 +22369,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-211" class="class-dialog" aria-label="CategorySalesRepresentationModelAssembler details">
+        <dialog id="class-dialog-212" class="class-dialog" aria-label="CategorySalesRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22302,8 +22454,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-212"
-             data-dialog-target="class-dialog-212">
+             aria-haspopup="dialog" aria-controls="class-dialog-213"
+             data-dialog-target="class-dialog-213">
           <div class="class-card-header">
             <span class="class-name">StoreDetailsRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -22322,7 +22474,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-212" class="class-dialog" aria-label="StoreDetailsRepresentationModelAssembler details">
+        <dialog id="class-dialog-213" class="class-dialog" aria-label="StoreDetailsRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22399,8 +22551,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-213"
-             data-dialog-target="class-dialog-213">
+             aria-haspopup="dialog" aria-controls="class-dialog-214"
+             data-dialog-target="class-dialog-214">
           <div class="class-card-header">
             <span class="class-name">StoreRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -22419,7 +22571,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-213" class="class-dialog" aria-label="StoreRepresentationModelAssembler details">
+        <dialog id="class-dialog-214" class="class-dialog" aria-label="StoreRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22494,8 +22646,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-214"
-             data-dialog-target="class-dialog-214">
+             aria-haspopup="dialog" aria-controls="class-dialog-215"
+             data-dialog-target="class-dialog-215">
           <div class="class-card-header">
             <span class="class-name">StoreSalesRepresentationModelAssembler</span>
             <span class="type-badge assembler">assembler</span>
@@ -22514,7 +22666,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-214" class="class-dialog" aria-label="StoreSalesRepresentationModelAssembler details">
+        <dialog id="class-dialog-215" class="class-dialog" aria-label="StoreSalesRepresentationModelAssembler details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22599,8 +22751,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-215"
-             data-dialog-target="class-dialog-215">
+             aria-haspopup="dialog" aria-controls="class-dialog-216"
+             data-dialog-target="class-dialog-216">
           <div class="class-card-header">
             <span class="class-name">ReportController</span>
             <span class="type-badge controller">controller</span>
@@ -22628,7 +22780,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-215" class="class-dialog" aria-label="ReportController details">
+        <dialog id="class-dialog-216" class="class-dialog" aria-label="ReportController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22719,8 +22871,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-216"
-             data-dialog-target="class-dialog-216">
+             aria-haspopup="dialog" aria-controls="class-dialog-217"
+             data-dialog-target="class-dialog-217">
           <div class="class-card-header">
             <span class="class-name">StoreController</span>
             <span class="type-badge controller">controller</span>
@@ -22754,7 +22906,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-216" class="class-dialog" aria-label="StoreController details">
+        <dialog id="class-dialog-217" class="class-dialog" aria-label="StoreController details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -22943,8 +23095,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-217"
-             data-dialog-target="class-dialog-217">
+             aria-haspopup="dialog" aria-controls="class-dialog-218"
+             data-dialog-target="class-dialog-218">
           <div class="class-card-header">
             <span class="class-name">CategorySalesDto</span>
             <span class="type-badge dto">dto</span>
@@ -22963,7 +23115,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-217" class="class-dialog" aria-label="CategorySalesDto details">
+        <dialog id="class-dialog-218" class="class-dialog" aria-label="CategorySalesDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23005,8 +23157,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-218"
-             data-dialog-target="class-dialog-218">
+             aria-haspopup="dialog" aria-controls="class-dialog-219"
+             data-dialog-target="class-dialog-219">
           <div class="class-card-header">
             <span class="class-name">CategorySales</span>
             <span class="type-badge dto">dto</span>
@@ -23025,7 +23177,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-218" class="class-dialog" aria-label="CategorySales details">
+        <dialog id="class-dialog-219" class="class-dialog" aria-label="CategorySales details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23100,8 +23252,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-219"
-             data-dialog-target="class-dialog-219">
+             aria-haspopup="dialog" aria-controls="class-dialog-220"
+             data-dialog-target="class-dialog-220">
           <div class="class-card-header">
             <span class="class-name">CategorySalesResponse</span>
             <span class="type-badge dto">dto</span>
@@ -23120,7 +23272,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-219" class="class-dialog" aria-label="CategorySalesResponse details">
+        <dialog id="class-dialog-220" class="class-dialog" aria-label="CategorySalesResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23195,8 +23347,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-220"
-             data-dialog-target="class-dialog-220">
+             aria-haspopup="dialog" aria-controls="class-dialog-221"
+             data-dialog-target="class-dialog-221">
           <div class="class-card-header">
             <span class="class-name">InventoryDto</span>
             <span class="type-badge dto">dto</span>
@@ -23215,7 +23367,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-220" class="class-dialog" aria-label="InventoryDto details">
+        <dialog id="class-dialog-221" class="class-dialog" aria-label="InventoryDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23255,8 +23407,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-221"
-             data-dialog-target="class-dialog-221">
+             aria-haspopup="dialog" aria-controls="class-dialog-222"
+             data-dialog-target="class-dialog-222">
           <div class="class-card-header">
             <span class="class-name">Inventory</span>
             <span class="type-badge dto">dto</span>
@@ -23275,7 +23427,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-221" class="class-dialog" aria-label="Inventory details">
+        <dialog id="class-dialog-222" class="class-dialog" aria-label="Inventory details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23350,8 +23502,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-222"
-             data-dialog-target="class-dialog-222">
+             aria-haspopup="dialog" aria-controls="class-dialog-223"
+             data-dialog-target="class-dialog-223">
           <div class="class-card-header">
             <span class="class-name">StoreDetailsDto</span>
             <span class="type-badge dto">dto</span>
@@ -23370,7 +23522,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-222" class="class-dialog" aria-label="StoreDetailsDto details">
+        <dialog id="class-dialog-223" class="class-dialog" aria-label="StoreDetailsDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23403,8 +23555,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-223"
-             data-dialog-target="class-dialog-223">
+             aria-haspopup="dialog" aria-controls="class-dialog-224"
+             data-dialog-target="class-dialog-224">
           <div class="class-card-header">
             <span class="class-name">StoreDetails</span>
             <span class="type-badge dto">dto</span>
@@ -23423,7 +23575,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-223" class="class-dialog" aria-label="StoreDetails details">
+        <dialog id="class-dialog-224" class="class-dialog" aria-label="StoreDetails details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23481,8 +23633,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-224"
-             data-dialog-target="class-dialog-224">
+             aria-haspopup="dialog" aria-controls="class-dialog-225"
+             data-dialog-target="class-dialog-225">
           <div class="class-card-header">
             <span class="class-name">StoreDetailsResponse</span>
             <span class="type-badge dto">dto</span>
@@ -23501,7 +23653,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-224" class="class-dialog" aria-label="StoreDetailsResponse details">
+        <dialog id="class-dialog-225" class="class-dialog" aria-label="StoreDetailsResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23565,8 +23717,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-225"
-             data-dialog-target="class-dialog-225">
+             aria-haspopup="dialog" aria-controls="class-dialog-226"
+             data-dialog-target="class-dialog-226">
           <div class="class-card-header">
             <span class="class-name">StoreDto</span>
             <span class="type-badge dto">dto</span>
@@ -23585,7 +23737,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-225" class="class-dialog" aria-label="StoreDto details">
+        <dialog id="class-dialog-226" class="class-dialog" aria-label="StoreDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23627,8 +23779,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-226"
-             data-dialog-target="class-dialog-226">
+             aria-haspopup="dialog" aria-controls="class-dialog-227"
+             data-dialog-target="class-dialog-227">
           <div class="class-card-header">
             <span class="class-name">Store</span>
             <span class="type-badge dto">dto</span>
@@ -23647,7 +23799,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-226" class="class-dialog" aria-label="Store details">
+        <dialog id="class-dialog-227" class="class-dialog" aria-label="Store details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23714,8 +23866,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-227"
-             data-dialog-target="class-dialog-227">
+             aria-haspopup="dialog" aria-controls="class-dialog-228"
+             data-dialog-target="class-dialog-228">
           <div class="class-card-header">
             <span class="class-name">StoreRequest</span>
             <span class="type-badge dto">dto</span>
@@ -23734,7 +23886,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-227" class="class-dialog" aria-label="StoreRequest details">
+        <dialog id="class-dialog-228" class="class-dialog" aria-label="StoreRequest details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23801,8 +23953,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-228"
-             data-dialog-target="class-dialog-228">
+             aria-haspopup="dialog" aria-controls="class-dialog-229"
+             data-dialog-target="class-dialog-229">
           <div class="class-card-header">
             <span class="class-name">StoreResponse</span>
             <span class="type-badge dto">dto</span>
@@ -23821,7 +23973,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-228" class="class-dialog" aria-label="StoreResponse details">
+        <dialog id="class-dialog-229" class="class-dialog" aria-label="StoreResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23894,8 +24046,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-229"
-             data-dialog-target="class-dialog-229">
+             aria-haspopup="dialog" aria-controls="class-dialog-230"
+             data-dialog-target="class-dialog-230">
           <div class="class-card-header">
             <span class="class-name">StoreSalesDto</span>
             <span class="type-badge dto">dto</span>
@@ -23914,7 +24066,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-229" class="class-dialog" aria-label="StoreSalesDto details">
+        <dialog id="class-dialog-230" class="class-dialog" aria-label="StoreSalesDto details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -23947,8 +24099,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-230"
-             data-dialog-target="class-dialog-230">
+             aria-haspopup="dialog" aria-controls="class-dialog-231"
+             data-dialog-target="class-dialog-231">
           <div class="class-card-header">
             <span class="class-name">StoreSales</span>
             <span class="type-badge dto">dto</span>
@@ -23967,7 +24119,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-230" class="class-dialog" aria-label="StoreSales details">
+        <dialog id="class-dialog-231" class="class-dialog" aria-label="StoreSales details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24035,8 +24187,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-231"
-             data-dialog-target="class-dialog-231">
+             aria-haspopup="dialog" aria-controls="class-dialog-232"
+             data-dialog-target="class-dialog-232">
           <div class="class-card-header">
             <span class="class-name">StoreSalesResponse</span>
             <span class="type-badge dto">dto</span>
@@ -24055,7 +24207,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-231" class="class-dialog" aria-label="StoreSalesResponse details">
+        <dialog id="class-dialog-232" class="class-dialog" aria-label="StoreSalesResponse details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24123,8 +24275,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-232"
-             data-dialog-target="class-dialog-232">
+             aria-haspopup="dialog" aria-controls="class-dialog-233"
+             data-dialog-target="class-dialog-233">
           <div class="class-card-header">
             <span class="class-name">InventoryEntity</span>
             <span class="type-badge entity">entity</span>
@@ -24143,7 +24295,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-232" class="class-dialog" aria-label="InventoryEntity details">
+        <dialog id="class-dialog-233" class="class-dialog" aria-label="InventoryEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24228,8 +24380,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-233"
-             data-dialog-target="class-dialog-233">
+             aria-haspopup="dialog" aria-controls="class-dialog-234"
+             data-dialog-target="class-dialog-234">
           <div class="class-card-header">
             <span class="class-name">StoreEntity</span>
             <span class="type-badge entity">entity</span>
@@ -24248,7 +24400,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-233" class="class-dialog" aria-label="StoreEntity details">
+        <dialog id="class-dialog-234" class="class-dialog" aria-label="StoreEntity details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24337,8 +24489,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-234"
-             data-dialog-target="class-dialog-234">
+             aria-haspopup="dialog" aria-controls="class-dialog-235"
+             data-dialog-target="class-dialog-235">
           <div class="class-card-header">
             <span class="class-name">InventoryMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -24357,7 +24509,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-234" class="class-dialog" aria-label="InventoryMapper details">
+        <dialog id="class-dialog-235" class="class-dialog" aria-label="InventoryMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24426,8 +24578,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-235"
-             data-dialog-target="class-dialog-235">
+             aria-haspopup="dialog" aria-controls="class-dialog-236"
+             data-dialog-target="class-dialog-236">
           <div class="class-card-header">
             <span class="class-name">StoreMapper</span>
             <span class="type-badge mapper">mapper</span>
@@ -24446,7 +24598,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-235" class="class-dialog" aria-label="StoreMapper details">
+        <dialog id="class-dialog-236" class="class-dialog" aria-label="StoreMapper details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24517,8 +24669,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-236"
-             data-dialog-target="class-dialog-236">
+             aria-haspopup="dialog" aria-controls="class-dialog-237"
+             data-dialog-target="class-dialog-237">
           <div class="class-card-header">
             <span class="class-name">CustomInventoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -24537,7 +24689,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-236" class="class-dialog" aria-label="CustomInventoryRepository details">
+        <dialog id="class-dialog-237" class="class-dialog" aria-label="CustomInventoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24570,8 +24722,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-237"
-             data-dialog-target="class-dialog-237">
+             aria-haspopup="dialog" aria-controls="class-dialog-238"
+             data-dialog-target="class-dialog-238">
           <div class="class-card-header">
             <span class="class-name">CustomInventoryRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -24590,7 +24742,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-237" class="class-dialog" aria-label="CustomInventoryRepositoryImpl details">
+        <dialog id="class-dialog-238" class="class-dialog" aria-label="CustomInventoryRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24623,8 +24775,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-238"
-             data-dialog-target="class-dialog-238">
+             aria-haspopup="dialog" aria-controls="class-dialog-239"
+             data-dialog-target="class-dialog-239">
           <div class="class-card-header">
             <span class="class-name">CustomStoreRepository</span>
             <span class="type-badge repository">repository</span>
@@ -24643,7 +24795,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-238" class="class-dialog" aria-label="CustomStoreRepository details">
+        <dialog id="class-dialog-239" class="class-dialog" aria-label="CustomStoreRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24726,8 +24878,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-239"
-             data-dialog-target="class-dialog-239">
+             aria-haspopup="dialog" aria-controls="class-dialog-240"
+             data-dialog-target="class-dialog-240">
           <div class="class-card-header">
             <span class="class-name">CustomStoreRepositoryImpl</span>
             <span class="type-badge repository">repository</span>
@@ -24746,7 +24898,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-239" class="class-dialog" aria-label="CustomStoreRepositoryImpl details">
+        <dialog id="class-dialog-240" class="class-dialog" aria-label="CustomStoreRepositoryImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24865,8 +25017,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-240"
-             data-dialog-target="class-dialog-240">
+             aria-haspopup="dialog" aria-controls="class-dialog-241"
+             data-dialog-target="class-dialog-241">
           <div class="class-card-header">
             <span class="class-name">InventoryRepository</span>
             <span class="type-badge repository">repository</span>
@@ -24885,7 +25037,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-240" class="class-dialog" aria-label="InventoryRepository details">
+        <dialog id="class-dialog-241" class="class-dialog" aria-label="InventoryRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -24952,8 +25104,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-241"
-             data-dialog-target="class-dialog-241">
+             aria-haspopup="dialog" aria-controls="class-dialog-242"
+             data-dialog-target="class-dialog-242">
           <div class="class-card-header">
             <span class="class-name">StoreRepository</span>
             <span class="type-badge repository">repository</span>
@@ -24972,7 +25124,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-241" class="class-dialog" aria-label="StoreRepository details">
+        <dialog id="class-dialog-242" class="class-dialog" aria-label="StoreRepository details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25014,8 +25166,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-242"
-             data-dialog-target="class-dialog-242">
+             aria-haspopup="dialog" aria-controls="class-dialog-243"
+             data-dialog-target="class-dialog-243">
           <div class="class-card-header">
             <span class="class-name">ReportService</span>
             <span class="type-badge service">service</span>
@@ -25034,7 +25186,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-242" class="class-dialog" aria-label="ReportService details">
+        <dialog id="class-dialog-243" class="class-dialog" aria-label="ReportService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25101,8 +25253,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-243"
-             data-dialog-target="class-dialog-243">
+             aria-haspopup="dialog" aria-controls="class-dialog-244"
+             data-dialog-target="class-dialog-244">
           <div class="class-card-header">
             <span class="class-name">ReportServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -25121,7 +25273,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-243" class="class-dialog" aria-label="ReportServiceImpl details">
+        <dialog id="class-dialog-244" class="class-dialog" aria-label="ReportServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25196,8 +25348,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-244"
-             data-dialog-target="class-dialog-244">
+             aria-haspopup="dialog" aria-controls="class-dialog-245"
+             data-dialog-target="class-dialog-245">
           <div class="class-card-header">
             <span class="class-name">StoreService</span>
             <span class="type-badge service">service</span>
@@ -25216,7 +25368,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-244" class="class-dialog" aria-label="StoreService details">
+        <dialog id="class-dialog-245" class="class-dialog" aria-label="StoreService details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25375,8 +25527,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-245"
-             data-dialog-target="class-dialog-245">
+             aria-haspopup="dialog" aria-controls="class-dialog-246"
+             data-dialog-target="class-dialog-246">
           <div class="class-card-header">
             <span class="class-name">StoreServiceImpl</span>
             <span class="type-badge service">service</span>
@@ -25395,7 +25547,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-245" class="class-dialog" aria-label="StoreServiceImpl details">
+        <dialog id="class-dialog-246" class="class-dialog" aria-label="StoreServiceImpl details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25587,8 +25739,8 @@
         
         
         <div class="class-card clickable" tabindex="0" role="button"
-             aria-haspopup="dialog" aria-controls="class-dialog-246"
-             data-dialog-target="class-dialog-246">
+             aria-haspopup="dialog" aria-controls="class-dialog-247"
+             data-dialog-target="class-dialog-247">
           <div class="class-card-header">
             <span class="class-name">ExpressionUtils</span>
             <span class="type-badge other">other</span>
@@ -25607,7 +25759,7 @@
           </div>
         </div>
 
-        <dialog id="class-dialog-246" class="class-dialog" aria-label="ExpressionUtils details">
+        <dialog id="class-dialog-247" class="class-dialog" aria-label="ExpressionUtils details">
           <div class="dialog-header">
             <div class="dialog-header-text">
               <div class="class-card-header">
@@ -25735,34 +25887,14 @@
   </section>
 
   
-  <section>
-    <h2>Parse Errors</h2>
-    <details class="findings-category" style="--cat-color: #e66767;" open>
-      <summary>
-        <span aria-hidden="true">🚫</span>
-        <span>Files That Failed to Parse</span>
-        <span class="count-badge">1</span>
-      </summary>
-      <div class="findings-list">
-        
-        <div class="finding-item">
-          <span class="finding-text" style="font-family: monospace;">.cache\spring-rest-sakila\repo\src\main\java\com\example\app\services\catalog\domain\serializer\LocalDateYearSerializer.java: Expected &#39;:&#39; (at Keyword &#34;case&#34; line 57, position 13)</span>
-        </div>
-        
-      </div>
-    </details>
-  </section>
-  
 
 </main>
 
 <footer>
-  Generated July 12, 2026 at 03:33 AM UTC using claude-haiku-4-5 &middot;
-  187 file(s) parsed, 246 class(es) extracted &middot;
-  74 LLM call(s), 43 served from cache &middot;
-  124710 input / 50155 output tokens
-  
-  <br>1 file(s) could not be parsed and were skipped -- see Parse Errors above.
+  Generated July 12, 2026 at 04:55 AM UTC using claude-haiku-4-5 &middot;
+  188 file(s) parsed, 247 class(es) extracted &middot;
+  4 LLM call(s), 240 served from cache &middot;
+  14506 input / 1291 output tokens
   
 </footer>
 
