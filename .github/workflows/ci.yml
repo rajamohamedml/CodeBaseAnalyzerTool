@@ -6,7 +6,7 @@ name: CI
 # so CI never makes a real, billable network call.
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
   pull_request:
 
 jobs:

@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "intellisource-ai"
-version = "1.0.0"
+version = "1.1.0"
 description = "Analyzes a Java/Spring codebase and extracts structured knowledge (overview, method signatures, complexity, security findings, dependency graph, git-churn hotspots) using an LLM via LangChain."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 
 # Runtime dependencies only. Dev/test/lint tooling lives in the
 # "dev" optional-dependency group below so `pip install -e .` stays lean
