@@ -324,19 +324,6 @@
   }
   .card-footer .view-details { color: var(--accent); font-weight: 600; white-space: nowrap; }
 
-  /* Hotspots + dependency-rank: two compact side-by-side panels summarizing
-     churn x complexity and fan-in, shown before the detailed module list so
-     a reviewer sees "what's risky" before "everything that exists". */
-  .signals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 28px; }
-  .signal-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
-  .signal-panel h3 { margin: 0 0 12px; font-size: 14px; }
-  table.signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  table.signal-table th, table.signal-table td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
-  table.signal-table th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
-  table.signal-table td.class-col { font-family: monospace; color: var(--text); }
-  table.signal-table tr:last-child td { border-bottom: none; }
-  .rank-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 700; margin-right: 6px; }
-
   .depends-on { margin-top: 8px; }
   .depends-on .dep-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 6px; }
   .dep-chip { display: inline-block; font-size: 11px; font-family: monospace; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-secondary); padding: 2px 7px; border-radius: 999px; margin: 2px 2px 0 0; overflow-wrap: anywhere; }
@@ -590,129 +577,106 @@
   
 
   
-  <div class="signals-grid">
-    
-    <div class="signal-panel">
-      <h3>🔥 Hotspots &mdash; changed often, hard to change safely</h3>
-      <table class="signal-table">
-        <thead><tr><th>Class</th><th>Commits</th><th>Last Modified</th><th>High-Complexity</th></tr></thead>
-        <tbody>
-          
-          <tr>
-            <td class="class-col">Film</td>
-            <td>4</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">FilmRequest</td>
-            <td>4</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">Staff</td>
-            <td>4</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">CustomerEntity</td>
-            <td>3</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">StaffEntity</td>
-            <td>3</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">RedisConfig</td>
-            <td>5</td>
-            <td>2023-06-30</td>
-            <td>0</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">Address</td>
-            <td>2</td>
-            <td>2023-07-01</td>
-            <td>1</td>
-          </tr>
-          
-          <tr>
-            <td class="class-col">AddressEntity</td>
-            <td>2</td>
-            <td>2023-07-05</td>
-            <td>1</td>
-          </tr>
-          
-        </tbody>
-      </table>
-    </div>
-    
-    
-    <div class="signal-panel">
-      <h3>🔗 Most Relied-Upon Classes</h3>
-      <table class="signal-table">
-        <thead><tr><th>#</th><th>Class</th><th>Depended On By</th></tr></thead>
-        <tbody>
-          
-          <tr>
-            <td><span class="rank-badge">1</span></td>
-            <td class="class-col">StaffDto</td>
-            <td>26 classes</td>
-          </tr>
-          
-          <tr>
-            <td><span class="rank-badge">2</span></td>
-            <td class="class-col">Category</td>
-            <td>20 classes</td>
-          </tr>
-          
-          <tr>
-            <td><span class="rank-badge">3</span></td>
-            <td class="class-col">CategoryConverter</td>
-            <td>20 classes</td>
-          </tr>
-          
-          <tr>
-            <td><span class="rank-badge">4</span></td>
-            <td class="class-col">AddressDto</td>
-            <td>19 classes</td>
-          </tr>
-          
-          <tr>
-            <td><span class="rank-badge">5</span></td>
-            <td class="class-col">CustomerDto</td>
-            <td>17 classes</td>
-          </tr>
-          
-          <tr>
-            <td><span class="rank-badge">6</span></td>
-            <td class="class-col">FullName</td>
-            <td>17 classes</td>
-          </tr>
-          
-        </tbody>
-      </table>
-    </div>
-    
-  </div>
-  
-
-  
   <section>
     <h2>Notable Findings</h2>
     
-    <details class="findings-category" style="--cat-color: #e66767;" open>
+    <details class="findings-category" style="--cat-color: #9085e9;" open>
+      <summary>
+        <span aria-hidden="true">🔥</span>
+        <span>Hotspots — changed often, hard to change safely</span>
+        <span class="count-badge">8</span>
+      </summary>
+      
+      <div class="findings-list">
+        
+        <div class="finding-item">
+          <span class="finding-text">4 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">Film &mdash; src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">4 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">FilmRequest &mdash; src/main/java/com/example/app/services/catalog/domain/dto/FilmDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">4 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">Staff &mdash; src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">3 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">CustomerEntity &mdash; src/main/java/com/example/app/services/customer/domain/entity/CustomerEntity.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">3 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">StaffEntity &mdash; src/main/java/com/example/app/services/staff/domain/entity/StaffEntity.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">5 commit(s) · last modified 2023-06-30 · 0 high-complexity method(s)</span>
+          <span class="source">RedisConfig &mdash; src/main/java/com/example/app/config/RedisConfig.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">2 commit(s) · last modified 2023-07-01 · 1 high-complexity method(s)</span>
+          <span class="source">Address &mdash; src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">2 commit(s) · last modified 2023-07-05 · 1 high-complexity method(s)</span>
+          <span class="source">AddressEntity &mdash; src/main/java/com/example/app/services/location/domain/entity/AddressEntity.java</span>
+        </div>
+        
+      </div>
+      
+    </details>
+    
+    <details class="findings-category" style="--cat-color: #9085e9;">
+      <summary>
+        <span aria-hidden="true">🔗</span>
+        <span>Most Relied-Upon Classes</span>
+        <span class="count-badge">6</span>
+      </summary>
+      
+      <div class="findings-list">
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 26 other classes</span>
+          <span class="source">StaffDto &mdash; src/main/java/com/example/app/services/staff/domain/dto/StaffDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 20 other classes</span>
+          <span class="source">Category &mdash; src/main/java/com/example/app/services/catalog/domain/dto/CategoryDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 20 other classes</span>
+          <span class="source">CategoryConverter &mdash; src/main/java/com/example/app/services/catalog/domain/converter/CategoryConverter.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 19 other classes</span>
+          <span class="source">AddressDto &mdash; src/main/java/com/example/app/services/location/domain/dto/AddressDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 17 other classes</span>
+          <span class="source">CustomerDto &mdash; src/main/java/com/example/app/services/customer/domain/dto/CustomerDto.java</span>
+        </div>
+        
+        <div class="finding-item">
+          <span class="finding-text">Depended on by 17 other classes</span>
+          <span class="source">FullName &mdash; src/main/java/com/example/app/common/domain/entity/FullName.java</span>
+        </div>
+        
+      </div>
+      
+    </details>
+    
+    <details class="findings-category" style="--cat-color: #e66767;">
       <summary>
         <span aria-hidden="true">⚠️</span>
         <span>High-Complexity Methods</span>

@@ -324,19 +324,6 @@
   }
   .card-footer .view-details { color: var(--accent); font-weight: 600; white-space: nowrap; }
 
-  /* Hotspots + dependency-rank: two compact side-by-side panels summarizing
-     churn x complexity and fan-in, shown before the detailed module list so
-     a reviewer sees "what's risky" before "everything that exists". */
-  .signals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 28px; }
-  .signal-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; min-width: 0; }
-  .signal-panel h3 { margin: 0 0 12px; font-size: 14px; }
-  table.signal-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  table.signal-table th, table.signal-table td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
-  table.signal-table th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
-  table.signal-table td.class-col { font-family: monospace; color: var(--text); }
-  table.signal-table tr:last-child td { border-bottom: none; }
-  .rank-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 700; margin-right: 6px; }
-
   .depends-on { margin-top: 8px; }
   .depends-on .dep-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-right: 6px; }
   .dep-chip { display: inline-block; font-size: 11px; font-family: monospace; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-secondary); padding: 2px 7px; border-radius: 999px; margin: 2px 2px 0 0; overflow-wrap: anywhere; }
@@ -447,46 +434,6 @@
     </a>
     {% endfor %}
   </nav>
-  {% endif %}
-
-  {% if hotspots or top_dependencies %}
-  <div class="signals-grid">
-    {% if hotspots %}
-    <div class="signal-panel">
-      <h3>🔥 Hotspots &mdash; changed often, hard to change safely</h3>
-      <table class="signal-table">
-        <thead><tr><th>Class</th><th>Commits</th><th>Last Modified</th><th>High-Complexity</th></tr></thead>
-        <tbody>
-          {% for spot in hotspots %}
-          <tr>
-            <td class="class-col">{{ spot.class_name }}</td>
-            <td>{{ spot.commit_count }}</td>
-            <td>{{ spot.last_modified or '—' }}</td>
-            <td>{{ spot.high_complexity_methods }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% endif %}
-    {% if top_dependencies %}
-    <div class="signal-panel">
-      <h3>🔗 Most Relied-Upon Classes</h3>
-      <table class="signal-table">
-        <thead><tr><th>#</th><th>Class</th><th>Depended On By</th></tr></thead>
-        <tbody>
-          {% for dep in top_dependencies %}
-          <tr>
-            <td><span class="rank-badge">{{ loop.index }}</span></td>
-            <td class="class-col">{{ dep.class_name }}</td>
-            <td>{{ dep.depended_on_by }} class{{ 'es' if dep.depended_on_by != 1 else '' }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% endif %}
-  </div>
   {% endif %}
 
   {% if notable_findings %}

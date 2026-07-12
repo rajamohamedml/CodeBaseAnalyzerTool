@@ -42,19 +42,6 @@ class _Finding(TypedDict):
     text: str
 
 
-class _Hotspot(TypedDict):
-    class_name: str
-    file_path: str
-    commit_count: int
-    last_modified: str | None
-    high_complexity_methods: int
-
-
-class _DependencyRank(TypedDict):
-    class_name: str
-    depended_on_by: int
-
-
 class _FindingSubcategory(TypedDict):
     label: str
     icon: str
@@ -242,13 +229,18 @@ _SEVERITY_LABELS: dict[str, str] = {"high": "High", "medium": "Medium", "low": "
 _SEVERITY_ICONS: dict[str, str] = {"high": "\U0001f534", "medium": "\U0001f7e0", "low": "\U0001f7e1"}
 
 
-def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCategory]:
+def _collect_notable_findings(
+    classes: list[ClassAnalysis], hotspot_names: list[str]
+) -> list[_FindingCategory]:
     """Roll up every LLM-flagged notable aspect, every statically-flagged
-    high-complexity method, and every deterministic security finding into
-    categorized, collapsible groups, so a reviewer isn't stuck scrolling
-    one flat list of hundreds of items to find what's worth a closer look.
-    Notable aspects and security findings are each further split into their
-    own subcategories (keyword-based, and by severity, respectively).
+    high-complexity method, every deterministic security finding, and the
+    two churn/dependency rankings into categorized, collapsible groups, so
+    a reviewer isn't stuck scrolling one flat list of hundreds of items to
+    find what's worth a closer look. Notable aspects and security findings
+    are each further split into their own subcategories (keyword-based,
+    and by severity, respectively); hotspots and most-relied-upon classes
+    are two more top-level categories, siblings of Notable Aspects rather
+    than nested inside it, since they're ranked lists, not keyword groups.
     """
     high_complexity: list[_Finding] = []
     aspects_by_category: dict[tuple[str, str], list[_Finding]] = {}
@@ -306,6 +298,8 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
             "findings": all_security_findings,
             "subcategories": security_subcategories,
         },
+        _hotspots_category(classes, hotspot_names),
+        _top_dependencies_category(classes),
         {"label": "High-Complexity Methods", "icon": "⚠️", "findings": high_complexity, "subcategories": []},
         {
             "label": "Notable Aspects",
@@ -317,41 +311,65 @@ def _collect_notable_findings(classes: list[ClassAnalysis]) -> list[_FindingCate
     return [category for category in categories if category["findings"]]
 
 
-def _collect_hotspots(classes: list[ClassAnalysis], hotspot_names: list[str]) -> list[_Hotspot]:
-    """Build the display row for each class named in `hotspots`, in the
-    same highest-risk-first order `pipeline._compute_hotspots` ranked them.
+def _hotspots_category(classes: list[ClassAnalysis], hotspot_names: list[str]) -> _FindingCategory:
+    """Render `pipeline._compute_hotspots`' ranking (churn x complexity) as
+    its own expandable "Hotspots" category under Notable Findings, in the
+    same highest-risk-first order it was ranked in.
     """
     by_name = {cls.class_name: cls for cls in classes}
-    rows: list[_Hotspot] = []
+    findings: list[_Finding] = []
     for name in hotspot_names:
         cls = by_name.get(name)
         if cls is None or cls.churn is None:
             continue
-        rows.append(
+        high_complexity_methods = sum(1 for m in cls.methods if m.high_complexity)
+        findings.append(
             {
                 "class_name": cls.class_name,
                 "file_path": cls.file_path,
-                "commit_count": cls.churn.commit_count,
-                "last_modified": cls.churn.last_modified,
-                "high_complexity_methods": sum(1 for m in cls.methods if m.high_complexity),
+                "text": (
+                    f"{cls.churn.commit_count} commit(s) · "
+                    f"last modified {cls.churn.last_modified or 'unknown'} · "
+                    f"{high_complexity_methods} high-complexity method(s)"
+                ),
             }
         )
-    return rows
+    return {
+        "label": "Hotspots — changed often, hard to change safely",
+        "icon": "\U0001f525",
+        "findings": findings,
+        "subcategories": [],
+    }
 
 
-def _collect_top_dependencies(classes: list[ClassAnalysis], limit: int = 6) -> list[_DependencyRank]:
+def _top_dependencies_category(classes: list[ClassAnalysis], limit: int = 6) -> _FindingCategory:
     """Rank classes by fan-in (how many other classes depend on them),
-    derived from each class's own `depends_on` list -- the most
-    relied-upon classes in the codebase, and therefore the riskiest to
-    change carelessly.
+    derived from each class's own `depends_on` list, as its own expandable
+    "Most Relied-Upon Classes" category under Notable Findings -- the
+    riskiest classes in the codebase to change carelessly.
     """
+    by_name = {cls.class_name: cls for cls in classes}
     fan_in: dict[str, int] = {}
     for cls in classes:
         for target in cls.depends_on:
             fan_in[target] = fan_in.get(target, 0) + 1
 
     ranked = sorted(fan_in.items(), key=lambda kv: (-kv[1], kv[0]))[:limit]
-    return [{"class_name": name, "depended_on_by": count} for name, count in ranked if count > 0]
+    findings: list[_Finding] = [
+        {
+            "class_name": name,
+            "file_path": by_name[name].file_path if name in by_name else "",
+            "text": f"Depended on by {count} other class{'es' if count != 1 else ''}",
+        }
+        for name, count in ranked
+        if count > 0
+    ]
+    return {
+        "label": "Most Relied-Upon Classes",
+        "icon": "\U0001f517",
+        "findings": findings,
+        "subcategories": [],
+    }
 
 
 def render_report(analysis: ProjectAnalysis) -> str:
@@ -373,9 +391,7 @@ def render_report(analysis: ProjectAnalysis) -> str:
         generated_at_display=_format_generated_at(analysis.metadata.generated_at),
         modules=_group_by_module(analysis.classes),
         accent_colors=_ACCENT_COLORS,
-        notable_findings=_collect_notable_findings(analysis.classes),
-        hotspots=_collect_hotspots(analysis.classes, analysis.hotspots),
-        top_dependencies=_collect_top_dependencies(analysis.classes),
+        notable_findings=_collect_notable_findings(analysis.classes, analysis.hotspots),
         total_classes=len(analysis.classes),
         total_methods=sum(len(c.methods) for c in analysis.classes),
         total_endpoints=sum(len(c.rest_endpoints) for c in analysis.classes),
